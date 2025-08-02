@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Admin Panel for Real Estate Listings">
+    <meta name="theme-color" content="#1e3a8a">
+    <meta name="author" content="QuadCoders Team">
+    <link rel="icon" href="img/house.png" type="image/x-icon">
+    <title>Real Estate - Admin Panel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* Base Styles from Home Page */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: white; 
+        } 
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            background: #1e3a8a;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .logo img {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: white;
+            margin: 2px 0;
+            transition: 0.3s;
+            border-radius: 2px;
+        }
+
+        /* Advanced Search Section */
+        .search-section {
+            background: white;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .search-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .search-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1e3a8a;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .search-form {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr auto;
+            gap: 1rem;
+            align-items: end;
+        }
+
+        .search-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .search-label {
+            font-weight: 500;
+            color: #374151;
+            font-size: 0.875rem;
+        }
+
+        .search-input {
+            padding: 0.75rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: #1e3a8a;
+            box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+        }
+
+        .dropdown {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .dropdown-btn {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            background: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1rem;
+            color: #374151;
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-btn:hover,
+        .dropdown.active .dropdown-btn {
+            border-color: #1e3a8a;
+            box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+        }
+
+        .dropdown-content {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid #1e3a8a;
+            border-radius: 12px;
+            margin-top: 0.25rem;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 100;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        .dropdown.active .dropdown-content {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-option {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .dropdown-option:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-option:hover {
+            background: #f8fafc;
+        }
+
+        .dropdown-option.selected {
+            background: #1e3a8a;
+            color: white;
+        }
+
+        .search-btn {
+            padding: 0.75rem 2rem;
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            min-height: 50px;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(30, 58, 138, 0.3);
+        }
+
+        .selected-filters {
+            margin-top: 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .filter-tag {
+            background: #eff6ff;
+            color: #1e3a8a;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 1px solid #bae6fd;
+        }
+
+        .filter-tag .remove {
+            cursor: pointer;
+            width: 16px;
+            height: 16px;
+            background: #1e3a8a;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+        }
+
+        /* Listings Section - Full-width and improved table styling */
+        .listings-section {
+            margin: 20px auto;
+            padding: 0 2rem; /* Add padding to sides for full-width content */
+            font-family: Arial, sans-serif;
+        }
+
+        .property-container {
+            margin-bottom: 40px;
+            width: 100%; /* Make container full width */
+        }
+        
+        .property-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .property-title {
+            font-size: 24px;
+            color: #333;
+            text-align: left;
+        }
+
+        .add-property-btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .add-property-btn:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .property-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px auto;
+            table-layout: auto; /* Changed to auto for better column distribution */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        /* Table headers and data cells */
+        .property-table th, .property-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+            word-wrap: break-word;
+        }
+
+        .property-table th {
+            background-color: #f2f2f2;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .property-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .property-table tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .property-table td {
+            color: #555;
+        }
+        
+        /* Admin-specific button styling */
+        .actions-cell {
+            white-space: nowrap;
+        }
+        
+        .action-btn {
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 8px;
+            color: white;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 600;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .action-btn:last-child {
+            margin-right: 0;
+        }
+
+        /* Gradient and hover effects for CRUD buttons */
+        .edit-btn {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+        }
+
+        .edit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .delete-btn {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+
+        .delete-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(239, 68, 68, 0.3);
+        }
+        
+        /* Footer Styles from Home Page */
+        .footer {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            padding: 3rem 2rem 1rem;
+            margin-top: auto;
+            position: relative;
+            top: 55px; 
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;  
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-left {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .footer-logo img {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .footer-description {
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.6;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-copyright {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.875rem;
+        }
+
+        .footer-center h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: white;
+        }
+
+        .footer-nav {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .footer-nav a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-weight: 400;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0;
+        }
+
+        .footer-nav a:hover {
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .footer-nav a i {
+            font-size: 0.875rem;
+            width: 16px;
+        }
+        
+        .footer-right h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: white;
+        }
+
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.9rem;
+        }
+
+        .contact-item i {
+            width: 16px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .social-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding-top: 1.5rem;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.875rem;
+        }
+        
+        /* Mobile Responsive for Admin Page */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+            }
+
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: #1e3a8a;
+                flex-direction: column;
+                padding: 1rem 0;
+                gap: 20px;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .search-form {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .search-section {
+                padding: 1.5rem 1rem;
+            }
+
+            .nav-links a[href="#login"]:hover {
+                transform: scale(1.1);
+                background: rgba(255, 255, 255, 0.2);
+            }
+            
+            .listings-section {
+                margin: 10px;
+                max-width: none;
+                padding: 0 1rem;
+            }
+            
+            .property-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 15px;
+            }
+
+            .add-property-btn {
+                width: 100%;
+            }
+            
+            .property-table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+                margin: 10px 0;
+            }
+            
+            .property-table th, .property-table td {
+                min-width: 120px;
+                padding: 8px;
+            }
+            
+            .footer {
+                padding: 2rem 1rem 1rem;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                text-align: center;
+            }
+
+            .footer-left {
+                align-items: center;
+                text-align: center;
+            }
+
+            .footer-nav {
+                align-items: center;
+            }
+
+            .footer-nav a:hover {
+                transform: none;
+            }
+
+            .contact-info {
+                align-items: center;
+            }
+
+            .social-links {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .footer-content {
+                gap: 1.5rem;
+            }
+
+            .footer-logo {
+                font-size: 1.25rem;
+            }
+
+            .social-link {
+                width: 35px;
+                height: 35px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <img src="img/house.png" alt="Logo">
+            <span>Real Estate - Admin</span>
+        </div>
+        
+        <ul class="nav-links">
+            <li><a href="../frontend/home.html">Home</a></li>
+            <li><a href="../frontend/index.html"><i class="fas fa-user-shield"></i> Admin</a></li>
+        </ul>
+        
+        <div class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
+    <section class="search-section" id="home">
+        <div class="search-container">
+            <h2 class="search-title">Admin Dashboard</h2>
+            
+            <form class="search-form">
+                <div class="search-group">
+                    <label class="search-label">Location</label>
+                    <input type="text" class="search-input" placeholder="Enter city, area, or landmark" id="location">
+                </div>
+
+                <div class="search-group">
+                    <label class="search-label">Property Type</label>
+                    <div class="dropdown" id="flatType">
+                        <div class="dropdown-btn">
+                            <span>Select Type</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="dropdown-content">
+                            <div class="dropdown-option" data-value="1rk">1 RK</div>
+                            <div class="dropdown-option" data-value="1bhk">1 BHK</div>
+                            <div class="dropdown-option" data-value="2rk">2 RK</div>
+                            <div class="dropdown-option" data-value="2bhk">2 BHK</div>
+                            <div class="dropdown-option" data-value="3bhk">3 BHK</div>
+                            <div class="dropdown-option" data-value="4bhk">4+ BHK</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="search-group">
+                    <label class="search-label">Budget Range</label>
+                    <div class="dropdown" id="priceRange">
+                        <div class="dropdown-btn">
+                            <span>Select Budget</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="dropdown-content">
+                            <div class="dropdown-option" data-value="0-25000">₹0 - ₹25,000</div>
+                            <div class="dropdown-option" data-value="25000-50000">₹25,000 - ₹50,000</div>
+                            <div class="dropdown-option" data-value="50000-100000">₹50,000 - ₹1,00,000</div>
+                            <div class="dropdown-option" data-value="100000-200000">₹1,00,000 - ₹2,00,000</div>
+                            <div class="dropdown-option" data-value="200000-500000">₹2,00,000 - ₹5,00,000</div>
+                            <div class="dropdown-option" data-value="500000+">₹5,00,000+</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="search-group">
+                    <label class="search-label">Tenant</label>
+                    <div class="dropdown" id="tenantType">
+                        <div class="dropdown-btn">
+                            <span>Select Preference</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="dropdown-content">
+                            <div class="dropdown-option" data-value="family">Family</div>
+                            <div class="dropdown-option" data-value="bachelor">Bachelor</div>
+                            <div class="dropdown-option" data-value="no-preference">No Preference</div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="search-btn">
+                    <i class="fas fa-search"></i>
+                    Search
+                </button>
+            </form>
+
+            <div class="selected-filters" id="selectedFilters"></div>
+        </div>
+    </section>
+
+    <section class="listings-section">
+        <div class="property-container">
+            <div class="property-header">
+                <h2 class="property-title">Owner Properties</h2>
+                <button class="add-property-btn" data-type="owner"><i class="fas fa-plus"></i> Add New</button>
+            </div>
+            <table class="property-table" id="ownerPropertiesTable">
+                <thead>
+                    <tr>
+                        <th>Location</th>
+                        <th>Property Type</th>
+                        <th>Price</th>
+                        <th>Owner Name</th>
+                        <th>Contact</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="ownerPropertiesBody">
+                    <tr>
+                        <td>New York, NY</td>
+                        <td>2 RK</td>
+                        <td>$3,000</td>
+                        <td>John Doe</td>
+                        <td>(123) 456-7890</td>
+                        <td>2025-01-01</td>
+                        <td class="actions-cell">
+                            <button class="action-btn edit-btn"><i class="fas fa-edit"></i> Edit</button>
+                            <button class="action-btn delete-btn"><i class="fas fa-trash-alt"></i> Delete</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Los Angeles, CA</td>
+                        <td>1 BHK</td>
+                        <td>$4,500</td>
+                        <td>Jane Smith</td>
+                        <td>(987) 654-3210</td>
+                        <td>2025-06-01</td>
+                        <td class="actions-cell">
+                            <button class="action-btn edit-btn"><i class="fas fa-edit"></i> Edit</button>
+                            <button class="action-btn delete-btn"><i class="fas fa-trash-alt"></i> Delete</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="property-container">
+            <div class="property-header">
+                <h2 class="property-title">Renter Properties</h2>
+                <button class="add-property-btn" data-type="renter"><i class="fas fa-plus"></i> Add New</button>
+            </div>
+            <table class="property-table" id="renterPropertiesTable">
+                <thead>
+                    <tr>
+                        <th>Location</th>
+                        <th>Property Type</th>
+                        <th>Price</th>
+                        <th>Agent Name</th>
+                        <th>Contact</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="renterPropertiesBody">
+                    <tr>
+                        <td>Chicago, IL</td>
+                        <td>1 RK</td>
+                        <td>$2,500</td>
+                        <td>Emily Johnson</td>
+                        <td>(555) 123-4567</td>
+                        <td>2025-03-15</td>
+                        <td class="actions-cell">
+                            <button class="action-btn edit-btn"><i class="fas fa-edit"></i> Edit</button>
+                            <button class="action-btn delete-btn"><i class="fas fa-trash-alt"></i> Delete</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Miami, FL</td>
+                        <td>2 BHK</td>
+                        <td>$1,800</td>
+                        <td>Michael Brown</td>
+                        <td>(444) 765-4321</td>
+                        <td>2025-09-01</td>
+                        <td class="actions-cell">
+                            <button class="action-btn edit-btn"><i class="fas fa-edit"></i> Edit</button>
+                            <button class="action-btn delete-btn"><i class="fas fa-trash-alt"></i> Delete</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-left">
+                    <div class="footer-logo">
+                        <img src="img/house.png" alt="Logo">
+                        <span>Real Estate</span>
+                    </div>
+                    <p class="footer-description">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum.
+                    </p>
+                    <div class="footer-copyright">
+                        © 2025 Real Estate. All rights reserved.
+                    </div>
+                </div>
+
+                <div class="footer-center">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-nav">
+                        <li><a href="#home"><i class="fas fa-home"></i> Home</a></li>
+                        <li><a href="#about"><i class="fas fa-info-circle"></i> About</a></li>
+                        <li><a href="#contact"><i class="fas fa-envelope"></i> Contact</a></li>
+                        <li><a href="#login"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-right">
+                    <h3>Get In Touch</h3>
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Mumbai, Maharashtra, India</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-phone"></i>
+                            <span>+91 98765 43210</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>info@realestate.com</span>
+                        </div>
+                    </div>
+                    
+                    <div class="social-links">
+                        <a href="#" class="social-link" title="Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="social-link" title="Twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="social-link" title="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="social-link" title="LinkedIn">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                Made by Team | Privacy Policy | Terms of Service
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // JS from home.html with admin-specific additions
+        document.addEventListener('DOMContentLoaded', function() {
+            // Hamburger menu functionality
+            const hamburger = document.querySelector('.hamburger');
+            const navLinks = document.querySelector('.nav-links');
+            
+            hamburger.addEventListener('click', function() {
+                navLinks.classList.toggle('active');
+            });
+
+            // Dropdown functionality
+            const dropdowns = document.querySelectorAll('.dropdown');
+            const selectedFilters = document.getElementById('selectedFilters');
+            let filters = {};
+
+            dropdowns.forEach(dropdown => {
+                const btn = dropdown.querySelector('.dropdown-btn');
+                const options = dropdown.querySelectorAll('.dropdown-option');
+
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    
+                    dropdowns.forEach(d => {
+                        if(d !== dropdown) d.classList.remove('active');
+                    });
+                    
+                    dropdown.classList.toggle('active');
+                });
+
+                options.forEach(option => {
+                    option.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        
+                        const value = option.dataset.value;
+                        const text = option.textContent;
+                        const dropdownId = dropdown.id;
+                        
+                        btn.querySelector('span').textContent = text;
+                        
+                        options.forEach(opt => opt.classList.remove('selected'));
+                        option.classList.add('selected');
+                        
+                        filters[dropdownId] = { value, text };
+                        
+                        dropdown.classList.remove('active');
+                        updateSelectedFilters();
+                    });
+                });
+            });
+
+            document.addEventListener('click', () => {
+                dropdowns.forEach(d => d.classList.remove('active'));
+            });
+
+            function updateSelectedFilters() {
+                selectedFilters.innerHTML = '';
+                
+                Object.keys(filters).forEach(key => {
+                    if(filters[key]) {
+                        const tag = document.createElement('div');
+                        tag.className = 'filter-tag';
+                        tag.innerHTML = `
+                            <span>${filters[key].text}</span>
+                            <div class="remove" data-filter="${key}">×</div>
+                        `;
+                        selectedFilters.appendChild(tag);
+                    }
+                });
+
+                selectedFilters.querySelectorAll('.remove').forEach(remove => {
+                    remove.addEventListener('click', (e) => {
+                        const filterKey = e.target.dataset.filter;
+                        delete filters[filterKey];
+                        
+                        const dropdown = document.getElementById(filterKey);
+                        const btn = dropdown.querySelector('.dropdown-btn span');
+                        const options = dropdown.querySelectorAll('.dropdown-option');
+                        
+                        btn.textContent = getDefaultText(filterKey);
+                        options.forEach(opt => opt.classList.remove('selected'));
+                        
+                        updateSelectedFilters();
+                    });
+                });
+            }
+
+            function getDefaultText(filterKey) {
+                const defaults = {
+                    'flatType': 'Select Type',
+                    'priceRange': 'Select Budget',
+                    'tenantType': 'Select Preference'
+                };
+                return defaults[filterKey] || 'Select';
+            }
+
+            document.querySelector('.search-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                const location = document.getElementById('location').value;
+                const searchData = {
+                    location: location,
+                    ...filters
+                };
+                
+                console.log('Search Data:', searchData);
+                alert('Search functionality will be implemented here!\nCheck console for search data.');
+            });
+
+            // --- Admin-specific JavaScript starts here ---
+            
+            document.querySelectorAll('.add-property-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    const propertyType = button.dataset.type;
+                    alert(`Add New ${propertyType} property functionality will be implemented here.`);
+                });
+            });
+
+            const ownerTable = document.getElementById('ownerPropertiesTable');
+            const renterTable = document.getElementById('renterPropertiesTable');
+
+            function setupTableListeners(table) {
+                table.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('edit-btn')) {
+                        const row = e.target.closest('tr');
+                        const rowData = Array.from(row.querySelectorAll('td')).map(td => td.textContent.trim());
+                        alert(`Editing property: ${rowData.join(', ')}`);
+                    } else if (e.target.classList.contains('delete-btn')) {
+                        const row = e.target.closest('tr');
+                        const confirmDelete = confirm('Are you sure you want to delete this property?');
+                        if (confirmDelete) {
+                            row.remove();
+                            alert('Property deleted successfully!');
+                        }
+                    }
+                });
+            }
+            
+            setupTableListeners(ownerTable);
+            setupTableListeners(renterTable);
+        });
+    </script>
+</body>
+</html>
