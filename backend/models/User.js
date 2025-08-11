@@ -1,5 +1,5 @@
-// Import required packages
-const mongoose = require('mongoose');
+import express from "express";
+import mongoose from "mongoose";
 
 const UserSchema = new mongoose.Schema({
     fullName: {
@@ -14,6 +14,11 @@ const UserSchema = new mongoose.Schema({
         trim: true,
         match: [/^[0-9]{10}$/, 'Please fill a valid 10-digit mobile number.'],
     },
+    password: {
+        type: String,
+        required: [true, 'Password is required.'],
+        minlength: [6, 'Password must be at least 6 characters long.'],
+    },
     registrationDate: {
         type: Date,
         default: Date.now,
@@ -21,4 +26,5 @@ const UserSchema = new mongoose.Schema({
 });
 
 // Create and export the User model
-module.exports = mongoose.model('User', UserSchema);
+const User = mongoose.model('User', UserSchema);
+export default User;

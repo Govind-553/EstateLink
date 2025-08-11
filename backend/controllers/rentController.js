@@ -6,10 +6,11 @@ const router = express.Router();
 
 
 // Route 1 - Create a new rent listing
-router.post("/create/:contact", async (req, res) => {
+export const createRentListing = async (req, res) => {
     const { contact } = req.params;
     const rentData = req.body;
-    
+    rentData = { ...rentData, createdAt: new Date() };
+
     try {
         if (!contact || !rentData) {
             return res.status(400).json({ message: "Missing contact or rent data." });
@@ -20,7 +21,7 @@ router.post("/create/:contact", async (req, res) => {
             return res.status(404).json({ message: "User with this contact not found." });
         }
 
-        const { location, price, description } = rentData;
+        const { location, price } = rentData;
         if (!location || !price) {
             return res.status(400).json({ message: "Location and price are required." });
         }
@@ -28,7 +29,7 @@ router.post("/create/:contact", async (req, res) => {
         const newListing = new RentFlat({
             ...rentData,
             contact,
-            userId: user._id,
+            userId: User._id,
         });
 
         const savedListing = await newListing.save();
@@ -42,7 +43,7 @@ router.post("/create/:contact", async (req, res) => {
         console.error("Error creating rent listing:", error.message);
         res.status(500).json({ message: "Server error while creating rent listing." });
     }
-});
+};
 
 
 // Route 2 - Get all rent listings

@@ -10,6 +10,7 @@ import User from "../models/User.js";
 router.post('/create', createUser);
 
 // Route 2 - Get all users
+/*
 router.get('/all', async (req, res) => {
     try {
         const users = await User.find();
@@ -18,7 +19,7 @@ router.get('/all', async (req, res) => {
         console.error(err.message);
         res.status(500).send('Server Error');
     }
-});
+}); */
 
 // Route 3 - Get user by contact
 router.get('/contact/:mobileNumber', async (req, res) => {
@@ -35,3 +36,4 @@ router.get('/contact/:mobileNumber', async (req, res) => {
     }
 });
 
+export default router;

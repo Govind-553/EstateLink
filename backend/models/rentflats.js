@@ -15,13 +15,14 @@ const rentFlatSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  price: { 
+  price: {
     type: Number,
     required: true
   },
   contact: {
-    type: Number,
+    type: mongoose.Schema.Types.Number,
     required: [true, 'Mobile number is required.'],
+    ref: 'User',
     trim: true,
     match: [/^[0-9]{10}$/, 'Please fill a valid 10-digit mobile number.']
   },
