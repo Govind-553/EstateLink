@@ -34,12 +34,12 @@
         </div>
     </nav>
 
-    <!-- Advanced Search Section -->
+     <!-- Advanced Search Section -->
     <section class="search-section" id="home">
         <div class="search-container">
             <h2 class="search-title">Find Your Perfect Property</h2>
             
-            <form class="search-form">
+            <div class="search-form">
                 <!-- Location Search -->
                 <div class="search-group">
                     <label class="search-label">Location</label>
@@ -51,10 +51,11 @@
                     <label class="search-label">Property Type</label>
                     <div class="dropdown" id="flatType">
                         <div class="dropdown-btn">
-                            <span>Select Type</span>
+                            <span>All</span>
                             <i class="fas fa-chevron-down"></i>
                         </div>
                         <div class="dropdown-content">
+                            <div class="dropdown-option" data-value="all">All</div>
                             <div class="dropdown-option" data-value="1rk">1 RK</div>
                             <div class="dropdown-option" data-value="1bhk">1 BHK</div>
                             <div class="dropdown-option" data-value="2rk">2 RK</div>
@@ -70,16 +71,17 @@
                     <label class="search-label">Budget Range</label>
                     <div class="dropdown" id="priceRange">
                         <div class="dropdown-btn">
-                            <span>Select Budget</span>
+                            <span>All</span>
                             <i class="fas fa-chevron-down"></i>
                         </div>
                         <div class="dropdown-content">
-                            <div class="dropdown-option" data-value="0-25000">₹0 - ₹25,000</div>
-                            <div class="dropdown-option" data-value="25000-50000">₹25,000 - ₹50,000</div>
-                            <div class="dropdown-option" data-value="50000-100000">₹50,000 - ₹1,00,000</div>
-                            <div class="dropdown-option" data-value="100000-200000">₹1,00,000 - ₹2,00,000</div>
-                            <div class="dropdown-option" data-value="200000-500000">₹2,00,000 - ₹5,00,000</div>
-                            <div class="dropdown-option" data-value="500000+">₹5,00,000+</div>
+                            <div class="dropdown-option" data-value="all">All</div>
+                            <div class="dropdown-option" data-value="0-2500">$0 - $2,500</div>
+                            <div class="dropdown-option" data-value="2500-5000">$2,500 - $5,000</div>
+                            <div class="dropdown-option" data-value="5000-10000">$5,000 - $10,000</div>
+                            <div class="dropdown-option" data-value="10000-20000">$10,000 - $20,000</div>
+                            <div class="dropdown-option" data-value="20000-50000">$20,000 - $50,000</div>
+                            <div class="dropdown-option" data-value="50000+">$50,000+</div>
                         </div>
                     </div>
                 </div>
@@ -89,10 +91,11 @@
                     <label class="search-label">Tenant</label>
                     <div class="dropdown" id="tenantType">
                         <div class="dropdown-btn">
-                            <span>Select Preference</span>
+                            <span>All</span>
                             <i class="fas fa-chevron-down"></i>
                         </div>
                         <div class="dropdown-content">
+                            <div class="dropdown-option" data-value="all">All</div>
                             <div class="dropdown-option" data-value="family">Family</div>
                             <div class="dropdown-option" data-value="bachelor">Bachelor</div>
                             <div class="dropdown-option" data-value="no-preference">No Preference</div>
@@ -101,11 +104,11 @@
                 </div>
 
                 <!-- Search Button -->
-                <button type="submit" class="search-btn">
+                <button class="search-btn" onclick="applyFilters()">
                     <i class="fas fa-search"></i>
                     Search
                 </button>
-            </form>
+            </div>
 
             <!-- Selected Filters Display -->
             <div class="selected-filters" id="selectedFilters"></div>
@@ -128,22 +131,22 @@
                     </tr>
                 </thead>
                 <tbody id="ownerPropertiesBody">
-                     <tr>
-                    <td>New York, NY</td>
-                    <td>2 RK</td>
-                    <td>$3,000</td>
-                    <td>John Doe</td>
-                    <td>(123) 456-7890</td>
-                    <td>2025-01-01</td>
-                </tr>
-                <tr>
-                    <td>Los Angeles, CA</td>
-                    <td>1 BHK</td>
-                    <td>$4,500</td>
-                    <td>Jane Smith</td>
-                    <td>(987) 654-3210</td>
-                    <td>2025-06-01</td>
-                </tr>
+                    <tr data-location="New York, NY" data-type="2rk" data-price="3000">
+                        <td>New York, NY</td>
+                        <td>2 RK</td>
+                        <td>$3,000</td>
+                        <td>John Doe</td>
+                        <td>(123) 456-7890</td>
+                        <td>2025-01-01</td>
+                    </tr>
+                    <tr data-location="Los Angeles, CA" data-type="1bhk" data-price="4500">
+                        <td>Los Angeles, CA</td>
+                        <td>1 BHK</td>
+                        <td>$4,500</td>
+                        <td>Jane Smith</td>
+                        <td>(987) 654-3210</td>
+                        <td>2025-06-01</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -162,22 +165,22 @@
                     </tr>
                 </thead>
                 <tbody id="renterPropertiesBody">
-                <tr>
-                    <td>Chicago, IL</td>
-                    <td>1 RK</td>
-                    <td>$2,500</td>
-                    <td>Emily Johnson</td>
-                    <td>(555) 123-4567</td>
-                    <td>2025-03-15</td>
-                </tr>
-                <tr>
-                    <td>Miami, FL</td>
-                    <td>2 BHK</td>
-                    <td>$1,800</td>
-                    <td>Michael Brown</td>
-                    <td>(444) 765-4321</td>
-                    <td>2025-09-01</td>
-                </tr>
+                    <tr data-location="Chicago, IL" data-type="1rk" data-price="2500">
+                        <td>Chicago, IL</td>
+                        <td>1 RK</td>
+                        <td>$2,500</td>
+                        <td>Emily Johnson</td>
+                        <td>(555) 123-4567</td>
+                        <td>2025-03-15</td>
+                    </tr>
+                    <tr data-location="Miami, FL" data-type="2bhk" data-price="1800">
+                        <td>Miami, FL</td>
+                        <td>2 BHK</td>
+                        <td>$1,800</td>
+                        <td>Michael Brown</td>
+                        <td>(444) 765-4321</td>
+                        <td>2025-09-01</td>
+                    </tr>
                 </tbody>
             </table>
         </div>

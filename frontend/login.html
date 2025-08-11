@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login Register</title>
+<link rel="icon" href="../frontend/img/house.png" type="image/png">
+
+<style>
+    body {
+        font-family: 'Segoe UI', sans-serif;
+        background: white;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+    }
+    .container {
+        background: #fff;
+        padding: 25px 30px;
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        width: 100%;
+        max-width: 400px;
+        animation: fadeIn 0.5s ease-in-out;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: scale(0.9); }
+        to { opacity: 1; transform: scale(1); }
+    }
+    h1 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #333;
+    }
+    label {
+        display: block;
+        margin-top: 12px;
+        font-weight: 500;
+        color: #555;
+    }
+    .phone-input {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    .phone-input span {
+        padding: 8px 12px;
+        background: #f1f1f1;
+        border: 1px solid #ccc;
+        border-radius: 6px 0 0 6px;
+        font-weight: bold;
+    }
+    input[type="text"],
+    input[type="password"],
+    input[type="number"] {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 14px;
+        outline: none;
+        transition: all 0.2s ease-in-out;
+    }
+    input:focus {
+        border-color: #2575fc;
+        box-shadow: 0 0 5px rgba(37, 117, 252, 0.5);
+    }
+    button {
+        width: 100%;
+        padding: 12px;
+        background: linear-gradient(to right, #6a11cb, #2575fc);
+        color: white;
+        font-size: 16px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        margin-top: 20px;
+        transition: background 0.3s ease;
+    }
+    button:disabled {
+        opacity: 0.7;
+        background: #b5bad8;
+        cursor: not-allowed;
+    }
+    button:hover:enabled {
+        background: linear-gradient(to right, #2575fc, #6a11cb);
+    }
+    p {
+        text-align: center;
+        margin-top: 15px;
+        color: #555;
+    }
+    a {
+        color: #2575fc;
+        text-decoration: none;
+        font-weight: 500;
+    }
+    a:hover {
+        text-decoration: underline;
+    }
+    /* OTP horizontal underline style */
+    #otp-box {
+        display: none;
+        margin-top: 15px;
+        text-align: center;
+    }
+    .otp-label {
+        margin-bottom: 10px;
+        font-weight: 500;
+        color: #444;
+    }
+    .otp-input {
+        width: 40px;
+        font-size: 24px;
+        text-align: center;
+        border: none;
+        border-bottom: 2px solid #ccc;
+        margin: 0 5px;
+        outline: none;
+        transition: border-color 0.3s;
+        background: transparent;
+    }
+    .otp-input:focus {
+        border-bottom-color: #2575fc;
+    }
+
+    
+    .otp-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+    .otp-message {
+        text-align: center;
+        color: #2575fc;
+        font-size: 15px;
+        margin: 16px 0 8px 0;
+    }
+</style>
+</head>
+<body>
+
+<div class="container" id="form-container">
+    <!-- Login Form -->
+    <h1>Login</h1>
+    <form id="loginForm" autocomplete="off">
+        <label for="username">Phone Number</label>
+        <div class="phone-input">
+            <span>+91</span>
+            <input type="number" id="username" name="username" placeholder="Enter your phone number" required>
+        </div>
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+
+        <!-- OTP Field horizontal -->
+       <div id="otp-box">
+    <div class="otp-label">Enter OTP</div>
+    <div class="otp-row">
+        <input type="text" maxlength="1" class="otp-input" inputmode="numeric" />
+        <input type="text" maxlength="1" class="otp-input" inputmode="numeric" />
+        <input type="text" maxlength="1" class="otp-input" inputmode="numeric" />
+        <input type="text" maxlength="1" class="otp-input" inputmode="numeric" />
+        <input type="text" maxlength="1" class="otp-input" inputmode="numeric" />
+        <input type="text" maxlength="1" class="otp-input" inputmode="numeric" />
+    </div>
+    <button type="button" id="verifyOtpBtn" disabled style="margin-top:24px;">Verify OTP</button>
+    <div class="otp-message" id="otpMsg"></div>
+</div>
+
+
+        <button type="submit" id="loginBtn">Login</button>
+    </form>
+    <p>Don't have an account? <a href="#" onclick="showRegister()">Register here</a></p>
+</div>
+
+<script>
+    let otpStep = false;
+    let otpInputs = null;
+    let verifyBtn = null;
+
+    function showOtpUI() {
+        document.getElementById("otp-box").style.display = "block";
+        document.getElementById("loginBtn").style.display = "none";
+        otpInputs = document.querySelectorAll(".otp-input");
+        verifyBtn = document.getElementById("verifyOtpBtn");
+        document.getElementById("otpMsg").textContent = "";
+        otpInputs[0].focus();
+        // Listen for OTP logic
+        otpInputs.forEach((input, idx) => {
+            input.value = "";
+            input.addEventListener("input", function(e) {
+                this.value = this.value.replace(/[^0-9]/g, '');
+                if (this.value.length === 1 && idx < 5) otpInputs[idx + 1].focus();
+                checkOtpFilled();
+            });
+            input.addEventListener("keydown", function(e) {
+                if (e.key === "Backspace" && !this.value && idx > 0) otpInputs[idx - 1].focus();
+            });
+            input.addEventListener("paste", function(e){
+                const pasted = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '').slice(0,6).split('');
+                otpInputs.forEach((inp, i) => inp.value = pasted[i] || "");
+                otpInputs[Math.min(5, pasted.length-1)].focus();
+                setTimeout(checkOtpFilled, 10);
+                e.preventDefault();
+            });
+        });
+        verifyBtn.addEventListener("click", function() {
+            const otp = Array.from(otpInputs).map(inp => inp.value).join('');
+            if (otp.length === 6) {
+                document.getElementById("otpMsg").textContent = "✅ OTP Verified! Logging in…";
+                // Simulate navigation after success
+                setTimeout(() => {
+                    document.getElementById("otpMsg").textContent = "";
+                }, 2000);
+            }
+        });
+    }
+
+    function checkOtpFilled() {
+        const allFilled = Array.from(otpInputs).every(inp => inp.value && inp.value.length === 1);
+        verifyBtn.disabled = !allFilled;
+    }
+
+    document.getElementById("loginForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        if (!otpStep) {
+            otpStep = true;
+            showOtpUI();
+        }
+    });
+
+    function showRegister() {
+        document.getElementById("form-container").innerHTML = `
+            <h1>Register</h1>
+            <form id="registerForm">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" name="name" placeholder="Enter your name" required>
+
+                <label for="mobile">Mobile Number</label>
+                <div class="phone-input">
+                    <span>+91</span>
+                    <input type="number" id="mobile" name="mobile" placeholder="Enter your phone number" required>
+                </div>
+
+                <label for="regPassword">Password</label>
+                <input type="password" id="regPassword" name="password" placeholder="Enter your password" required>
+
+                <button type="submit">Register</button>
+            </form>
+            <p>Already have an account? <a href="#" onclick="location.reload()">Login here</a></p>
+        `;
+    }
+</script>
+</body>
+</html>
