@@ -1,74 +1,131 @@
-import express from "express";
+import SellFlat from "../models/sellflats.js";
+import User from "../models/User.js";
 
-const router = express.Router();
-
-// Mock DB (in-memory)
-const sellListings = [];
-
-// Route 1 - Create a new sell listing
-router.post("/create/:contact", (req, res) => {
+// Create a new sell listing
+export const createSellListing = async (req, res) => {
     const { contact } = req.params;
-    const sellData = req.body;
+    let sellData = req.body;
+    sellData = { ...sellData, createdAt: new Date() };
 
-    const newListing = { contact, ...sellData };
-    sellListings.push(newListing);
+    try {
+        if (!contact || !sellData) {
+            return res.status(400).json({ message: "Missing contact or sell data." });
+        }
 
-    res.status(201).json({ message: "New flat for sale is listed.", listing: newListing });
-});
+        const user = await User.findOne({ mobileNumber: contact });
+        if (!user) {
+            return res.status(404).json({ message: "User with this contact not found." });
+        }
 
-// Route 2 - Get all sell listings
-router.get("/all", (req, res) => {
-    res.status(200).json({ message: "All the flats for sale are listed below.", listings: sellListings });
-});
+        const { location, price } = sellData;
+        if (!location || !price) {
+            return res.status(400).json({ message: "Location and price are required." });
+        }
 
-// Route 3 - Get specific sell listings by contact
-router.get("/by-contact/:contact", (req, res) => {
-    const { contact } = req.params;
+        const newListing = new SellFlat({
+            ...sellData,
+            contact,
+            userId: user._id,
+            userName: user.fullName,
+        });
 
-    const filtered = sellListings.filter(listing => listing.contact === contact);
+        const savedListing = await newListing.save();
 
-    res.status(200).json({
-        message: "All the flats of the specific seller are listed below.",
-        listings: filtered
-    });
-});
+        res.status(201).json({
+            message: "New flat for sale is listed successfully.",
+            listing: savedListing,
+        });
 
-// Route 4 - Update a listing by contact (e.g., update location and price)
-// Uncomment if needed
-// router.put("/update/:contact", (req, res) => {
-//     const { contact } = req.params;
-//     const { location, price } = req.body;
-
-//     let updated = false;
-//     sellListings.forEach(listing => {
-//         if (listing.contact === contact) {
-//             if (location) listing.location = location;
-//             if (price) listing.price = price;
-//             updated = true;
-//         }
-//     });
-
-//     if (updated) {
-//         res.status(200).json({ message: "Listings updated successfully." });
-//     } else {
-//         res.status(404).json({ message: "No listings found for the given contact." });
-//     }
-// });
-
-// Route 5 - Delete listings by contact
-router.delete("/delete/:contact", (req, res) => {
-    const { contact } = req.params;
-    const initialLength = sellListings.length;
-
-    const filtered = sellListings.filter(listing => listing.contact !== contact);
-    sellListings.length = 0;
-    sellListings.push(...filtered);
-
-    if (filtered.length < initialLength) {
-        res.status(200).json({ message: "Listings deleted successfully." });
-    } else {
-        res.status(404).json({ message: "No listings found for the given contact." });
+    } catch (error) {
+        console.error("Error creating sell listing:", error.message);
+        res.status(500).json({ message: "Server error while creating sell listing." });
     }
-});
+};
 
-export default router;
+// Get all sell listings
+export const getAllSellListings = async (req, res) => {
+    try {
+        const listings = await SellFlat.find();
+        res.status(200).json({
+            message: "All the flats for sale are listed below.",
+            listings
+        });
+    } catch (error) {
+        console.error("Error fetching sell listings:", error.message);
+        res.status(500).json({ message: "Server error while fetching listings." });
+    }
+};
+
+// Get listings by contact
+export const getSellListingsByContact = async (req, res) => {
+    const { contact } = req.params;
+    try {
+        const listings = await SellFlat.find({ contact });
+        res.status(200).json({
+            message: "All the flats for sale by this agent are listed below.",
+            listings
+        });
+    } catch (error) {
+        console.error("Error fetching listings by contact:", error.message);
+        res.status(500).json({ message: "Server error while fetching listings." });
+    }
+};
+
+// Update listings by contact
+export const updateSellListingByContact = async (req, res) => {
+    const { contact } = req.params;
+    const { location, price } = req.body;
+
+    try {
+        if (!contact) {
+            return res.status(400).json({ message: "Contact is required." });
+        }
+
+        const update = {};
+        if (location) update.location = location;
+        if (price) update.price = price;
+
+        if (Object.keys(update).length === 0) {
+            return res.status(400).json({ message: "No fields provided to update." });
+        }
+
+        const result = await SellFlat.updateMany({ contact }, { $set: update });
+
+        if (result.modifiedCount > 0) {
+            res.status(200).json({
+                message: `Sell listings updated successfully for contact ${contact}.`,
+                updatedFields: update,
+                modifiedCount: result.modifiedCount
+            });
+        } else {
+            res.status(404).json({ message: "No sell listings found for the given contact." });
+        }
+    } catch (error) {
+        console.error("Error updating sell listings:", error.message);
+        res.status(500).json({ message: "Server error while updating listings." });
+    }
+};
+
+// Delete listings by contact
+export const deleteSellListingByContact = async (req, res) => {
+    const { contact } = req.params;
+
+    try {
+        if (!contact) {
+            return res.status(400).json({ message: "Contact is required." });
+        }
+
+        const result = await SellFlat.deleteMany({ contact });
+
+        if (result.deletedCount > 0) {
+            res.status(200).json({
+                message: `Deleted ${result.deletedCount} sell listing(s) for contact ${contact}.`
+            });
+        } else {
+            res.status(404).json({ message: "No sell listings found for the given contact." });
+        }
+    } catch (error) {
+        console.error("Error deleting sell listings:", error.message);
+        res.status(500).json({ message: "Server error while deleting listings." });
+    }
+};
