@@ -3,31 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Real Estate Listings and Information">
-    <meta name="theme-color" content="#1e3a8a">
+    <meta name="description" content="Admin Panel for Real Estate User Management">
     <meta name="author" content="QuadCoders Team">
+    <meta name="theme-color" content="#1e3a8a">
     <link rel="icon" href="img/house.png" type="image/x-icon">
-    <title>Real Estate</title>
+    <title>Real Estate - Admin Panel</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-
+    
     <style>
+        /* --- Base & Reset Styles --- */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: white; 
-        } 
-
         html {
             scroll-behavior: smooth;
         }
 
-        /* Navbar Styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        main {
+            flex-grow: 1; /* Ensures main content takes up available space */
+        }
+
+        /* --- Navbar Styles --- */
         .navbar {
             background: #1e3a8a;
             padding: 1rem 2rem;
@@ -52,8 +59,6 @@
         .logo img {
             width: 40px;
             height: 40px;
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.2);
         }
 
         .nav-links {
@@ -72,7 +77,7 @@
             transition: all 0.3s ease;
         }
 
-        .nav-links a:hover {
+        .nav-links a:hover, .nav-links a.active {
             background: rgba(255, 255, 255, 0.1);
         }
 
@@ -80,19 +85,18 @@
             display: none;
             flex-direction: column;
             cursor: pointer;
-            padding: 0.5rem;
+            gap: 4px;
         }
 
         .hamburger span {
             width: 25px;
             height: 3px;
             background: white;
-            margin: 2px 0;
             transition: 0.3s;
             border-radius: 2px;
         }
 
-        /* Advanced Search Section */
+        /* --- Search Section --- */
         .search-section {
             background: white;
             padding: 2rem;
@@ -115,9 +119,10 @@
 
         .search-form {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: 0.5fr 0.5fr 0.5fr 0.5fr 0.5fr;
             gap: 1rem;
-            align-items: end;
+            align-items: flex-end;
+            flex-wrap: wrap;
         }
 
         .search-group {
@@ -125,6 +130,8 @@
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
+            flex-grow: 1;
+            min-width: 200px;
         }
 
         .search-label {
@@ -133,7 +140,8 @@
             font-size: 0.875rem;
         }
 
-        .search-input {
+        .search-input, .dropdown-btn {
+            height: 50px;
             padding: 0.75rem 1rem;
             border: 2px solid #e5e7eb;
             border-radius: 12px;
@@ -143,7 +151,7 @@
             width: 100%;
         }
 
-        .search-input:focus {
+        .search-input:focus, .dropdown.active .dropdown-btn {
             border-color: #1e3a8a;
             box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
         }
@@ -173,23 +181,11 @@
         }
 
         .dropdown-btn {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
             background: white;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 1rem;
             color: #374151;
-            transition: all 0.3s ease;
-        }
-
-        .dropdown-btn:hover,
-        .dropdown.active .dropdown-btn {
-            border-color: #1e3a8a;
-            box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
         }
 
         .dropdown-content {
@@ -198,9 +194,9 @@
             left: 0;
             right: 0;
             background: white;
-            border: 2px solid #1e3a8a;
+            border: 1px solid #e5e7eb;
             border-radius: 12px;
-            margin-top: 0.25rem;
+            margin-top: 0.5rem;
             opacity: 0;
             visibility: hidden;
             transform: translateY(-10px);
@@ -208,6 +204,7 @@
             z-index: 100;
             max-height: 250px;
             overflow-y: auto;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         }
 
         .dropdown.active .dropdown-content {
@@ -220,11 +217,6 @@
             padding: 0.75rem 1rem;
             cursor: pointer;
             transition: background 0.2s ease;
-            border-bottom: 1px solid #f3f4f6;
-        }
-
-        .dropdown-option:last-child {
-            border-bottom: none;
         }
 
         .dropdown-option:hover {
@@ -237,6 +229,7 @@
         }
 
         .search-btn {
+            height: 50px;
             padding: 0.75rem 2rem;
             background: linear-gradient(135deg, #1e3a8a, #3b82f6);
             color: white;
@@ -251,7 +244,6 @@
             justify-content: center;
             gap: 0.5rem;
             min-height: 50px;
-            width: 100%; 
         }
 
         .search-btn:hover {
@@ -259,18 +251,12 @@
             box-shadow: 0 8px 25px rgba(30, 58, 138, 0.3);
         }
 
-        .selected-filters-container {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-
         .selected-filters {
+            margin-top: 1rem;
             display: flex;
+            gap: 20px;
+            margin-bottom: 2rem;
             flex-wrap: wrap;
-            gap: 0.5rem;
         }
         
         #clearAllBtn {
@@ -299,9 +285,8 @@
             align-items: center;
             gap: 0.5rem;
             border: 1px solid #bae6fd;
-            white-space: nowrap;
         }
-        
+
         .filter-tag .remove {
             cursor: pointer;
             width: 16px;
@@ -315,87 +300,54 @@
             font-size: 0.75rem;
         }
 
-        /* Message for empty state */
-        .table-message {
-            text-align: center;
-            font-size: 1.25rem;
-            color: #6b7280;
-            padding: 50px 20px;
-            border: 2px dashed #e5e7eb;
-            border-radius: 12px;
-            margin: 20px auto;
-            max-width: 800px;
+        /* Range Slider Styles */
+        .range-container {
+            margin-top: 0.5rem;
         }
 
-        /* Listings Section */ 
-        .listings-section {
-            margin: 20px auto;
-            font-family: Arial, sans-serif;
-            max-width: 1200px;
-        }
-
-        .property-container {
-            margin-bottom: 40px;
-        }
-
-        .property-title {
-            font-size: 24px;
-            margin-bottom: 10px;
-            color: #333;
-            text-align: center;
-        }
-        
-        /* Table and Message Container */
-        .table-wrapper {
-            position: relative;
-        }
-
-        .property-table {
+        .range-slider {
             width: 100%;
-            border-collapse: collapse;
-            margin: 10px auto;
-            table-layout: fixed;
+            height: 6px;
+            background: #e5e7eb;
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
         }
 
-        .property-table th, .property-table td {
-            border: 1px solid #ddd;
-            padding: 12px;
-            text-align: left;
-            word-wrap: break-word;
+        .range-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #1e3a8a;
+            border-radius: 50%;
+            cursor: pointer;
         }
 
-        .property-table th {
-            background-color: #f2f2f2;
-            color: #333;
-            font-weight: bold;
+        .range-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: #1e3a8a;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
         }
 
-        .property-table tr:nth-child(even) {
-            background-color: #f9f9f9;
+        .range-values {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
         }
 
-        .property-table tr:hover {
-            background-color: #f1f1f1;
-        }
-
-        .property-table td {
-            color: #555;
-        }
-
-        /* Hide table initially */
-        .property-table-container.hidden {
-            display: none;
-        }
-        
-        .table-message.hidden {
-            display: none;
-        }
-
-        /* Responsive Styles */
+        /* Mobile Responsive */
         @media (max-width: 768px) {
             .navbar {
                 padding: 1rem;
             }
+
             .nav-links {
                 display: none;
                 position: absolute;
@@ -407,120 +359,41 @@
                 padding: 1rem 0;
                 gap: 20px;
             }
+
             .nav-links.active {
                 display: flex;
             }
+
             .hamburger {
                 display: flex;
             }
+
             .search-form {
                 grid-template-columns: 1fr;
                 gap: 1.5rem;
             }
+
             .search-section {
                 padding: 1.5rem 1rem;
             }
+
             .nav-links a[href="#login"]:hover {
-                transform: scale(1.1);
-                background: rgba(255, 255, 255, 0.2);
-            }
-            .listings-section {
-                margin: 10px;
-                max-width: none;
-                overflow: hidden; 
-            }
-            .property-container {
-                overflow: visible; 
-            }
+             transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.2);
+    }
+}
 
-            .property-table-container.hidden {
-                display: block; /* We need to keep the container visible for the transform to work, but hide the content */
-                height: 0;
-            }
-
-            .property-table-container:not(.hidden) {
-                height: 100vw; /* This will create a viewport-based height for the rotated table */
-                width: 100vw;
-            }
-
-            .property-table-container:not(.hidden) .property-table {
-                transform: rotate(90deg) translateX(0); /* Corrected transform */
-                transform-origin: top left;
-                width: 100vh;
-                position: absolute;
-                top: 0;
-                left: 0;
-            }
-            
-            .property-table {
-                border-collapse: collapse;
-                table-layout: fixed;
-            }
-
-            .property-table th, .property-table td {
-                word-wrap: normal;
-                white-space: nowrap;
-                min-width: 150px;
-                display: table-cell;
-                text-align: left;
-                padding: 12px;
-                transform: rotate(-90deg);
-                transform-origin: top left;
-            }
-            .property-table th {
-                height: 100%;
-                display: flex;
-                align-items: center;
-            }
-            
-            .property-table thead th {
-                transform: rotate(-90deg);
-                transform-origin: top left;
-                position: absolute;
-                top: 0;
-                left: 0;
-            }
-            .property-table tbody td {
-                transform: rotate(0deg);
-            }
-        }
-
-        /* Re-apply desktop styles for larger screens */
-        @media (min-width: 769px) {
-            .property-table-container.hidden {
-                display: none;
-            }
-            .property-table-container:not(.hidden) {
-                display: block;
-                height: auto;
-            }
-            .property-table-container .property-table {
-                transform: none;
-                transform-origin: none;
-                width: 100%;
-                height: auto;
-                position: static;
-                top: auto;
-                left: auto;
-            }
-            .property-table th, .property-table td {
-                transform: none;
-            }
-        }
-        
-        /* Footer Styles */
+/* Footer Styles */
         .footer {
             background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
             color: white;
             padding: 3rem 2rem 1rem;
             margin-top: auto;
-            position: relative;
-            top: 55px;
         }
 
         .footer-container {
             max-width: 1200px;
-            margin: 0 auto; 
+            margin: 0 auto;  
         }
 
         .footer-content {
@@ -530,7 +403,6 @@
             margin-bottom: 2rem;
         }
 
-        /* Left Section - Company Info */
         .footer-left {
             display: flex;
             flex-direction: column;
@@ -549,8 +421,6 @@
         .footer-logo img {
             width: 40px;
             height: 40px;
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.2);
         }
 
         .footer-description {
@@ -565,8 +435,7 @@
             font-size: 0.875rem;
         }
 
-        /* Center Section - Navigation */
-        .footer-center h3 {
+        .footer-center h3, .footer-right h3 {
             font-size: 1.125rem;
             font-weight: 600;
             margin-bottom: 1.5rem;
@@ -583,30 +452,15 @@
         .footer-nav a {
             color: rgba(255, 255, 255, 0.8);
             text-decoration: none;
-            font-weight: 400;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            padding: 0.25rem 0;
         }
 
         .footer-nav a:hover {
             color: white;
             transform: translateX(5px);
-        }
-
-        .footer-nav a i {
-            font-size: 0.875rem;
-            width: 16px;
-        }
-
-        /* Right Section - Contact & Social */
-        .footer-right h3 {
-            font-size: 1.125rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-            color: white;
         }
 
         .contact-info {
@@ -622,11 +476,6 @@
             gap: 0.75rem;
             color: rgba(255, 255, 255, 0.9);
             font-size: 0.9rem;
-        }
-
-        .contact-item i {
-            width: 16px;
-            color: rgba(255, 255, 255, 0.7);
         }
 
         .social-links {
@@ -646,16 +495,13 @@
             color: white;
             text-decoration: none;
             transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
         }
 
         .social-link:hover {
             background: rgba(255, 255, 255, 0.2);
             transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
         }
 
-        /* Bottom Bar */
         .footer-bottom {
             border-top: 1px solid rgba(255, 255, 255, 0.2);
             padding-top: 1.5rem;
@@ -713,8 +559,77 @@
             }
         } 
 
-        /* about and contact section */
-        .section-container {
+    /* Listings Section */        
+.listings-section {
+    margin: 20px auto;
+    font-family: Arial, sans-serif;
+    max-width: 1200px;
+}
+
+.property-container {
+    margin-bottom: 40px;
+}
+
+.property-title {
+    font-size: 24px;
+    margin-bottom: 10px;
+    color: #333;
+    text-align: center;
+}
+
+.property-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px auto;
+    table-layout: fixed;
+}
+
+.property-table th, .property-table td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+    word-wrap: break-word;
+}
+
+.property-table th {
+    background-color: #f2f2f2;
+    color: #333;
+    font-weight: bold;
+}
+
+.property-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.property-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+.property-table td {
+    color: #555;
+}
+
+@media (max-width: 768px) {
+    .listings-section {
+        margin: 10px;
+        max-width: none;
+    }
+    
+    .property-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+        margin: 10px 0;
+    }
+    
+    .property-table th, .property-table td {
+        min-width: 120px;
+        padding: 8px;
+    }
+}
+
+/* about and contact section */
+.section-container {
             max-width: 1200px;
             margin: 30px auto;
             padding: 0 20px;
@@ -768,55 +683,42 @@
             text-align: center;
             color: #333;
             font-weight: 600;
-        }
-
-        .column p {
-            font-size: 16px;
-            line-height: 1.6;
-            color: #666;
-            margin-bottom: 20px;
-        }
-
-        .contact-info {
-            margin-bottom: 30px;
-        }
-
-        .contact-item {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
-            padding: 10px 0;
         }
 
-        .contact-icon {
-            width: 20px;
-            height: 20px;
-            margin-right: 15px;
-            color: #007bff;
-            font-weight: bold;
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            line-height: 1;
+            padding: 0;
         }
 
-        .contact-details {
-            flex: 1;
+        .panel-content {
+            padding: 1.5rem;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+        
+        .panel-content form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
         }
 
-        .contact-label {
-            font-weight: 600;
-            color: #333;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+        .panel-content label {
+            font-weight: 500;
+            color: #555;
+            font-size: 0.9rem;
         }
 
-        .contact-value {
-            color: #666;
-            font-size: 16px;
-            margin-top: 2px;
-        }
-
-        .contact-form {
-            background-color: #f8f9fa;
-            padding: 30px;
+        .panel-content input, .panel-content select {
+            padding: 12px;
+            font-size: 1rem;
             border-radius: 8px;
             border: 1px solid #e9ecef;
         }
@@ -825,237 +727,103 @@
             margin-bottom: 20px;
         }
 
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
         .form-group input,
         .form-group textarea {
             width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e9ecef;
-            border-radius: 5px;
-            font-size: 16px;
-            transition: border-color 0.3s ease;
-            box-sizing: border-box;
         }
-
-        .form-group input:focus,
-        .form-group textarea:focus {
+        
+        .panel-content input:focus, .panel-content select:focus {
             outline: none;
-            border-color: #007bff;
+            border-color: #1e3a8a;
+            box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
         }
 
-        .form-group textarea {
-            resize: vertical;
-            min-height: 120px;
-        }
-
-        .submit-btn {
-            background-color: #007bff;
-            color: white;
-            padding: 12px 30px;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            width: 100%;
-        }
-
-        .submit-btn:hover {
-            background-color: #0056b3;
-        }
-
-        .about-stats {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            margin-top: 30px;
-        }
-
-        .stat-item {
-            text-align: center;
-            padding: 20px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .stat-number {
-            font-size: 32px;
-            font-weight: bold;
-            color: #007bff;
-            display: block;
-        }
-
-        .stat-label {
-            font-size: 14px;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-top: 5px;
-        }
-
-        .team-member {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .member-photo {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            background-color: #e9ecef;
-            margin: 0 auto 15px;
+        .button-row {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 48px;
-            color: #007bff;
+            gap: 10px;
+            margin-top: 1rem;
         }
 
-        .member-name {
-            font-size: 18px;
+        .button-row button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
             font-weight: 600;
-            color: #333;
-            margin-bottom: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        #editBtn { background-color: #ffc107; color: #333; }
+        #saveBtn { background-color: #28a745; color: #fff; }
+        #saveBtn:disabled { background-color: #a7d7b8; cursor: not-allowed; }
+        #submitUserBtn { background-color: #1e3a8a; color: white; }
+        #submitUserBtn:hover { background-color: #1a3274; }
+
+        /* --- Overlay for background dim --- */
+        .overlay {
+            position: fixed;
+            display: none;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1500;
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+        .overlay.show {
+            display: block;
+            opacity: 1;
         }
 
-        .member-title {
-            font-size: 14px;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        @media (max-width: 1024px) {
-            .section-container {
-                margin: 40px auto;
-                padding: 0 15px;
+        /* --- Responsive Styles --- */
+        @media (max-width: 992px) {
+            .footer-content {
+                grid-template-columns: 1fr 1fr;
             }
-            
-            .section-title {
-                font-size: 32px;
-                margin-bottom: 40px;
-            }
-            
-            .two-column-layout {
-                gap: 40px;
-            }
-            
-            .about-section,
-            .contact-section {
-                padding: 60px 0;
+            .footer-left {
+                grid-column: 1 / -1; /* Span full width */
             }
         }
 
         @media (max-width: 768px) {
-            .two-column-layout {
-                grid-template-columns: 1fr;
-                gap: 30px;
+            .navbar { padding: 1rem; }
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: #1e3a8a;
+                flex-direction: column;
+                padding: 1rem 0;
             }
-            
-            .section-title {
-                font-size: 28px;
-                margin-bottom: 30px;
-            }
-            
-            .about-section,
-            .contact-section {
-                padding: 40px 0;
-            }
-            
-            .column {
-                padding: 15px;
-            }
-            
-            .contact-form {
-                padding: 20px;
-            }
-            
-            .about-stats {
-                grid-template-columns: 1fr;
-                gap: 15px;
-            }
-            
-            .stat-item {
-                padding: 15px;
-            }
-            
-            .member-photo {
-                width: 100px;
-                height: 100px;
-                font-size: 40px;
-            }
-        }
+            .nav-links.active { display: flex; }
+            .hamburger { display: flex; }
+            .search-form { flex-direction: column; align-items: stretch; }
+            .data-section { padding: 1rem; }
 
-        @media (max-width: 480px) {
-            .section-container {
-                margin: 20px auto;
-                padding: 0 10px;
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
             }
-            
-            .section-title {
-                font-size: 24px;
-                margin-bottom: 25px;
-            }
-            
-            .section-title::after {
-                width: 60px;
-                height: 2px;
-            }
-            
-            .about-section,
-            .contact-section {
-                padding: 30px 0;
-            }
-            
-            .column {
-                padding: 10px;
-            }
-            
-            .column h3 {
-                font-size: 20px;
-            }
-            
-            .contact-form {
-                padding: 15px;
-            }
-            
-            .form-group input,
-            .form-group textarea {
-                padding: 10px 12px;
-                font-size: 14px;
-            }
-            
-            .submit-btn {
-                padding: 10px 20px;
-                font-size: 14px;
-            }
-            
-            .stat-number {
-                font-size: 24px;
-            }
-            
-            .stat-label {
-                font-size: 12px;
-            }
-            
-            .member-photo {
-                width: 80px;
-                height: 80px;
-                font-size: 32px;
-            }
-            
-            .member-name {
-                font-size: 16px;
-            }
-            
-            .member-title {
-                font-size: 12px;
+            .footer-left, .footer-nav, .contact-info, .social-links {
+                align-items: center;
+                justify-content: center;
             }
         }
     </style>
 </head>
 <body>
+       <!-- Navbar -->
     <nav class="navbar">
         <div class="logo">
             <img src="img/house.png" alt="Logo">
@@ -1076,11 +844,13 @@
         </div>
     </nav>
 
+     <!-- Advanced Search Section -->
     <section class="search-section" id="home">
         <div class="search-container">
             <h2 class="search-title">Find Your Perfect Property</h2>
             
-            <div class="search-form" id="searchForm">
+            <div class="search-form">
+                <!-- Location Search -->
                 <div class="search-group">
                     <label class="search-label">Select Your Location</label>
                     <div class="dropdown" id="location">
@@ -1096,30 +866,30 @@
                     </div>
                 </div>
 
+                <!-- Flat Type Dropdown -->
                 <div class="search-group">
                     <label class="search-label">Property Type</label>
-                    <div class="dropdown" id="propertyType">
+                    <div class="dropdown" id="flatType">
                         <div class="dropdown-btn">
-                            <span>Select Property Type</span>
+                            <span>All Statuses</span>
                             <i class="fas fa-chevron-down"></i>
                         </div>
                         <div class="dropdown-content">
                             <div class="dropdown-option" data-value="1rk">1 RK</div>
                             <div class="dropdown-option" data-value="1bhk">1 BHK</div>
-                            <div class="dropdown-option" data-value="1.5bhk">1.5 BHK</div>
+                            <div class="dropdown-option" data-value="2bhk">1.5 BHK</div>
                             <div class="dropdown-option" data-value="2bhk">2 BHK</div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Price Range -->
                 <div class="search-group">
                     <label class="search-label">Enter Your Budget</label>
-                    <div class="price-input-group">
-                         <span class="input-icon">₹</span>
-                         <input type="text" class="search-input" id="priceInput" placeholder="e.g., 10,000 - 15,000">
-                    </div>
+                    <input type="price" class="search-input" id="price" placeholder="eg.₹ 10,000 - 15,000">
                 </div>
 
+                <!-- Tenant Preference -->
                 <div class="search-group">
                     <label class="search-label">Tenant</label>
                     <div class="dropdown" id="tenantType">
@@ -1134,132 +904,127 @@
                     </div>
                 </div>
 
-                <button type="button" class="search-btn" id="searchBtn">
+                <!-- Search Button -->
+                <button type="button" class="search-btn" onclick="applyFilters()">
                     <i class="fas fa-search"></i>
                     Search
                 </button>
+
+            <!-- <button type="button" id="clearAllFilters">Clear All</button> -->
             </div>
-            
-            <div class="selected-filters-container">
-                 <div class="selected-filters" id="selectedFilters"></div>
-                 <button type="button" id="clearAllBtn" class="search-btn" style="display:none;">
-                    <i class="fas fa-times"></i> Clear All
-                 </button>
-            </div>
+
+            <!-- Selected Filters Display -->
+            <div class="selected-filters" id="selectedFilters"></div>
         </div>
     </section>
 
-    <section class="listings-section">
+    <!-- Property Listings Tables Section --> 
+<section class="listings-section">
         <div class="property-container">
             <h2 class="property-title">Available Properties</h2>
-            
-            <div id="tableContainer" class="property-table-container hidden">
-                <table class="property-table" id="propertiesTable">
-                    <thead>
-                        <tr>
-                            <th>Location</th>
-                            <th>Property Type</th>
-                            <th>Price</th>
-                            <th>Name</th>
-                            <th>Contact</th>
-                            <th>Tenant Choice</th>
-                            <th>Date</th>
-                            <th>Ownership Type</th>
-                        </tr>
-                    </thead>
-                    <tbody id="propertiesBody">
-                        <tr data-location="kandivali west" data-type="1rk" data-price="25000" data-tenant="family">
-                            <td>Kandivali West</td>
-                            <td>1 RK</td>
-                            <td>₹25,000</td>
-                            <td>Rahul Sharma</td>
-                            <td>+91 98765 43210</td>
-                            <td>Family</td>
-                            <td>2025-01-01</td>
-                            <td>Owner</td>
-                        </tr>
-                        <tr data-location="malad west" data-type="1bhk" data-price="35000" data-tenant="family">
-                            <td>Malad West</td>
-                            <td>1 BHK</td>
-                            <td>₹35,000</td>
-                            <td>Priya Singh</td>
-                            <td>+91 91234 56789</td>
-                            <td>Family</td>
-                            <td>2025-06-01</td>
-                            <td>Agent</td>
-                        </tr>
-                        <tr data-location="goregaon west" data-type="2bhk" data-price="60000" data-tenant="family">
-                            <td>Goregaon West</td>
-                            <td>2 BHK</td>
-                            <td>₹60,000</td>
-                            <td>Arjun Patel</td>
-                            <td>+91 80123 45678</td>
-                            <td>Family</td>
-                            <td>2025-12-01</td>
-                            <td>Owner</td>
-                        </tr>
-                        <tr data-location="kandivali west" data-type="1.5bhk" data-price="45000" data-tenant="bachelor">
-                            <td>Kandivali West</td>
-                            <td>1.5 BHK</td>
-                            <td>₹45,000</td>
-                            <td>Anjali Desai</td>
-                            <td>+91 79012 34567</td>
-                            <td>Bachelor</td>
-                            <td>2025-08-15</td>
-                            <td>Agent</td>
-                        </tr>
-                        <tr data-location="malad west" data-type="1rk" data-price="28000" data-tenant="bachelor">
-                            <td>Malad West</td>
-                            <td>1 RK</td>
-                            <td>₹28,000</td>
-                            <td>Suresh Kumar</td>
-                            <td>+91 90123 45678</td>
-                            <td>Bachelor</td>
-                            <td>2025-03-15</td>
-                            <td>Owner</td>
-                        </tr>
-                        <tr data-location="goregaon west" data-type="2bhk" data-price="65000" data-tenant="family">
-                            <td>Goregaon West</td>
-                            <td>2 BHK</td>
-                            <td>₹65,000</td>
-                            <td>Kavita Rao</td>
-                            <td>+91 88765 43210</td>
-                            <td>Family</td>
-                            <td>2025-09-01</td>
-                            <td>Agent</td>
-                        </tr>
-                        <tr data-location="kandivali west" data-type="1bhk" data-price="38000" data-tenant="bachelor">
-                            <td>Kandivali West</td>
-                            <td>1 BHK</td>
-                            <td>₹38,000</td>
-                            <td>Vikram Joshi</td>
-                            <td>+91 77654 32109</td>
-                            <td>Bachelor</td>
-                            <td>2025-11-20</td>
-                            <td>Owner</td>
-                        </tr>
-                        <tr data-location="malad west" data-type="1.5bhk" data-price="48000" data-tenant="family">
-                            <td>Malad West</td>
-                            <td>1.5 BHK</td>
-                            <td>₹48,000</td>
-                            <td>Meera Iyer</td>
-                            <td>+91 99876 54321</td>
-                            <td>Family</td>
-                            <td>2025-07-10</td>
-                            <td>Agent</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div id="tableMessage" class="table-message">
-                Please use the search filters above to find properties.
-            </div>
-        </div>
+            <table class="property-table" id="PropertiesTable">
+                <thead>
+                    <tr>
+                        <th>Location</th>
+                        <th>Property Type</th>
+                        <th>Price</th>
+                        <th>Name</th>
+                        <th>Contact</th>
+                        <th>Date</th>
+                        <th>Ownership Type</th>
+                    </tr>
+                </thead>
+<tbody id="PropertiesBody">
+    <tr data-location="Kandivali West" data-type="1rk" data-price="25000">
+        <td>Kandivali West</td>
+        <td>1 RK</td>
+        <td>₹25,000</td>
+        <td>Rahul Sharma</td>
+        <td>+91 98765 43210</td>
+        <td>2025-01-01</td>
+        <td>Owner</td>
+    </tr>
+
+    <tr data-location="Malad West" data-type="1bhk" data-price="35000">
+        <td>Malad West</td>
+        <td>1 BHK</td>
+        <td>₹35,000</td>
+        <td>Priya Singh</td>
+        <td>+91 91234 56789</td>
+        <td>2025-06-01</td>
+        <td>Agent</td>
+    </tr>
+
+    <tr data-location="Goregaon West" data-type="2bhk" data-price="60000">
+        <td>Goregaon West</td>
+        <td>2 BHK</td>
+        <td>₹60,000</td>
+        <td>Arjun Patel</td>
+        <td>+91 80123 45678</td>
+        <td>2025-12-01</td>
+        <td>Owner</td>
+    </tr>
+
+    <tr data-location="Kandivali West" data-type="1.5bhk" data-price="45000">
+        <td>Kandivali West</td>
+        <td>1.5 BHK</td>
+        <td>₹45,000</td>
+        <td>Anjali Desai</td>
+        <td>+91 79012 34567</td>
+        <td>2025-08-15</td>
+        <td>Agent</td>
+    </tr>
+
+    <tr data-location="Malad West" data-type="1rk" data-price="28000">
+        <td>Malad West</td>
+        <td>1 RK</td>
+        <td>₹28,000</td>
+        <td>Suresh Kumar</td>
+        <td>+91 90123 45678</td>
+        <td>2025-03-15</td>
+        <td>Owner</td>
+    </tr>
+
+    <tr data-location="Goregaon West" data-type="2bhk" data-price="65000">
+        <td>Goregaon West</td>
+        <td>2 BHK</td>
+        <td>₹65,000</td>
+        <td>Kavita Rao</td>
+        <td>+91 88765 43210</td>
+        <td>2025-09-01</td>
+        <td>Agent</td>
+    </tr>
+
+    <tr data-location="Kandivali West" data-type="1bhk" data-price="38000">
+        <td>Kandivali West</td>
+        <td>1 BHK</td>
+        <td>₹38,000</td>
+        <td>Vikram Joshi</td>
+        <td>+91 77654 32109</td>
+        <td>2025-11-20</td>
+        <td>Owner</td>
+    </tr>
+
+    <tr data-location="Malad West" data-type="1.5bhk" data-price="48000">
+        <td>Malad West</td>
+        <td>1.5 BHK</td>
+        <td>₹48,000</td>
+        <td>Meera Iyer</td>
+        <td>+91 99876 54321</td>
+        <td>2025-07-10</td>
+        <td>Agent</td>
+    </tr>
+</tbody>
+</table>
+</div>
+
     </section>
 
+    <!-- Footer Component -->
     <footer class="footer">
         <div class="footer-container">
             <div class="footer-content">
+                <!-- Left Section -->
                 <div class="footer-left">
                     <div class="footer-logo">
                         <img src="img/house.png" alt="Logo">
@@ -1273,6 +1038,7 @@
                     </div>
                 </div>
 
+                <!-- Center Section -->
                 <div class="footer-center">
                     <h3>Quick Links</h3>
                     <ul class="footer-nav">
@@ -1283,6 +1049,7 @@
                     </ul>
                 </div>
 
+                <!-- Right Section -->
                 <div class="footer-right">
                     <h3>Get In Touch</h3>
                     <div class="contact-info">
@@ -1317,47 +1084,45 @@
                 </div>
             </div>
 
+            <!-- Bottom Bar -->
             <div class="footer-bottom">
                 Made by Team | Privacy Policy | Terms of Service
             </div>
         </div>
     </footer>
 
+
     <script>
-        // Store filters globally
-        let filters = {};
-        
+
+        let filters = {}; //globally accessible
+
+        // Hamburger menu functionality
         document.addEventListener('DOMContentLoaded', function() {
             const hamburger = document.querySelector('.hamburger');
             const navLinks = document.querySelector('.nav-links');
-            const dropdowns = document.querySelectorAll('.dropdown');
-            const searchBtn = document.getElementById('searchBtn');
-            const clearAllBtn = document.getElementById('clearAllBtn');
-            const selectedFiltersContainer = document.getElementById('selectedFilters');
-            const propertiesBody = document.getElementById('propertiesBody');
-            const tableContainer = document.getElementById('tableContainer');
-            const tableMessage = document.getElementById('tableMessage');
-            const priceInput = document.getElementById('priceInput');
-
-            // Initial state: hide table and show message
-            hideTable();
-            showTableMessage('Please use the search filters above to find properties.');
-
-            // Hamburger menu functionality
+            
             hamburger.addEventListener('click', function() {
                 navLinks.classList.toggle('active');
             });
 
             // Dropdown functionality
+            const dropdowns = document.querySelectorAll('.dropdown');
+            const selectedFilters = document.getElementById('selectedFilters');
+            let filters = {};
+
             dropdowns.forEach(dropdown => {
                 const btn = dropdown.querySelector('.dropdown-btn');
+                const content = dropdown.querySelector('.dropdown-content');
                 const options = dropdown.querySelectorAll('.dropdown-option');
 
                 btn.addEventListener('click', (e) => {
                     e.stopPropagation();
+                    
+                    // Close other dropdowns
                     dropdowns.forEach(d => {
                         if(d !== dropdown) d.classList.remove('active');
                     });
+                    
                     dropdown.classList.toggle('active');
                 });
 
@@ -1369,17 +1134,18 @@
                         const text = option.textContent;
                         const dropdownId = dropdown.id;
                         
-                        // Update button text and selected option
+                        // Update button text
                         btn.querySelector('span').textContent = text;
+                        
+                        // Update selected option
                         options.forEach(opt => opt.classList.remove('selected'));
                         option.classList.add('selected');
                         
-                        // Store the filter
+                        // Store filter
                         filters[dropdownId] = { value, text };
                         
                         dropdown.classList.remove('active');
                         updateSelectedFilters();
-                        applyFilters();
                     });
                 });
             });
@@ -1388,186 +1154,140 @@
             document.addEventListener('click', () => {
                 dropdowns.forEach(d => d.classList.remove('active'));
             });
-            
-            // Search button click handler
-            searchBtn.addEventListener('click', applyFilters);
-            
-            // Clear all button click handler
-            clearAllBtn.addEventListener('click', () => {
-                clearAllFilters();
-                hideTable();
-                showTableMessage('Please use the search filters above to find properties.');
-            });
 
-            // Handle price input changes to update filters
-            priceInput.addEventListener('input', () => {
-                const priceValue = priceInput.value.trim();
-                if (priceValue) {
-                    filters.priceInput = {
-                        value: priceValue,
-                        text: `₹${priceValue}`
-                    };
-                } else {
-                    delete filters.priceInput;
-                }
-                updateSelectedFilters();
-                applyFilters();
-            });
-
-            // Function to dynamically update the selected filter tags
+            // Update selected filters display
             function updateSelectedFilters() {
-                selectedFiltersContainer.innerHTML = '';
-                let hasFilters = false;
+                selectedFilters.innerHTML = '';
                 
                 Object.keys(filters).forEach(key => {
-                    const filter = filters[key];
-                    // Exclude empty inputs or dropdowns without a value
-                    if (filter && filter.value) {
-                         hasFilters = true;
-                         const tag = document.createElement('div');
-                         tag.className = 'filter-tag';
-                         tag.innerHTML = `
-                            <span>${filter.text}</span>
+                    if(filters[key]) {
+                        const tag = document.createElement('div');
+                        tag.className = 'filter-tag';
+                        tag.innerHTML = `
+                            <span>${filters[key].text}</span>
                             <div class="remove" data-filter="${key}">×</div>
-                         `;
-                         selectedFiltersContainer.appendChild(tag);
+                        `;
+                        selectedFilters.appendChild(tag);
                     }
                 });
-                
-                // Show/hide clear all button
-                if (hasFilters) {
-                    clearAllBtn.style.display = 'block';
-                } else {
-                    clearAllBtn.style.display = 'none';
-                }
 
-                // Add remove functionality to tags
-                selectedFiltersContainer.querySelectorAll('.remove').forEach(remove => {
+                // Add remove functionality
+                selectedFilters.querySelectorAll('.remove').forEach(remove => {
                     remove.addEventListener('click', (e) => {
                         const filterKey = e.target.dataset.filter;
+                        delete filters[filterKey];
                         
-                        if (filterKey === 'priceInput') {
-                            priceInput.value = ''; 
-                            delete filters.priceInput;
-                        } else {
-                            // Reset dropdown UI
-                            const dropdown = document.getElementById(filterKey);
-                            if (dropdown) {
-                                const btn = dropdown.querySelector('.dropdown-btn span');
-                                btn.textContent = getDefaultText(filterKey);
-                                dropdown.querySelectorAll('.dropdown-option').forEach(opt => opt.classList.remove('selected'));
-                                delete filters[filterKey];
-                            }
-                        }
+                        // Reset dropdown
+                        const dropdown = document.getElementById(filterKey);
+                        const btn = dropdown.querySelector('.dropdown-btn span');
+                        const options = dropdown.querySelectorAll('.dropdown-option');
+                        
+                        btn.textContent = getDefaultText(filterKey);
+                        options.forEach(opt => opt.classList.remove('selected'));
                         
                         updateSelectedFilters();
-                        applyFilters(); // Re-apply filters after removing one
                     });
                 });
             }
 
-            // Get default text for a dropdown
             function getDefaultText(filterKey) {
-                switch(filterKey) {
-                    case 'location': return 'Select Location';
-                    case 'propertyType': return 'Select Property Type';
-                    case 'tenantType': return 'Select Choice';
-                    default: return 'Select';
-                }
+                const defaults = {
+                    'flatType': 'Select Type',
+                    'nearbyRange': 'Select Range',
+                    'priceRange': 'Select Budget'
+                };
+                return defaults[filterKey] || 'Select';
             }
 
-            // Function to clear all filters and reset UI
-            function clearAllFilters() {
-                filters = {}; // Reset the filter object
+            // Search form submission
+            document.querySelector('.search-form').addEventListener('submit', (e) => {
+                e.preventDefault();
                 
-                // Reset all dropdowns to default state
-                dropdowns.forEach(dropdown => {
-                    const btn = dropdown.querySelector('.dropdown-btn span');
-                    const options = dropdown.querySelectorAll('.dropdown-option');
-                    btn.textContent = getDefaultText(dropdown.id);
-                    options.forEach(opt => opt.classList.remove('selected'));
-                });
+                const location = document.getElementById('location').value;
+                const searchData = {
+                    location: location,
+                    ...filters
+                };
                 
-                // Clear the price input field
-                priceInput.value = '';
+                console.log('Search Data:', searchData);
+                alert('Search functionality will be implemented here!\nCheck console for search data.');
+            }); 
 
-                updateSelectedFilters(); // Clear the filter tags
-            }
+    // ===== Attach Clear All button if exists =====
+    const clearBtn = document.getElementById('clearAllFilters');
+    if (clearBtn) {
+        clearBtn.addEventListener('click', clearAllFilters);
+    }
+        });
+        
 
-            // Filtering logic
-            function applyFilters() {
-                const rows = propertiesBody.querySelectorAll('tr');
-                let foundResults = false;
+//  CLEAR ALL FUNCTION
+function clearAllFilters() {
+    // Reset object
+    filters = {};
 
-                const filterLocation = filters.location ? filters.location.value.toLowerCase() : '';
-                const filterType = filters.propertyType ? filters.propertyType.value.toLowerCase() : '';
-                const filterTenant = filters.tenantType ? filters.tenantType.value.toLowerCase() : '';
-                const priceRange = filters.priceInput ? filters.priceInput.value.replace(/[^0-9-]/g, '') : '';
-                
-                let minPrice = -1;
-                let maxPrice = -1;
-                if (priceRange.includes('-')) {
-                    const parts = priceRange.split('-').map(p => parseInt(p.trim().replace(/,/g, ''), 10));
-                    minPrice = parts[0];
-                    maxPrice = parts[1];
-                }
+    // Reset dropdown UIs
+    document.querySelectorAll('.dropdown').forEach(dropdown => {
+        dropdown.querySelector('.dropdown-btn span').textContent = 'All';
+        dropdown.querySelectorAll('.dropdown-option').forEach(opt => opt.classList.remove('selected'));
+    });
 
-                rows.forEach(row => {
-                    const rowLocation = row.getAttribute('data-location');
-                    const rowType = row.getAttribute('data-type');
-                    const rowTenant = row.getAttribute('data-tenant');
-                    const rowPrice = parseInt(row.getAttribute('data-price'), 10);
-                    
-                    // Filter checks
-                    const matchLocation = !filterLocation || rowLocation.includes(filterLocation);
-                    const matchType = !filterType || rowType === filterType;
-                    const matchTenant = !filterTenant || rowTenant === filterTenant;
-                    
-                    let matchPrice = false;
-                    if (!priceRange) {
-                        matchPrice = true;
-                    } else if (minPrice !== -1 && maxPrice !== -1) {
-                        matchPrice = (rowPrice >= minPrice && rowPrice <= maxPrice);
-                    } else if (minPrice !== -1) {
-                        matchPrice = (rowPrice >= minPrice);
-                    } else {
-                        // Single number input
-                        const singlePrice = parseInt(priceRange.replace(/,/g, ''), 10);
-                        matchPrice = (rowPrice === singlePrice);
-                    }
+    // Reset text input
+    document.getElementById('location').value = '';
 
-                    if (matchLocation && matchType && matchTenant && matchPrice) {
-                        row.style.display = '';
-                        foundResults = true;
-                    } else {
-                        row.style.display = 'none';
-                    }
-                });
-                
-                // Show/hide table based on results
-                if (foundResults) {
-                    showTable();
-                } else {
-                    hideTable();
-                    showTableMessage('No properties found matching your criteria. Please try different filters.');
-                }
-            }
+    // Update tag display
+    document.getElementById('selectedFilters').innerHTML = '';
 
-            function hideTable() {
-                tableContainer.classList.add('hidden');
-                tableMessage.classList.remove('hidden');
-            }
+    // Show all rows again
+    applyFilters();
+}
 
-            function showTable() {
-                tableContainer.classList.remove('hidden');
-                tableMessage.classList.add('hidden');
-            }
 
-            function showTableMessage(message) {
-                tableMessage.classList.remove('hidden');
-                tableMessage.textContent = message;
+//  FILTERING LOGIC
+function applyFilters() {
+    const locationInput = document.getElementById('location').value.trim().toLowerCase();
+
+    const flatTypeValue = filters.flatType ? filters.flatType.value : 'all';
+    const priceRangeValue = filters.priceRange ? filters.priceRange.value : 'all';
+    const tenantTypeValue = filters.tenantType ? filters.tenantType.value : 'all';
+
+    // Helper: check price range
+    function priceMatches(price, range) {
+        if (range === 'all') return true;
+        if (range.includes('+')) {
+            let min = parseInt(range.replace('+', ''), 10);
+            return price >= min;
+        }
+        let [min, max] = range.split('-').map(Number);
+        return price >= min && price <= max;
+    }
+
+    // Apply to both tables
+    function filterTable(tableBodyId) {
+        const rows = document.getElementById(tableBodyId).querySelectorAll('tr');
+        rows.forEach(row => {
+            const rowLocation = row.getAttribute('data-location').toLowerCase();
+            const rowType = row.getAttribute('data-type').toLowerCase();
+            const rowPrice = parseInt(row.getAttribute('data-price'), 10);
+            const rowTenant = row.getAttribute('data-tenant')?.toLowerCase() || '';
+
+            const matchLocation = locationInput === '' || rowLocation.includes(locationInput);
+            const matchType = flatTypeValue === 'all' || flatTypeValue === rowType;
+            const matchPrice = priceMatches(rowPrice, priceRangeValue);
+            const matchTenant = tenantTypeValue === 'all' || tenantTypeValue === rowTenant;
+
+            if (matchLocation && matchType && matchPrice && matchTenant) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
             }
         });
+    }
+
+    filterTable('ownerPropertiesBody');
+    filterTable('renterPropertiesBody');
+}
+
     </script>
 </body>
 </html>
