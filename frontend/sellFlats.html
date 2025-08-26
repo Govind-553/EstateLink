@@ -40,13 +40,25 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
 
+        .logo a {
+            text-decoration: none;
+            color: inherit;
+        }
+
         .logo {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            font-size: 1.5rem;
+            gap: 1rem;
+            font-size: 25px;
             font-weight: 700;
-            color: white;
+            color: #fff;
+            background: transparent;
+            cursor: pointer;
+        }
+
+        .logo span {
+            background: transparent;
+            vertical-align: middle;
         }
 
         .logo img {
@@ -54,6 +66,7 @@
             height: 40px;
             border-radius: 8px;
             background: rgba(255, 255, 255, 0.2);
+            vertical-align: middle;
         }
 
         .nav-links {
@@ -869,10 +882,12 @@
 </head>
 <body>
 <nav class="navbar">
-    <div class="logo">
-        <img src="img/house.png" alt="Logo">
-        <span>Real Estate - Admin</span>
-    </div>
+<div class="logo">
+  <a href="../frontend/index.html">
+    <img src="img/house.png" alt="Logo">
+    <span>Real Estate</span>
+  </a>
+</div>
         
     <ul class="nav-links">
         <li><a href="../frontend/admin.html">Dashboard</a></li>
@@ -1150,25 +1165,24 @@
     <div class="footer-container">
         <div class="footer-content">
             <div class="footer-left">
-                <div class="footer-logo">
-                    <img src="img/house.png" alt="Logo">
-                    <span>Real Estate</span>
+                    <div class="footer-logo">
+                        <img src="img/house.png" alt="Logo">
+                        <span>Real Estate</span>
+                    </div>
+                    <p class="footer-description">
+                        Your trusted partner in finding the perfect property. We combine years of experience with modern technology to help you buy, sell, or rent with confidence.
+                    </p>
+                    <div class="footer-copyright">
+                        © 2025 Real Estate. All rights reserved.
+                    </div>
                 </div>
-                <p class="footer-description">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum.
-                </p>
-                <div class="footer-copyright">
-                    © 2025 Real Estate. All rights reserved.
-                </div>
-            </div>
 
             <div class="footer-center">
                 <h3>Quick Links</h3>
                 <ul class="footer-nav">
                     <li><a href="#home"><i class="fas fa-home"></i> Home</a></li>
                     <li><a href="#about"><i class="fas fa-info-circle"></i> About</a></li>
-                    <li><a href="#contact"><i class="fas fa-envelope"></i> Contact</a></li>
-                    <li><a href="#login"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                    <li><a href="../frontend/login-register.html"><i class="fas fa-sign-in-alt"></i> Login</a></li>
                 </ul>
             </div>
 
