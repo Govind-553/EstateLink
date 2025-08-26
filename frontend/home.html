@@ -521,19 +521,21 @@
             }
         }
         
-        /* Footer Styles */
+                /* Footer Styles */
         .footer {
             background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
             color: white;
             padding: 3rem 2rem 1rem;
-            margin-top: auto;
-            position: relative;
-            top: 55px;
+        }
+
+        .footer * {
+            background: transparent;
         }
 
         .footer-container {
             max-width: 1200px;
-            margin: 0 auto; 
+            margin: 0 auto;
+            background: transparent;
         }
 
         .footer-content {
@@ -541,13 +543,14 @@
             grid-template-columns: 2fr 1fr 1fr;
             gap: 3rem;
             margin-bottom: 2rem;
+            background: transparent;
         }
 
-        /* Left Section - Company Info */
         .footer-left {
             display: flex;
             flex-direction: column;
             gap: 1rem;
+            background: transparent;
         }
 
         .footer-logo {
@@ -557,6 +560,7 @@
             font-size: 1.5rem;
             font-weight: 700;
             margin-bottom: 1rem;
+            background: transparent;
         }
 
         .footer-logo img {
@@ -571,19 +575,22 @@
             line-height: 1.6;
             font-size: 0.95rem;
             margin-bottom: 1rem;
+            background: transparent;
         }
 
         .footer-copyright {
             color: rgba(255, 255, 255, 0.7);
             font-size: 0.875rem;
+            background: transparent;
         }
 
-        /* Center Section - Navigation */
-        .footer-center h3 {
+        .footer-center h3,
+        .footer-right h3 {
             font-size: 1.125rem;
             font-weight: 600;
             margin-bottom: 1.5rem;
             color: white;
+            background: transparent;
         }
 
         .footer-nav {
@@ -591,6 +598,13 @@
             display: flex;
             flex-direction: column;
             gap: 0.75rem;
+            background: transparent;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-nav li {
+            background: transparent;
         }
 
         .footer-nav a {
@@ -602,6 +616,7 @@
             align-items: center;
             gap: 0.5rem;
             padding: 0.25rem 0;
+            background: transparent;
         }
 
         .footer-nav a:hover {
@@ -612,39 +627,42 @@
         .footer-nav a i {
             font-size: 0.875rem;
             width: 16px;
+            background: transparent;
         }
 
-        /* Right Section - Contact & Social */
-        .footer-right h3 {
-            font-size: 1.125rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-            color: white;
-        }
-
-        .contact-info {
+        .footer .contact-info {
             display: flex;
             flex-direction: column;
             gap: 1rem;
             margin-bottom: 2rem;
+            background: transparent;
         }
 
-        .contact-item {
+        .footer .contact-item {
             display: flex;
             align-items: center;
             gap: 0.75rem;
             color: rgba(255, 255, 255, 0.9);
             font-size: 0.9rem;
+            background: transparent;
+            margin-bottom: 0;
+            padding: 0;
         }
 
-        .contact-item i {
+        .footer .contact-item i {
             width: 16px;
             color: rgba(255, 255, 255, 0.7);
+            background: transparent;
+        }
+
+        .footer .contact-item span {
+            background: transparent;
         }
 
         .social-links {
             display: flex;
             gap: 1rem;
+            background: transparent;
         }
 
         .social-link {
@@ -668,16 +686,18 @@
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
         }
 
-        /* Bottom Bar */
+        .social-link i {
+            background: transparent;
+        }
+
         .footer-bottom {
             border-top: 1px solid rgba(255, 255, 255, 0.2);
             padding-top: 1.5rem;
             text-align: center;
             color: rgba(255, 255, 255, 0.7);
             font-size: 0.875rem;
+            background: transparent;
         }
-
-        /* Mobile Responsive */
         @media (max-width: 768px) {
             .footer {
                 padding: 2rem 1rem 1rem;
@@ -702,370 +722,14 @@
                 transform: none;
             }
 
-            .contact-info {
+            .footer .contact-info {
                 align-items: center;
             }
 
             .social-links {
                 justify-content: center;
             }
-        }
-
-        @media (max-width: 480px) {
-            .footer-content {
-                gap: 1.5rem;
-            }
-
-            .footer-logo {
-                font-size: 1.25rem;
-            }
-
-            .social-link {
-                width: 35px;
-                height: 35px;
-            }
-        } 
-
-        /* about and contact section */
-        .section-container {
-            max-width: 1200px;
-            margin: 30px auto;
-            padding: 0 20px;
-            font-family: Arial, sans-serif;
-        }
-
-        .section-title {
-            font-size: 36px;
-            font-weight: bold;
-            text-align: center;
-            margin-bottom: 50px;
-            color: #333;
-            position: relative;
-        }
-
-        .section-title::after {
-            content: '';
-            width: 80px;
-            height: 3px;
-            background-color: #007bff;
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        .two-column-layout {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 50px;
-            align-items: start;
-        }
-
-        .about-section {
-            background-color: #f8f9fa;
-            padding: 80px 0;
-        }
-
-        .contact-section {
-            background-color: #ffffff;
-            padding: 80px 0;
-        }
-
-        .column {
-            padding: 20px;
-        }
-
-        .column h3 {
-            font-size: 24px;
-            margin-bottom: 20px;
-            text-align: center;
-            color: #333;
-            font-weight: 600;
-        }
-
-        .column p {
-            font-size: 16px;
-            line-height: 1.6;
-            color: #666;
-            margin-bottom: 20px;
-        }
-
-        .contact-info {
-            margin-bottom: 30px;
-        }
-
-        .contact-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-            padding: 10px 0;
-        }
-
-        .contact-icon {
-            width: 20px;
-            height: 20px;
-            margin-right: 15px;
-            color: #007bff;
-            font-weight: bold;
-        }
-
-        .contact-details {
-            flex: 1;
-        }
-
-        .contact-label {
-            font-weight: 600;
-            color: #333;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .contact-value {
-            color: #666;
-            font-size: 16px;
-            margin-top: 2px;
-        }
-
-        .contact-form {
-            background-color: #f8f9fa;
-            padding: 30px;
-            border-radius: 8px;
-            border: 1px solid #e9ecef;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group input,
-        .form-group textarea {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e9ecef;
-            border-radius: 5px;
-            font-size: 16px;
-            transition: border-color 0.3s ease;
-            box-sizing: border-box;
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #007bff;
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 120px;
-        }
-
-        .submit-btn {
-            background-color: #007bff;
-            color: white;
-            padding: 12px 30px;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            width: 100%;
-        }
-
-        .submit-btn:hover {
-            background-color: #0056b3;
-        }
-
-        .about-stats {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            margin-top: 30px;
-        }
-
-        .stat-item {
-            text-align: center;
-            padding: 20px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .stat-number {
-            font-size: 32px;
-            font-weight: bold;
-            color: #007bff;
-            display: block;
-        }
-
-        .stat-label {
-            font-size: 14px;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-top: 5px;
-        }
-
-        .team-member {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .member-photo {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            background-color: #e9ecef;
-            margin: 0 auto 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 48px;
-            color: #007bff;
-        }
-
-        .member-name {
-            font-size: 18px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 5px;
-        }
-
-        .member-title {
-            font-size: 14px;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        @media (max-width: 1024px) {
-            .section-container {
-                margin: 40px auto;
-                padding: 0 15px;
-            }
-            
-            .section-title {
-                font-size: 32px;
-                margin-bottom: 40px;
-            }
-            
-            .two-column-layout {
-                gap: 40px;
-            }
-            
-            .about-section,
-            .contact-section {
-                padding: 60px 0;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .two-column-layout {
-                grid-template-columns: 1fr;
-                gap: 30px;
-            }
-            
-            .section-title {
-                font-size: 28px;
-                margin-bottom: 30px;
-            }
-            
-            .about-section,
-            .contact-section {
-                padding: 40px 0;
-            }
-            
-            .column {
-                padding: 15px;
-            }
-            
-            .contact-form {
-                padding: 20px;
-            }
-            
-            .about-stats {
-                grid-template-columns: 1fr;
-                gap: 15px;
-            }
-            
-            .stat-item {
-                padding: 15px;
-            }
-            
-            .member-photo {
-                width: 100px;
-                height: 100px;
-                font-size: 40px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .section-container {
-                margin: 20px auto;
-                padding: 0 10px;
-            }
-            
-            .section-title {
-                font-size: 24px;
-                margin-bottom: 25px;
-            }
-            
-            .section-title::after {
-                width: 60px;
-                height: 2px;
-            }
-            
-            .about-section,
-            .contact-section {
-                padding: 30px 0;
-            }
-            
-            .column {
-                padding: 10px;
-            }
-            
-            .column h3 {
-                font-size: 20px;
-            }
-            
-            .contact-form {
-                padding: 15px;
-            }
-            
-            .form-group input,
-            .form-group textarea {
-                padding: 10px 12px;
-                font-size: 14px;
-            }
-            
-            .submit-btn {
-                padding: 10px 20px;
-                font-size: 14px;
-            }
-            
-            .stat-number {
-                font-size: 24px;
-            }
-            
-            .stat-label {
-                font-size: 12px;
-            }
-            
-            .member-photo {
-                width: 80px;
-                height: 80px;
-                font-size: 32px;
-            }
-            
-            .member-name {
-                font-size: 16px;
-            }
-            
-            .member-title {
-                font-size: 12px;
-            }
-        }
+        }      
     </style>
 </head>
 <body>
@@ -1078,10 +742,8 @@
 </div>
         
         <ul class="nav-links">
-            <li><a href="../frontend/index.html">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
-            <li><a href="../frontend/admin.html"><i class="fas fa-user"></i></a></li>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#listings">Properties</a></li>
         </ul>
         
         <div class="hamburger">
@@ -1164,7 +826,7 @@
         </div>
     </section>
 
-    <section class="listings-section">
+    <section class="listings-section" id="listings">
         <div class="property-container">
             <h2 class="property-title">Available Properties</h2>
             
@@ -1281,7 +943,7 @@
                         <span>Real Estate</span>
                     </div>
                     <p class="footer-description">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum.
+                        Your trusted partner in finding the perfect property. We combine years of experience with modern technology to help you buy, sell, or rent with confidence.
                     </p>
                     <div class="footer-copyright">
                         © 2025 Real Estate. All rights reserved.
@@ -1293,8 +955,7 @@
                     <ul class="footer-nav">
                         <li><a href="#home"><i class="fas fa-home"></i> Home</a></li>
                         <li><a href="#about"><i class="fas fa-info-circle"></i> About</a></li>
-                        <li><a href="#contact"><i class="fas fa-envelope"></i> Contact</a></li>
-                        <li><a href="#login"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                        <li><a href="../frontend/login-register.html"><i class="fas fa-sign-in-alt"></i> Login</a></li>
                     </ul>
                 </div>
 
@@ -1336,7 +997,7 @@
                 Made by Team | Privacy Policy | Terms of Service
             </div>
         </div>
-    </footer>
+</footer>
 
     <script>
         // Store filters globally
