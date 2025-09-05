@@ -10,1240 +10,1184 @@
     <title>Real Estate</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: white; 
+    } 
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: white; 
-        } 
+    html {
+        scroll-behavior: smooth;
+    }
 
-        html {
-            scroll-behavior: smooth;
-        }
+    .navbar {
+        background: #1e3a8a;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
 
-        /* Navbar Styles */
+    .logo a {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        font-size: 25px;
+        font-weight: 700;
+        color: #fff;
+        background: transparent;
+        cursor: pointer;
+    }
+
+    .logo span {
+        background: transparent;
+        vertical-align: middle;
+    }
+
+    .logo img {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.2);
+        vertical-align: middle;
+    }
+
+    .nav-links {
+        display: flex;
+        list-style: none;
+        gap: 2rem;
+        align-items: center;
+    }
+
+    .nav-links a {
+        color: white;
+        text-decoration: none;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .nav-links a:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .hamburger {
+        display: none;
+        flex-direction: column;
+        cursor: pointer;
+        padding: 0.5rem;
+    }
+
+    .hamburger span {
+        width: 25px;
+        height: 3px;
+        background: white;
+        margin: 2px 0;
+        transition: 0.3s;
+        border-radius: 2px;
+    }
+
+    .search-section {
+        background: white;
+        padding: 2rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .search-container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .search-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #1e3a8a;
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+
+    .search-form {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        align-items: end;
+    }
+
+    .search-group {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .search-label {
+        font-weight: 500;
+        color: #374151;
+        font-size: 0.875rem;
+    }
+
+    .search-input {
+        padding: 0.75rem 1rem;
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        outline: none;
+        width: 100%;
+    }
+
+    .search-input:focus {
+        border-color: #1e3a8a;
+        box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+    }
+
+    .price-input-group {
+        position: relative;
+    }
+
+    .price-input-group input {
+        padding-left: 2.5rem;
+    }
+    
+    .price-input-group .input-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6b7280;
+        font-size: 1.2rem;
+        pointer-events: none;
+    }
+
+    .dropdown {
+        position: relative;
+        cursor: pointer;
+    }
+
+    .dropdown-btn {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        background: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 1rem;
+        color: #374151;
+        transition: all 0.3s ease;
+    }
+
+    .dropdown-btn:hover,
+    .dropdown.active .dropdown-btn {
+        border-color: #1e3a8a;
+        box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+    }
+
+    .dropdown-content {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        border: 2px solid #1e3a8a;
+        border-radius: 12px;
+        margin-top: 0.25rem;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: all 0.3s ease;
+        z-index: 100;
+        max-height: 250px;
+        overflow-y: auto;
+    }
+
+    .dropdown.active .dropdown-content {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    .dropdown-option {
+        padding: 0.75rem 1rem;
+        cursor: pointer;
+        transition: background 0.2s ease;
+        border-bottom: 1px solid #f3f4f6;
+    }
+
+    .dropdown-option:last-child {
+        border-bottom: none;
+    }
+
+    .dropdown-option:hover {
+        background: #f8fafc;
+    }
+
+    .dropdown-option.selected {
+        background: #1e3a8a;
+        color: white;
+    }
+
+    .search-btn {
+        padding: 0.75rem 2rem;
+        background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        min-height: 50px;
+        width: 100%; 
+    }
+
+    .search-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(30, 58, 138, 0.3);
+    }
+
+    .selected-filters-container {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 1rem;
+    }
+
+    .selected-filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    
+    #clearAllBtn {
+        background: #e5e7eb;
+        color: #374151;
+        border: 1px solid #d1d5db;
+        font-weight: 500;
+        min-height: auto;
+        padding: 0.5rem 1rem;
+        width: auto;
+        box-shadow: none;
+    }
+
+    #clearAllBtn:hover {
+        background: #d1d5db;
+        transform: none;
+    }
+
+    .filter-tag {
+        background: #eff6ff;
+        color: #1e3a8a;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.875rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        border: 1px solid #bae6fd;
+        white-space: nowrap;
+    }
+    
+    .filter-tag .remove {
+        cursor: pointer;
+        width: 16px;
+        height: 16px;
+        background: #1e3a8a;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75rem;
+    }
+
+    .table-message {
+        text-align: center;
+        font-size: 1.25rem;
+        color: #6b7280;
+        padding: 50px 20px;
+        border: 2px dashed #e5e7eb;
+        border-radius: 12px;
+        margin: 20px auto;
+        max-width: 800px;
+    }
+
+    .listings-section {
+        margin: 20px auto;
+        font-family: Arial, sans-serif;
+        max-width: 1200px;
+    }
+
+    .property-container {
+        margin-bottom: 40px;
+    }
+
+    .property-title {
+        font-size: 24px;
+        margin-bottom: 10px;
+        color: #333;
+        text-align: center;
+    }
+    
+    .table-wrapper {
+        position: relative;
+    }
+
+    .property-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 10px auto;
+        table-layout: fixed;
+    }
+
+    .property-table th, .property-table td {
+        border: 1px solid #ddd;
+        padding: 12px;
+        text-align: left;
+        word-wrap: break-word;
+    }
+
+    .property-table th {
+        background-color: #f2f2f2;
+        color: #333;
+        font-weight: bold;
+    }
+
+    .property-table tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    .property-table tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    .property-table td {
+        color: #555;
+    }
+
+    .property-table-container.hidden {
+        display: none;
+    }
+    
+    .table-message.hidden {
+        display: none;
+    }
+
+    /* Mobile Table Styles (Triggered by JS) */
+    .property-table.mobile-table,
+    .property-table.mobile-table thead,
+    .property-table.mobile-table tbody,
+    .property-table.mobile-table th,
+    .property-table.mobile-table td,
+    .property-table.mobile-table tr {
+        display: block;
+    }
+
+    .property-table.mobile-table thead {
+        display: none;
+    }
+
+    .property-table.mobile-table tr {
+        border: 1px solid #ddd;
+        margin-bottom: 15px;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .property-table.mobile-table td {
+    border: none;
+    position: relative;
+    padding-left: 50%;
+    text-align: center;
+    border-bottom: 1px solid #f2f2f2;
+    }
+
+
+    .property-table.mobile-table td:last-child {
+        border-bottom: none;
+    }
+
+    .property-table.mobile-table td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 0;
+    width: 45%;
+    padding: 12px;
+    font-weight: bold;
+    color: #333;
+    white-space: nowrap;
+    text-align: center;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    }
+    
+    @media (max-width: 768px) {
         .navbar {
-            background: #1e3a8a;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 1rem;
         }
-
-        .logo a {
-            text-decoration: none;
-            color: inherit;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            font-size: 25px;
-            font-weight: 700;
-            color: #fff;
-            background: transparent;
-            cursor: pointer;
-        }
-
-        .logo span {
-            background: transparent;
-            vertical-align: middle;
-        }
-
-        .logo img {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.2);
-            vertical-align: middle;
-        }
-
         .nav-links {
-            display: flex;
-            list-style: none;
-            gap: 2rem;
-            align-items: center;
-        }
-
-        .nav-links a {
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-        }
-
-        .nav-links a:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .hamburger {
             display: none;
-            flex-direction: column;
-            cursor: pointer;
-            padding: 0.5rem;
-        }
-
-        .hamburger span {
-            width: 25px;
-            height: 3px;
-            background: white;
-            margin: 2px 0;
-            transition: 0.3s;
-            border-radius: 2px;
-        }
-
-        /* Advanced Search Section */
-        .search-section {
-            background: white;
-            padding: 2rem;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .search-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .search-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #1e3a8a;
-            margin-bottom: 1.5rem;
-            text-align: center;
-        }
-
-        .search-form {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            align-items: end;
-        }
-
-        .search-group {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .search-label {
-            font-weight: 500;
-            color: #374151;
-            font-size: 0.875rem;
-        }
-
-        .search-input {
-            padding: 0.75rem 1rem;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            outline: none;
-            width: 100%;
-        }
-
-        .search-input:focus {
-            border-color: #1e3a8a;
-            box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
-        }
-
-        /* Price input with icon */
-        .price-input-group {
-            position: relative;
-        }
-
-        .price-input-group input {
-            padding-left: 2.5rem; /* Make space for the icon */
-        }
-        
-        .price-input-group .input-icon {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #6b7280;
-            font-size: 1.2rem;
-            pointer-events: none; /* Icon does not interfere with input */
-        }
-
-        .dropdown {
-            position: relative;
-            cursor: pointer;
-        }
-
-        .dropdown-btn {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            background: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 1rem;
-            color: #374151;
-            transition: all 0.3s ease;
-        }
-
-        .dropdown-btn:hover,
-        .dropdown.active .dropdown-btn {
-            border-color: #1e3a8a;
-            box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
-        }
-
-        .dropdown-content {
             position: absolute;
             top: 100%;
             left: 0;
-            right: 0;
-            background: white;
-            border: 2px solid #1e3a8a;
-            border-radius: 12px;
-            margin-top: 0.25rem;
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(-10px);
-            transition: all 0.3s ease;
-            z-index: 100;
-            max-height: 250px;
-            overflow-y: auto;
-        }
-
-        .dropdown.active .dropdown-content {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-
-        .dropdown-option {
-            padding: 0.75rem 1rem;
-            cursor: pointer;
-            transition: background 0.2s ease;
-            border-bottom: 1px solid #f3f4f6;
-        }
-
-        .dropdown-option:last-child {
-            border-bottom: none;
-        }
-
-        .dropdown-option:hover {
-            background: #f8fafc;
-        }
-
-        .dropdown-option.selected {
-            background: #1e3a8a;
-            color: white;
-        }
-
-        .search-btn {
-            padding: 0.75rem 2rem;
-            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            min-height: 50px;
-            width: 100%; 
-        }
-
-        .search-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(30, 58, 138, 0.3);
-        }
-
-        .selected-filters-container {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-
-        .selected-filters {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
-        
-        #clearAllBtn {
-            background: #e5e7eb;
-            color: #374151;
-            border: 1px solid #d1d5db;
-            font-weight: 500;
-            min-height: auto;
-            padding: 0.5rem 1rem;
-            width: auto;
-            box-shadow: none;
-        }
-
-        #clearAllBtn:hover {
-            background: #d1d5db;
-            transform: none;
-        }
-
-        .filter-tag {
-            background: #eff6ff;
-            color: #1e3a8a;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.875rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            border: 1px solid #bae6fd;
-            white-space: nowrap;
-        }
-        
-        .filter-tag .remove {
-            cursor: pointer;
-            width: 16px;
-            height: 16px;
-            background: #1e3a8a;
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-        }
-
-        /* Message for empty state */
-        .table-message {
-            text-align: center;
-            font-size: 1.25rem;
-            color: #6b7280;
-            padding: 50px 20px;
-            border: 2px dashed #e5e7eb;
-            border-radius: 12px;
-            margin: 20px auto;
-            max-width: 800px;
-        }
-
-        /* Listings Section */ 
-        .listings-section {
-            margin: 20px auto;
-            font-family: Arial, sans-serif;
-            max-width: 1200px;
-        }
-
-        .property-container {
-            margin-bottom: 40px;
-        }
-
-        .property-title {
-            font-size: 24px;
-            margin-bottom: 10px;
-            color: #333;
-            text-align: center;
-        }
-        
-        /* Table and Message Container */
-        .table-wrapper {
-            position: relative;
-        }
-
-        .property-table {
             width: 100%;
-            border-collapse: collapse;
-            margin: 10px auto;
-            table-layout: fixed;
+            background: #1e3a8a;
+            flex-direction: column;
+            padding: 1rem 0;
+            gap: 20px;
         }
-
-        .property-table th, .property-table td {
-            border: 1px solid #ddd;
-            padding: 12px;
-            text-align: left;
-            word-wrap: break-word;
+        .nav-links.active {
+            display: flex;
         }
-
-        .property-table th {
-            background-color: #f2f2f2;
-            color: #333;
-            font-weight: bold;
+        .hamburger {
+            display: flex;
         }
-
-        .property-table tr:nth-child(even) {
-            background-color: #f9f9f9;
+        .search-form {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
         }
-
-        .property-table tr:hover {
-            background-color: #f1f1f1;
+        .search-section {
+            padding: 1.5rem 1rem;
         }
-
-        .property-table td {
-            color: #555;
+        .nav-links a[href="#login"]:hover {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.2);
         }
-
-        /* Hide table initially */
+        .listings-section {
+            margin: 10px;
+            max-width: none;
+            overflow: hidden; 
+        }
+        .property-container {
+            overflow: visible; 
+        }
         .property-table-container.hidden {
             display: none;
         }
-        
-        .table-message.hidden {
-            display: none;
+    }
+    
+    @media (min-width: 769px) {
+        .property-table.mobile-table {
+            display: table;
         }
-
-        /* Responsive Styles */
-        @media (max-width: 768px) {
-            .navbar {
-                padding: 1rem;
-            }
-            .nav-links {
-                display: none;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                width: 100%;
-                background: #1e3a8a;
-                flex-direction: column;
-                padding: 1rem 0;
-                gap: 20px;
-            }
-            .nav-links.active {
-                display: flex;
-            }
-            .hamburger {
-                display: flex;
-            }
-            .search-form {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-            }
-            .search-section {
-                padding: 1.5rem 1rem;
-            }
-            .nav-links a[href="#login"]:hover {
-                transform: scale(1.1);
-                background: rgba(255, 255, 255, 0.2);
-            }
-            .listings-section {
-                margin: 10px;
-                max-width: none;
-                overflow: hidden; 
-            }
-            .property-container {
-                overflow: visible; 
-            }
-
-            .property-table-container.hidden {
-                display: block; /* We need to keep the container visible for the transform to work, but hide the content */
-                height: 0;
-            }
-
-            .property-table-container:not(.hidden) {
-                height: 100vw; /* This will create a viewport-based height for the rotated table */
-                width: 100vw;
-            }
-
-            .property-table-container:not(.hidden) .property-table {
-                transform: rotate(90deg) translateX(0); /* Corrected transform */
-                transform-origin: top left;
-                width: 100vh;
-                position: absolute;
-                top: 0;
-                left: 0;
-            }
-            
-            .property-table {
-                border-collapse: collapse;
-                table-layout: fixed;
-            }
-
-            .property-table th, .property-table td {
-                word-wrap: normal;
-                white-space: nowrap;
-                min-width: 150px;
-                display: table-cell;
-                text-align: left;
-                padding: 12px;
-                transform: rotate(-90deg);
-                transform-origin: top left;
-            }
-            .property-table th {
-                height: 100%;
-                display: flex;
-                align-items: center;
-            }
-            
-            .property-table thead th {
-                transform: rotate(-90deg);
-                transform-origin: top left;
-                position: absolute;
-                top: 0;
-                left: 0;
-            }
-            .property-table tbody td {
-                transform: rotate(0deg);
-            }
+        .property-table.mobile-table thead,
+        .property-table.mobile-table tbody,
+        .property-table.mobile-table tr,
+        .property-table.mobile-table th,
+        .property-table.mobile-table td {
+            display: table-cell;
         }
+    }
 
-        /* Re-apply desktop styles for larger screens */
-        @media (min-width: 769px) {
-            .property-table-container.hidden {
-                display: none;
-            }
-            .property-table-container:not(.hidden) {
-                display: block;
-                height: auto;
-            }
-            .property-table-container .property-table {
-                transform: none;
-                transform-origin: none;
-                width: 100%;
-                height: auto;
-                position: static;
-                top: auto;
-                left: auto;
-            }
-            .property-table th, .property-table td {
-                transform: none;
-            }
-        }
-        
-                /* Footer Styles */
+    .footer {
+        background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+        color: white;
+        padding: 3rem 2rem 1rem;
+    }
+
+    .footer * {
+        background: transparent;
+    }
+
+    .footer-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: transparent;
+    }
+
+    .footer-content {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr;
+        gap: 3rem;
+        margin-bottom: 2rem;
+        background: transparent;
+    }
+
+    .footer-left {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        background: transparent;
+    }
+
+    .footer-logo {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        background: transparent;
+    }
+
+    .footer-logo img {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    .footer-description {
+        color: rgba(255, 255, 255, 0.9);
+        line-height: 1.6;
+        font-size: 0.95rem;
+        margin-bottom: 1rem;
+        background: transparent;
+    }
+
+    .footer-copyright {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.875rem;
+        background: transparent;
+    }
+
+    .footer-center h3,
+    .footer-right h3 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        color: white;
+        background: transparent;
+    }
+
+    .footer-nav {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        background: transparent;
+        padding: 0;
+        margin: 0;
+    }
+
+    .footer-nav li {
+        background: transparent;
+    }
+
+    .footer-nav a {
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        font-weight: 400;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.25rem 0;
+        background: transparent;
+    }
+
+    .footer-nav a:hover {
+        color: white;
+        transform: translateX(5px);
+    }
+
+    .footer-nav a i {
+        font-size: 0.875rem;
+        width: 16px;
+        background: transparent;
+    }
+
+    .footer .contact-info {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        background: transparent;
+    }
+
+    .footer .contact-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 0.9rem;
+        background: transparent;
+        margin-bottom: 0;
+        padding: 0;
+    }
+
+    .footer .contact-item i {
+        width: 16px;
+        color: rgba(255, 255, 255, 0.7);
+        background: transparent;
+    }
+
+    .footer .contact-item span {
+        background: transparent;
+    }
+
+    .social-links {
+        display: flex;
+        gap: 1rem;
+        background: transparent;
+    }
+
+    .social-link {
+        width: 40px;
+        height: 40px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+    }
+
+    .social-link:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    .social-link i {
+        background: transparent;
+    }
+
+    .footer-bottom {
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+        padding-top: 1.5rem;
+        text-align: center;
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.875rem;
+        background: transparent;
+    }
+    @media (max-width: 768px) {
         .footer {
-            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
-            color: white;
-            padding: 3rem 2rem 1rem;
-        }
-
-        .footer * {
-            background: transparent;
-        }
-
-        .footer-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: transparent;
+            padding: 2rem 1rem 1rem;
         }
 
         .footer-content {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr;
-            gap: 3rem;
-            margin-bottom: 2rem;
-            background: transparent;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            text-align: center;
         }
 
         .footer-left {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            background: transparent;
-        }
-
-        .footer-logo {
-            display: flex;
             align-items: center;
-            gap: 0.75rem;
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            background: transparent;
-        }
-
-        .footer-logo img {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        .footer-description {
-            color: rgba(255, 255, 255, 0.9);
-            line-height: 1.6;
-            font-size: 0.95rem;
-            margin-bottom: 1rem;
-            background: transparent;
-        }
-
-        .footer-copyright {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 0.875rem;
-            background: transparent;
-        }
-
-        .footer-center h3,
-        .footer-right h3 {
-            font-size: 1.125rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-            color: white;
-            background: transparent;
+            text-align: center;
         }
 
         .footer-nav {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-            background: transparent;
-            padding: 0;
-            margin: 0;
-        }
-
-        .footer-nav li {
-            background: transparent;
-        }
-
-        .footer-nav a {
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
-            font-weight: 400;
-            transition: all 0.3s ease;
-            display: flex;
             align-items: center;
-            gap: 0.5rem;
-            padding: 0.25rem 0;
-            background: transparent;
         }
 
         .footer-nav a:hover {
-            color: white;
-            transform: translateX(5px);
-        }
-
-        .footer-nav a i {
-            font-size: 0.875rem;
-            width: 16px;
-            background: transparent;
+            transform: none;
         }
 
         .footer .contact-info {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            background: transparent;
-        }
-
-        .footer .contact-item {
-            display: flex;
             align-items: center;
-            gap: 0.75rem;
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 0.9rem;
-            background: transparent;
-            margin-bottom: 0;
-            padding: 0;
-        }
-
-        .footer .contact-item i {
-            width: 16px;
-            color: rgba(255, 255, 255, 0.7);
-            background: transparent;
-        }
-
-        .footer .contact-item span {
-            background: transparent;
         }
 
         .social-links {
-            display: flex;
-            gap: 1rem;
-            background: transparent;
-        }
-
-        .social-link {
-            width: 40px;
-            height: 40px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
             justify-content: center;
-            color: white;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
         }
-
-        .social-link:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-        }
-
-        .social-link i {
-            background: transparent;
-        }
-
-        .footer-bottom {
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
-            padding-top: 1.5rem;
-            text-align: center;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 0.875rem;
-            background: transparent;
-        }
-        @media (max-width: 768px) {
-            .footer {
-                padding: 2rem 1rem 1rem;
-            }
-
-            .footer-content {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-                text-align: center;
-            }
-
-            .footer-left {
-                align-items: center;
-                text-align: center;
-            }
-
-            .footer-nav {
-                align-items: center;
-            }
-
-            .footer-nav a:hover {
-                transform: none;
-            }
-
-            .footer .contact-info {
-                align-items: center;
-            }
-
-            .social-links {
-                justify-content: center;
-            }
-        }      
-    </style>
+    }      
+</style>
 </head>
 <body>
-    <nav class="navbar">
-<div class="logo">
-  <a href="../frontend/index.html">
-    <img src="img/house.png" alt="Logo">
-    <span>Real Estate</span>
-  </a>
-</div>
+<nav class="navbar">
+    <div class="logo">
+        <a href="../frontend/index.html">
+            <img src="img/house.png" alt="Logo">
+            <span>Real Estate</span>
+        </a>
+    </div>
         
-        <ul class="nav-links">
-            <li><a href="#home">Home</a></li>
-            <li><a href="#listings">Properties</a></li>
-        </ul>
+    <ul class="nav-links">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#listings">Properties</a></li>
+    </ul>
         
-        <div class="hamburger">
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
-    </nav>
+    <div class="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+</nav>
 
-    <section class="search-section" id="home">
-        <div class="search-container">
-            <h2 class="search-title">Find Your Perfect Property</h2>
+<section class="search-section" id="home">
+    <div class="search-container">
+        <h2 class="search-title">Find Your Perfect Property</h2>
             
-            <div class="search-form" id="searchForm">
-                <div class="search-group">
-                    <label class="search-label">Select Your Location</label>
-                    <div class="dropdown" id="location">
-                        <div class="dropdown-btn">
-                            <span>Select Location</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </div>
-                        <div class="dropdown-content">
-                            <div class="dropdown-option" data-value="Kandivali West">Kandivali West</div>
-                            <div class="dropdown-option" data-value="Malad West">Malad West</div>
-                            <div class="dropdown-option" data-value="Goregaon West">Goregaon West</div>
-                        </div>
+        <div class="search-form" id="searchForm">
+            <div class="search-group">
+                <label class="search-label">Select Your Location</label>
+                <div class="dropdown" id="location">
+                    <div class="dropdown-btn">
+                        <span>Select Location</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="dropdown-content">
+                        <div class="dropdown-option" data-value="kandivali west">Kandivali West</div>
+                        <div class="dropdown-option" data-value="malad west">Malad West</div>
+                        <div class="dropdown-option" data-value="goregaon west">Goregaon West</div>
                     </div>
                 </div>
-
-                <div class="search-group">
-                    <label class="search-label">Property Type</label>
-                    <div class="dropdown" id="propertyType">
-                        <div class="dropdown-btn">
-                            <span>Select Property Type</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </div>
-                        <div class="dropdown-content">
-                            <div class="dropdown-option" data-value="1rk">1 RK</div>
-                            <div class="dropdown-option" data-value="1bhk">1 BHK</div>
-                            <div class="dropdown-option" data-value="1.5bhk">1.5 BHK</div>
-                            <div class="dropdown-option" data-value="2bhk">2 BHK</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="search-group">
-                    <label class="search-label">Enter Your Budget</label>
-                    <div class="price-input-group">
-                         <span class="input-icon">₹</span>
-                         <input type="text" class="search-input" id="priceInput" placeholder="e.g., 10,000 - 15,000">
-                    </div>
-                </div>
-
-                <div class="search-group">
-                    <label class="search-label">Tenant</label>
-                    <div class="dropdown" id="tenantType">
-                        <div class="dropdown-btn">
-                            <span>Select Choice</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </div>
-                        <div class="dropdown-content">
-                            <div class="dropdown-option" data-value="family">Family</div>
-                            <div class="dropdown-option" data-value="bachelor">Bachelor</div>
-                        </div>
-                    </div>
-                </div>
-
-                <button type="button" class="search-btn" id="searchBtn">
-                    <i class="fas fa-search"></i>
-                    Search
-                </button>
             </div>
+
+            <div class="search-group">
+                <label class="search-label">Property Type</label>
+                <div class="dropdown" id="propertyType">
+                    <div class="dropdown-btn">
+                        <span>Select Property Type</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="dropdown-content">
+                        <div class="dropdown-option" data-value="1rk">1 RK</div>
+                        <div class="dropdown-option" data-value="1bhk">1 BHK</div>
+                        <div class="dropdown-option" data-value="1.5bhk">1.5 BHK</div>
+                        <div class="dropdown-option" data-value="2bhk">2 BHK</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="search-group">
+                <label class="search-label">Enter Your Budget</label>
+                <div class="price-input-group">
+                       <span class="input-icon">₹</span>
+                       <input type="text" class="search-input" id="priceInput" placeholder="e.g., 10,000 - 15,000">
+                </div>
+            </div>
+
+            <div class="search-group">
+                <label class="search-label">Tenant</label>
+                <div class="dropdown" id="tenantType">
+                    <div class="dropdown-btn">
+                        <span>Select Choice</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="dropdown-content">
+                        <div class="dropdown-option" data-value="family">Family</div>
+                        <div class="dropdown-option" data-value="bachelor">Bachelor</div>
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" class="search-btn" id="searchBtn">
+                <i class="fas fa-search"></i>
+                Search
+            </button>
+        </div>
             
-            <div class="selected-filters-container">
-                 <div class="selected-filters" id="selectedFilters"></div>
-                 <button type="button" id="clearAllBtn" class="search-btn" style="display:none;">
-                    <i class="fas fa-times"></i> Clear All
-                 </button>
-            </div>
+        <div class="selected-filters-container">
+            <div class="selected-filters" id="selectedFilters"></div>
+               <button type="button" id="clearAllBtn" class="search-btn" style="display:none;">
+                 <i class="fas fa-times"></i> Clear All
+               </button>
         </div>
-    </section>
+    </div>
+</section>
 
-    <section class="listings-section" id="listings">
-        <div class="property-container">
-            <h2 class="property-title">Available Properties</h2>
+<section class="listings-section" id="listings">
+    <div class="property-container">
+        <h2 class="property-title">Available Properties</h2>
             
-            <div id="tableContainer" class="property-table-container hidden">
-                <table class="property-table" id="propertiesTable">
-                    <thead>
-                        <tr>
-                            <th>Location</th>
-                            <th>Property Type</th>
-                            <th>Price</th>
-                            <th>Name</th>
-                            <th>Contact</th>
-                            <th>Tenant Choice</th>
-                            <th>Date</th>
-                            <th>Ownership Type</th>
-                        </tr>
-                    </thead>
-                    <tbody id="propertiesBody">
-                        <tr data-location="kandivali west" data-type="1rk" data-price="25000" data-tenant="family">
-                            <td>Kandivali West</td>
-                            <td>1 RK</td>
-                            <td>₹25,000</td>
-                            <td>Rahul Sharma</td>
-                            <td>+91 98765 43210</td>
-                            <td>Family</td>
-                            <td>2025-01-01</td>
-                            <td>Owner</td>
-                        </tr>
-                        <tr data-location="malad west" data-type="1bhk" data-price="35000" data-tenant="family">
-                            <td>Malad West</td>
-                            <td>1 BHK</td>
-                            <td>₹35,000</td>
-                            <td>Priya Singh</td>
-                            <td>+91 91234 56789</td>
-                            <td>Family</td>
-                            <td>2025-06-01</td>
-                            <td>Agent</td>
-                        </tr>
-                        <tr data-location="goregaon west" data-type="2bhk" data-price="60000" data-tenant="family">
-                            <td>Goregaon West</td>
-                            <td>2 BHK</td>
-                            <td>₹60,000</td>
-                            <td>Arjun Patel</td>
-                            <td>+91 80123 45678</td>
-                            <td>Family</td>
-                            <td>2025-12-01</td>
-                            <td>Owner</td>
-                        </tr>
-                        <tr data-location="kandivali west" data-type="1.5bhk" data-price="45000" data-tenant="bachelor">
-                            <td>Kandivali West</td>
-                            <td>1.5 BHK</td>
-                            <td>₹45,000</td>
-                            <td>Anjali Desai</td>
-                            <td>+91 79012 34567</td>
-                            <td>Bachelor</td>
-                            <td>2025-08-15</td>
-                            <td>Agent</td>
-                        </tr>
-                        <tr data-location="malad west" data-type="1rk" data-price="28000" data-tenant="bachelor">
-                            <td>Malad West</td>
-                            <td>1 RK</td>
-                            <td>₹28,000</td>
-                            <td>Suresh Kumar</td>
-                            <td>+91 90123 45678</td>
-                            <td>Bachelor</td>
-                            <td>2025-03-15</td>
-                            <td>Owner</td>
-                        </tr>
-                        <tr data-location="goregaon west" data-type="2bhk" data-price="65000" data-tenant="family">
-                            <td>Goregaon West</td>
-                            <td>2 BHK</td>
-                            <td>₹65,000</td>
-                            <td>Kavita Rao</td>
-                            <td>+91 88765 43210</td>
-                            <td>Family</td>
-                            <td>2025-09-01</td>
-                            <td>Agent</td>
-                        </tr>
-                        <tr data-location="kandivali west" data-type="1bhk" data-price="38000" data-tenant="bachelor">
-                            <td>Kandivali West</td>
-                            <td>1 BHK</td>
-                            <td>₹38,000</td>
-                            <td>Vikram Joshi</td>
-                            <td>+91 77654 32109</td>
-                            <td>Bachelor</td>
-                            <td>2025-11-20</td>
-                            <td>Owner</td>
-                        </tr>
-                        <tr data-location="malad west" data-type="1.5bhk" data-price="48000" data-tenant="family">
-                            <td>Malad West</td>
-                            <td>1.5 BHK</td>
-                            <td>₹48,000</td>
-                            <td>Meera Iyer</td>
-                            <td>+91 99876 54321</td>
-                            <td>Family</td>
-                            <td>2025-07-10</td>
-                            <td>Agent</td>
-                        </tr>
-                    </tbody>
-                </table>
+        <div id="tableContainer" class="property-table-container hidden">
+            <table class="property-table" id="propertiesTable">
+                <thead>
+                    <tr>
+                        <th>Location</th>
+                        <th>Property Type</th>
+                        <th>Price</th>
+                        <th>Name</th>
+                        <th>Contact</th>
+                        <th>Tenant Choice</th>
+                        <th>Date</th>
+                        <th>Ownership Type</th>
+                    </tr>
+                </thead>
+                <tbody id="propertiesBody">
+                    <tr data-location="kandivali west" data-type="1rk" data-price="25000" data-tenant="family">
+                        <td data-label="Location">Kandivali West</td>
+                        <td data-label="Property Type">1 RK</td>
+                        <td data-label="Price">₹25,000</td>
+                        <td data-label="Name">Rahul Sharma</td>
+                        <td data-label="Contact">+91 98765 43210</td>
+                        <td data-label="Tenant Choice">Family</td>
+                        <td data-label="Date">2025-01-01</td>
+                        <td data-label="Ownership Type">Owner</td>
+                    </tr>
+                    <tr data-location="malad west" data-type="1bhk" data-price="35000" data-tenant="family">
+                        <td data-label="Location">Malad West</td>
+                        <td data-label="Property Type">1 BHK</td>
+                        <td data-label="Price">₹35,000</td>
+                        <td data-label="Name">Priya Singh</td>
+                        <td data-label="Contact">+91 91234 56789</td>
+                        <td data-label="Tenant Choice">Family</td>
+                        <td data-label="Date">2025-06-01</td>
+                        <td data-label="Ownership Type">Agent</td>
+                    </tr>
+                    <tr data-location="goregaon west" data-type="2bhk" data-price="60000" data-tenant="family">
+                        <td data-label="Location">Goregaon West</td>
+                        <td data-label="Property Type">2 BHK</td>
+                        <td data-label="Price">₹60,000</td>
+                        <td data-label="Name">Arjun Patel</td>
+                        <td data-label="Contact">+91 80123 45678</td>
+                        <td data-label="Tenant Choice">Family</td>
+                        <td data-label="Date">2025-12-01</td>
+                        <td data-label="Ownership Type">Owner</td>
+                    </tr>
+                    <tr data-location="kandivali west" data-type="1.5bhk" data-price="45000" data-tenant="bachelor">
+                        <td data-label="Location">Kandivali West</td>
+                        <td data-label="Property Type">1.5 BHK</td>
+                        <td data-label="Price">₹45,000</td>
+                        <td data-label="Name">Anjali Desai</td>
+                        <td data-label="Contact">+91 79012 34567</td>
+                        <td data-label="Tenant Choice">Bachelor</td>
+                        <td data-label="Date">2025-08-15</td>
+                        <td data-label="Ownership Type">Agent</td>
+                    </tr>
+                    <tr data-location="malad west" data-type="1rk" data-price="28000" data-tenant="bachelor">
+                        <td data-label="Location">Malad West</td>
+                        <td data-label="Property Type">1 RK</td>
+                        <td data-label="Price">₹28,000</td>
+                        <td data-label="Name">Suresh Kumar</td>
+                        <td data-label="Contact">+91 90123 45678</td>
+                        <td data-label="Tenant Choice">Bachelor</td>
+                        <td data-label="Date">2025-03-15</td>
+                        <td data-label="Ownership Type">Owner</td>
+                    </tr>
+                    <tr data-location="goregaon west" data-type="2bhk" data-price="65000" data-tenant="family">
+                        <td data-label="Location">Goregaon West</td>
+                        <td data-label="Property Type">2 BHK</td>
+                        <td data-label="Price">₹65,000</td>
+                        <td data-label="Name">Kavita Rao</td>
+                        <td data-label="Contact">+91 88765 43210</td>
+                        <td data-label="Tenant Choice">Family</td>
+                        <td data-label="Date">2025-09-01</td>
+                        <td data-label="Ownership Type">Agent</td>
+                    </tr>
+                    <tr data-location="kandivali west" data-type="1bhk" data-price="38000" data-tenant="bachelor">
+                        <td data-label="Location">Kandivali West</td>
+                        <td data-label="Property Type">1 BHK</td>
+                        <td data-label="Price">₹38,000</td>
+                        <td data-label="Name">Vikram Joshi</td>
+                        <td data-label="Contact">+91 77654 32109</td>
+                        <td data-label="Tenant Choice">Bachelor</td>
+                        <td data-label="Date">2025-11-20</td>
+                        <td data-label="Ownership Type">Owner</td>
+                    </tr>
+                    <tr data-location="malad west" data-type="1.5bhk" data-price="48000" data-tenant="family">
+                        <td data-label="Location">Malad West</td>
+                        <td data-label="Property Type">1.5 BHK</td>
+                        <td data-label="Price">₹48,000</td>
+                        <td data-label="Name">Meera Iyer</td>
+                        <td data-label="Contact">+91 99876 54321</td>
+                        <td data-label="Tenant Choice">Family</td>
+                        <td data-label="Date">2025-07-10</td>
+                        <td data-label="Ownership Type">Agent</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="tableMessage" class="table-message">
+            Please use the search filters above to find properties.
+        </div>
+    </div>
+</section>
+
+<footer class="footer">
+    <div class="footer-container">
+        <div class="footer-content">
+            <div class="footer-left">
+                <div class="footer-logo">
+                    <img src="img/house.png" alt="Logo">
+                    <span>Real Estate</span>
+                </div>
+                <p class="footer-description">
+                    Your trusted partner in finding the perfect property. We combine years of experience with modern technology to help you buy, sell, or rent with confidence.
+                </p>
+                <div class="footer-copyright">
+                    © 2025 Real Estate. All rights reserved.
+                </div>
             </div>
-            <div id="tableMessage" class="table-message">
-                Please use the search filters above to find properties.
+
+            <div class="footer-center">
+                <h3>Quick Links</h3>
+                <ul class="footer-nav">
+                    <li><a href="#home"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="#about"><i class="fas fa-info-circle"></i> About</a></li>
+                    <li><a href="../frontend/login-register.html"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-right">
+                <h3>Get In Touch</h3>
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Mumbai, Maharashtra, India</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <span>+91 98765 43210</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <span>info@realestate.com</span>
+                    </div>
+                </div>
+                
+                <div class="social-links">
+                    <a href="#" class="social-link" title="Facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" class="social-link" title="Twitter">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="social-link" title="Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" class="social-link" title="LinkedIn">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                </div>
             </div>
         </div>
-    </section>
 
-    <footer class="footer">
-        <div class="footer-container">
-            <div class="footer-content">
-                <div class="footer-left">
-                    <div class="footer-logo">
-                        <img src="img/house.png" alt="Logo">
-                        <span>Real Estate</span>
-                    </div>
-                    <p class="footer-description">
-                        Your trusted partner in finding the perfect property. We combine years of experience with modern technology to help you buy, sell, or rent with confidence.
-                    </p>
-                    <div class="footer-copyright">
-                        © 2025 Real Estate. All rights reserved.
-                    </div>
-                </div>
-
-                <div class="footer-center">
-                    <h3>Quick Links</h3>
-                    <ul class="footer-nav">
-                        <li><a href="#home"><i class="fas fa-home"></i> Home</a></li>
-                        <li><a href="#about"><i class="fas fa-info-circle"></i> About</a></li>
-                        <li><a href="../frontend/login-register.html"><i class="fas fa-sign-in-alt"></i> Login</a></li>
-                    </ul>
-                </div>
-
-                <div class="footer-right">
-                    <h3>Get In Touch</h3>
-                    <div class="contact-info">
-                        <div class="contact-item">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <span>Mumbai, Maharashtra, India</span>
-                        </div>
-                        <div class="contact-item">
-                            <i class="fas fa-phone"></i>
-                            <span>+91 98765 43210</span>
-                        </div>
-                        <div class="contact-item">
-                            <i class="fas fa-envelope"></i>
-                            <span>info@realestate.com</span>
-                        </div>
-                    </div>
-                    
-                    <div class="social-links">
-                        <a href="#" class="social-link" title="Facebook">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                        <a href="#" class="social-link" title="Twitter">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                        <a href="#" class="social-link" title="Instagram">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                        <a href="#" class="social-link" title="LinkedIn">
-                            <i class="fab fa-linkedin-in"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="footer-bottom">
-                Made by Team | Privacy Policy | Terms of Service
-            </div>
+        <div class="footer-bottom">
+            Made by Team | Privacy Policy | Terms of Service
         </div>
+    </div>
 </footer>
 
-    <script>
-        // Store filters globally
-        let filters = {};
-        
-        document.addEventListener('DOMContentLoaded', function() {
-            const hamburger = document.querySelector('.hamburger');
-            const navLinks = document.querySelector('.nav-links');
-            const dropdowns = document.querySelectorAll('.dropdown');
-            const searchBtn = document.getElementById('searchBtn');
-            const clearAllBtn = document.getElementById('clearAllBtn');
-            const selectedFiltersContainer = document.getElementById('selectedFilters');
-            const propertiesBody = document.getElementById('propertiesBody');
-            const tableContainer = document.getElementById('tableContainer');
-            const tableMessage = document.getElementById('tableMessage');
-            const priceInput = document.getElementById('priceInput');
+<script>
+    let filters = {};
 
-            // Initial state: hide table and show message
+    document.addEventListener('DOMContentLoaded', function() {
+        const hamburger = document.querySelector('.hamburger');
+        const navLinks = document.querySelector('.nav-links');
+        const dropdowns = document.querySelectorAll('.dropdown');
+        const searchBtn = document.getElementById('searchBtn');
+        const clearAllBtn = document.getElementById('clearAllBtn');
+        const selectedFiltersContainer = document.getElementById('selectedFilters');
+        const propertiesBody = document.getElementById('propertiesBody');
+        const tableContainer = document.getElementById('tableContainer');
+        const tableMessage = document.getElementById('tableMessage');
+        const priceInput = document.getElementById('priceInput');
+        const propertiesTable = document.getElementById('propertiesTable');
+
+        function hideTable() {
+            tableContainer.classList.add('hidden');
+            tableMessage.classList.remove('hidden');
+        }
+
+        function showTable() {
+            tableContainer.classList.remove('hidden');
+            tableMessage.classList.add('hidden');
+        }
+
+        function showTableMessage(message) {
+            tableMessage.classList.remove('hidden');
+            tableMessage.textContent = message;
+        }
+
+        function checkOrientation() {
+            if (window.innerWidth <= 768 && window.innerHeight > window.innerWidth) {
+                propertiesTable.classList.add('mobile-table');
+            } else {
+                propertiesTable.classList.remove('mobile-table');
+            }
+        }
+
+        hideTable();
+        showTableMessage('Please use the search filters above to find properties.');
+        checkOrientation();
+        window.addEventListener('resize', checkOrientation);
+
+        hamburger.addEventListener('click', function() {
+            navLinks.classList.toggle('active');
+        });
+
+        dropdowns.forEach(dropdown => {
+            const btn = dropdown.querySelector('.dropdown-btn');
+            const options = dropdown.querySelectorAll('.dropdown-option');
+
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dropdowns.forEach(d => {
+                    if(d !== dropdown) d.classList.remove('active');
+                });
+                dropdown.classList.toggle('active');
+            });
+
+            options.forEach(option => {
+                option.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const value = option.dataset.value;
+                    const text = option.textContent;
+                    const dropdownId = dropdown.id;
+                    
+                    btn.querySelector('span').textContent = text;
+                    options.forEach(opt => opt.classList.remove('selected'));
+                    option.classList.add('selected');
+                    
+                    filters[dropdownId] = { value, text };
+                    
+                    dropdown.classList.remove('active');
+                    updateSelectedFilters();
+                    applyFilters();
+                });
+            });
+        });
+
+        document.addEventListener('click', () => {
+            dropdowns.forEach(d => d.classList.remove('active'));
+        });
+        
+        searchBtn.addEventListener('click', applyFilters);
+        
+        clearAllBtn.addEventListener('click', () => {
+            clearAllFilters();
             hideTable();
             showTableMessage('Please use the search filters above to find properties.');
-
-            // Hamburger menu functionality
-            hamburger.addEventListener('click', function() {
-                navLinks.classList.toggle('active');
-            });
-
-            // Dropdown functionality
-            dropdowns.forEach(dropdown => {
-                const btn = dropdown.querySelector('.dropdown-btn');
-                const options = dropdown.querySelectorAll('.dropdown-option');
-
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    dropdowns.forEach(d => {
-                        if(d !== dropdown) d.classList.remove('active');
-                    });
-                    dropdown.classList.toggle('active');
-                });
-
-                options.forEach(option => {
-                    option.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        
-                        const value = option.dataset.value;
-                        const text = option.textContent;
-                        const dropdownId = dropdown.id;
-                        
-                        // Update button text and selected option
-                        btn.querySelector('span').textContent = text;
-                        options.forEach(opt => opt.classList.remove('selected'));
-                        option.classList.add('selected');
-                        
-                        // Store the filter
-                        filters[dropdownId] = { value, text };
-                        
-                        dropdown.classList.remove('active');
-                        updateSelectedFilters();
-                        applyFilters();
-                    });
-                });
-            });
-
-            // Close dropdowns when clicking outside
-            document.addEventListener('click', () => {
-                dropdowns.forEach(d => d.classList.remove('active'));
-            });
-            
-            // Search button click handler
-            searchBtn.addEventListener('click', applyFilters);
-            
-            // Clear all button click handler
-            clearAllBtn.addEventListener('click', () => {
-                clearAllFilters();
-                hideTable();
-                showTableMessage('Please use the search filters above to find properties.');
-            });
-
-            // Handle price input changes to update filters
-            priceInput.addEventListener('input', () => {
-                const priceValue = priceInput.value.trim();
-                if (priceValue) {
-                    filters.priceInput = {
-                        value: priceValue,
-                        text: `₹${priceValue}`
-                    };
-                } else {
-                    delete filters.priceInput;
-                }
-                updateSelectedFilters();
-                applyFilters();
-            });
-
-            // Function to dynamically update the selected filter tags
-            function updateSelectedFilters() {
-                selectedFiltersContainer.innerHTML = '';
-                let hasFilters = false;
-                
-                Object.keys(filters).forEach(key => {
-                    const filter = filters[key];
-                    // Exclude empty inputs or dropdowns without a value
-                    if (filter && filter.value) {
-                         hasFilters = true;
-                         const tag = document.createElement('div');
-                         tag.className = 'filter-tag';
-                         tag.innerHTML = `
-                            <span>${filter.text}</span>
-                            <div class="remove" data-filter="${key}">×</div>
-                         `;
-                         selectedFiltersContainer.appendChild(tag);
-                    }
-                });
-                
-                // Show/hide clear all button
-                if (hasFilters) {
-                    clearAllBtn.style.display = 'block';
-                } else {
-                    clearAllBtn.style.display = 'none';
-                }
-
-                // Add remove functionality to tags
-                selectedFiltersContainer.querySelectorAll('.remove').forEach(remove => {
-                    remove.addEventListener('click', (e) => {
-                        const filterKey = e.target.dataset.filter;
-                        
-                        if (filterKey === 'priceInput') {
-                            priceInput.value = ''; 
-                            delete filters.priceInput;
-                        } else {
-                            // Reset dropdown UI
-                            const dropdown = document.getElementById(filterKey);
-                            if (dropdown) {
-                                const btn = dropdown.querySelector('.dropdown-btn span');
-                                btn.textContent = getDefaultText(filterKey);
-                                dropdown.querySelectorAll('.dropdown-option').forEach(opt => opt.classList.remove('selected'));
-                                delete filters[filterKey];
-                            }
-                        }
-                        
-                        updateSelectedFilters();
-                        applyFilters(); // Re-apply filters after removing one
-                    });
-                });
-            }
-
-            // Get default text for a dropdown
-            function getDefaultText(filterKey) {
-                switch(filterKey) {
-                    case 'location': return 'Select Location';
-                    case 'propertyType': return 'Select Property Type';
-                    case 'tenantType': return 'Select Choice';
-                    default: return 'Select';
-                }
-            }
-
-            // Function to clear all filters and reset UI
-            function clearAllFilters() {
-                filters = {}; // Reset the filter object
-                
-                // Reset all dropdowns to default state
-                dropdowns.forEach(dropdown => {
-                    const btn = dropdown.querySelector('.dropdown-btn span');
-                    const options = dropdown.querySelectorAll('.dropdown-option');
-                    btn.textContent = getDefaultText(dropdown.id);
-                    options.forEach(opt => opt.classList.remove('selected'));
-                });
-                
-                // Clear the price input field
-                priceInput.value = '';
-
-                updateSelectedFilters(); // Clear the filter tags
-            }
-
-            // Filtering logic
-            function applyFilters() {
-                const rows = propertiesBody.querySelectorAll('tr');
-                let foundResults = false;
-
-                const filterLocation = filters.location ? filters.location.value.toLowerCase() : '';
-                const filterType = filters.propertyType ? filters.propertyType.value.toLowerCase() : '';
-                const filterTenant = filters.tenantType ? filters.tenantType.value.toLowerCase() : '';
-                const priceRange = filters.priceInput ? filters.priceInput.value.replace(/[^0-9-]/g, '') : '';
-                
-                let minPrice = -1;
-                let maxPrice = -1;
-                if (priceRange.includes('-')) {
-                    const parts = priceRange.split('-').map(p => parseInt(p.trim().replace(/,/g, ''), 10));
-                    minPrice = parts[0];
-                    maxPrice = parts[1];
-                }
-
-                rows.forEach(row => {
-                    const rowLocation = row.getAttribute('data-location');
-                    const rowType = row.getAttribute('data-type');
-                    const rowTenant = row.getAttribute('data-tenant');
-                    const rowPrice = parseInt(row.getAttribute('data-price'), 10);
-                    
-                    // Filter checks
-                    const matchLocation = !filterLocation || rowLocation.includes(filterLocation);
-                    const matchType = !filterType || rowType === filterType;
-                    const matchTenant = !filterTenant || rowTenant === filterTenant;
-                    
-                    let matchPrice = false;
-                    if (!priceRange) {
-                        matchPrice = true;
-                    } else if (minPrice !== -1 && maxPrice !== -1) {
-                        matchPrice = (rowPrice >= minPrice && rowPrice <= maxPrice);
-                    } else if (minPrice !== -1) {
-                        matchPrice = (rowPrice >= minPrice);
-                    } else {
-                        // Single number input
-                        const singlePrice = parseInt(priceRange.replace(/,/g, ''), 10);
-                        matchPrice = (rowPrice === singlePrice);
-                    }
-
-                    if (matchLocation && matchType && matchTenant && matchPrice) {
-                        row.style.display = '';
-                        foundResults = true;
-                    } else {
-                        row.style.display = 'none';
-                    }
-                });
-                
-                // Show/hide table based on results
-                if (foundResults) {
-                    showTable();
-                } else {
-                    hideTable();
-                    showTableMessage('No properties found matching your criteria. Please try different filters.');
-                }
-            }
-
-            function hideTable() {
-                tableContainer.classList.add('hidden');
-                tableMessage.classList.remove('hidden');
-            }
-
-            function showTable() {
-                tableContainer.classList.remove('hidden');
-                tableMessage.classList.add('hidden');
-            }
-
-            function showTableMessage(message) {
-                tableMessage.classList.remove('hidden');
-                tableMessage.textContent = message;
-            }
         });
-    </script>
+
+        priceInput.addEventListener('input', () => {
+            const priceValue = priceInput.value.trim();
+            if (priceValue) {
+                filters.priceInput = {
+                    value: priceValue,
+                    text: `₹${priceValue}`
+                };
+            } else {
+                delete filters.priceInput;
+            }
+            updateSelectedFilters();
+            applyFilters();
+        });
+
+        function updateSelectedFilters() {
+            selectedFiltersContainer.innerHTML = '';
+            let hasFilters = false;
+            
+            Object.keys(filters).forEach(key => {
+                const filter = filters[key];
+                if (filter && filter.value) {
+                    hasFilters = true;
+                    const tag = document.createElement('div');
+                    tag.className = 'filter-tag';
+                    tag.innerHTML = `<span>${filter.text}</span>`;
+                    selectedFiltersContainer.appendChild(tag);
+                }
+            });
+            
+            if (hasFilters) {
+                clearAllBtn.style.display = 'block';
+            } else {
+                clearAllBtn.style.display = 'none';
+            }
+        }
+
+        function getDefaultText(filterKey) {
+            switch(filterKey) {
+                case 'location': return 'Select Location';
+                case 'propertyType': return 'Select Property Type';
+                case 'tenantType': return 'Select Choice';
+                default: return 'Select';
+            }
+        }
+
+        function clearAllFilters() {
+            filters = {};
+            
+            dropdowns.forEach(dropdown => {
+                const btn = dropdown.querySelector('.dropdown-btn span');
+                const options = dropdown.querySelectorAll('.dropdown-option');
+                btn.textContent = getDefaultText(dropdown.id);
+                options.forEach(opt => opt.classList.remove('selected'));
+            });
+            
+            priceInput.value = '';
+            updateSelectedFilters();
+        }
+
+        function applyFilters() {
+            const rows = propertiesBody.querySelectorAll('tr');
+            let foundResults = false;
+
+            const filterLocation = filters.location ? filters.location.value.toLowerCase() : '';
+            const filterType = filters.propertyType ? filters.propertyType.value.toLowerCase() : '';
+            const filterTenant = filters.tenantType ? filters.tenantType.value.toLowerCase() : '';
+            const priceRange = filters.priceInput ? filters.priceInput.value.replace(/[^0-9-]/g, '') : '';
+            
+            let minPrice = -1;
+            let maxPrice = -1;
+            if (priceRange.includes('-')) {
+                const parts = priceRange.split('-').map(p => parseInt(p.trim().replace(/,/g, ''), 10));
+                minPrice = parts[0];
+                maxPrice = parts[1];
+            }
+
+            rows.forEach(row => {
+                const rowLocation = row.getAttribute('data-location');
+                const rowType = row.getAttribute('data-type');
+                const rowTenant = row.getAttribute('data-tenant');
+                const rowPrice = parseInt(row.getAttribute('data-price'), 10);
+                
+                const matchLocation = !filterLocation || rowLocation.includes(filterLocation);
+                const matchType = !filterType || rowType === filterType;
+                const matchTenant = !filterTenant || rowTenant === filterTenant;
+                
+                let matchPrice = false;
+                if (!priceRange) {
+                    matchPrice = true;
+                } else if (minPrice !== -1 && maxPrice !== -1) {
+                    matchPrice = (rowPrice >= minPrice && rowPrice <= maxPrice);
+                } else if (minPrice !== -1) {
+                    matchPrice = (rowPrice >= minPrice);
+                } else {
+                    const singlePrice = parseInt(priceRange.replace(/,/g, ''), 10);
+                    matchPrice = (rowPrice === singlePrice);
+                }
+
+                if (matchLocation && matchType && matchTenant && matchPrice) {
+                    row.style.display = '';
+                    foundResults = true;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            
+            if (foundResults) {
+                showTable();
+            } else {
+                hideTable();
+                showTableMessage('No properties found matching your criteria. Please try different filters.');
+            }
+        }
+    });
+</script>
 </body>
-</html>
+</html> 
