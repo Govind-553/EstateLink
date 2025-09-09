@@ -564,12 +564,8 @@ function setupRecaptchaForgot() {
                     <p class="message-text">Don't have an account? <a href="#" id="showRegisterLink">Sign up</a></p>
                 `;
                 setupEventListeners();
-<<<<<<< HEAD
                 //setupRecaptcha('recaptcha-container-login', 'loginSendOtpBtn', 'loginMobile');
                 
-=======
-                setupRecaptcha('recaptcha-container-login', 'loginSendOtpBtn', 'loginMobile');
->>>>>>> 9cfbaafd7ca99a9877fc0821c15fc11b39224a20
             };
 
             const renderRegisterForm = () => {
@@ -828,7 +824,7 @@ function setupRecaptchaForgot() {
                     const mobileInput = document.getElementById('mobile').value;
                     const passwordInput = document.getElementById('password').value;
                     // Here you would typically send the login data to your backend for verification
-                    alert(`Logging in with Mobile: +91${mobileInput} and Password: ${passwordInput}`);
+                    showCustomPopup(`Logging in with Mobile: +91${mobileInput} and Password: ${passwordInput}`);
                     // For demonstration, we'll just reset the form
                     // Example API call for login
                     // Send data to your backend
@@ -842,31 +838,21 @@ function setupRecaptchaForgot() {
                             })
                         });
 
-<<<<<<< HEAD
                                  const data = await response.json();
 
                                 if (response.ok) {
-                                    alert("✅ " + data.message);
+                                    showCustomPopup("✅ " + data.message);
                                     window.location.href = "../frontend/home.html";
                                 } else {
-                                    alert("❌ " + data.message);
+                                    showCustomPopup("❌ " + data.message);
                                 }
                         } catch (error) {
                             console.error("API error:", error);
-                            alert("Error logging in: " + error.message);
+                            showCustomPopup("Error logging in: " + error.message);
                         }
                     });
 
                 //this link help to change the number on otp verification page.
-=======
-                    if (mobileInput === dummyUser.mobile && passwordInput === dummyUser.password) {
-                        showCustomPopup("Login successful! Redirecting to home page.");
-                        window.location.href = "../frontend/home.html";
-                    } else {
-                        showCustomPopup("Invalid mobile number or password. Please try again.");
-                    }
-                });
->>>>>>> 9cfbaafd7ca99a9877fc0821c15fc11b39224a20
                 const changeNumberLink = document.getElementById('changeNumberLink');
                 if (changeNumberLink) changeNumberLink.addEventListener('click', (e) => {
                     e.preventDefault();
@@ -884,47 +870,17 @@ function setupRecaptchaForgot() {
                     const phoneNumber = "+91" + document.getElementById('regMobile').value;
 
                     if (!/^\+91[6-9]\d{9}$/.test(phoneNumber)) {
-                        alert("Please enter a valid 10-digit mobile number.");
+                        showCustomPopup("Please enter a valid 10-digit mobile number.");
                         return;
                     }
 
-<<<<<<< HEAD
                     try {
                         // Make sure phone is in +E.164 format
                         setupRecaptchaRegister();
                 
                         confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, recaptchaRegister);
                         window.confirmationResult = confirmationResult;
-                        alert("OTP sent for registration!");
-=======
-               const registerForm = document.getElementById('registerForm');
-if (registerForm) registerForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const phoneNumber = "+91" + document.getElementById('regMobile').value;
-
-    if (!/^\+91[6-9]\d{9}$/.test(phoneNumber)) {
-        showCustomPopup("Please enter a valid 10-digit mobile number.");
-        return;
-    }
-
-    try {
-        // Make sure phone is in +E.164 format
-        setupRecaptchaRegister();
-
-        confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, recaptchaRegister);
-        window.confirmationResult = confirmationResult;
-        showCustomPopup("OTP sent for registration!");
-
-        // When user fills registration form
-tempFullName = document.getElementById("regName").value;
-tempPassword = document.getElementById("regPassword").value;
-
-        renderOtpForm("register", phoneNumber);
-    } catch (error) {
-        showCustomPopup("Error sending OTP: " + error.message);
-    }
-});
->>>>>>> 9cfbaafd7ca99a9877fc0821c15fc11b39224a20
+                        showCustomPopup("OTP sent for registration!");
 
                         // When user fills registration form
                         // Store name and password temporarily, in the flow after OTP verification it can be used, if needed.
@@ -934,7 +890,7 @@ tempPassword = document.getElementById("regPassword").value;
 
                         renderOtpForm("register", phoneNumber);
                     } catch (error) {
-                        alert("Error sending OTP: " + error.message);
+                        showCustomPopup("Error sending OTP: " + error.message);
                     }
                 });
                 //this form help to send the otp for forgot password.
@@ -1020,7 +976,7 @@ tempPassword = document.getElementById("regPassword").value;
                         showCustomPopup("OTP verified! Phone: " + user.phoneNumber);
                         if (mode === "forgotPassword") {
                             // Handle forgot password flow
-                            //alert(".");
+                            //showCustomPopup(".");
                             renderPasswordResetForm();
                         } else if (mode === "register") {
                             try {
