@@ -80,11 +80,11 @@ export const loginUser = async (req, res) => {
         }
         
         //mobileNumber length restriction
-        // if (mobileNumber.length !== 10) {
-        //     return res.status(400).json({
-        //         message: "mobile Number should be of only 10 digit"
-        //     });
-        // }
+        if (mobileNumber.length !== 10) {
+            return res.status(400).json({
+                message: "mobile Number should be of only 10 digit"
+            });
+        }
 
         // Password length check
         if (password.length < 6) {
@@ -96,7 +96,7 @@ export const loginUser = async (req, res) => {
         //check the entered mobile number is registered or not.
         const existingUser = await User.findOne({ mobileNumber });
         if (!existingUser) {
-            res.status(400).json({
+            return res.status(400).json({
                 message: "Mobile number is not registered."
             });
         } else {

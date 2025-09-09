@@ -446,12 +446,13 @@ function setupRecaptchaForgot() {
                         <div class="form-links">
                             <a href="#" id="forgotPasswordLink">Forgot Password?</a>
                         </div>
-                        <button type="submit" class="btn">Login</button>
+                        <div id="recaptcha-container-login"></div>
+                        <button type="submit" id="loginBtn" class="btn">Login</button>
                     </form>
                     <p class="message-text">Don't have an account? <a href="#" id="showRegisterLink">Sign up</a></p>
                 `;
                 setupEventListeners();
-                setupRecaptcha('recaptcha-container-login', 'loginSendOtpBtn', 'loginMobile');
+                //setupRecaptcha('recaptcha-container-login', 'loginSendOtpBtn', 'loginMobile');
                 
             };
 
@@ -530,16 +531,7 @@ function setupRecaptchaForgot() {
                             <p class="message-text">Didn't receive the OTP? <a href="#" id="resendOtpLink">Resend OTP</a></p>
                         </form>
                         <p class="message-text"><a href="#" id="changeNumberLink">Change Number</a></p>
-                    `;
-                    // 👉 For register, add extra fields (name + password)
-    /*if (mode === "register") {
-        container.innerHTML += `
-            <div id="extra-fields">
-                <input type="text" id="regName" placeholder="Enter your name" required />
-                <input type="password" id="regPassword" placeholder="Enter your password" required />
-            </div>
-        `;
-    }*/
+                    `
 
                     setupOtpLogic(mode, phoneNumber);
                     setupEventListeners();
@@ -680,6 +672,7 @@ function setupRecaptchaForgot() {
             };
 
             const setupEventListeners = () => {
+                //help to toggle the password visibility.
                 const togglePasswordIcons = document.querySelectorAll('.toggle-password');
                 togglePasswordIcons.forEach(icon => {
                     icon.addEventListener('click', () => {
@@ -691,74 +684,104 @@ function setupRecaptchaForgot() {
                     });
                 });
 
+                //help to switch between login and register forms.
                 const showRegisterLink = document.getElementById('showRegisterLink');
                 if (showRegisterLink) showRegisterLink.addEventListener('click', (e) => {
                     e.preventDefault();
                     renderRegisterForm();
                 });
 
+                //help to switch back to login form.
                 const showLoginLink = document.getElementById('showLoginLink');
                 if (showLoginLink) showLoginLink.addEventListener('click', (e) => {
                     e.preventDefault();
                     renderLoginForm();
                 });
 
+                //this link help to navigate to forgot password form.
                 const forgotPasswordLink = document.getElementById('forgotPasswordLink');
                 if (forgotPasswordLink) forgotPasswordLink.addEventListener('click', (e) => {
                     e.preventDefault();
                     renderForgotPasswordForm();
                 });
 
+                //This is helps to handle the login form submission.
                 const loginForm = document.getElementById('loginForm');
-                if (loginForm) loginForm.addEventListener('submit', (e) => {
+                if (loginForm) loginForm.addEventListener('submit', async (e) => {
                     e.preventDefault();
                     const mobileInput = document.getElementById('mobile').value;
                     const passwordInput = document.getElementById('password').value;
+                    // Here you would typically send the login data to your backend for verification
+                    alert(`Logging in with Mobile: +91${mobileInput} and Password: ${passwordInput}`);
+                    // For demonstration, we'll just reset the form
+                    // Example API call for login
+                    // Send data to your backend
+                    try {
+                        const response = await fetch("http://localhost:3000/api/users/login", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                mobileNumber: mobileInput, // verified mobile from OTP
+                                password: passwordInput
+                            })
+                        });
 
-                    if (mobileInput === dummyUser.mobile && passwordInput === dummyUser.password) {
-                        alert("Login successful! Redirecting to home page.");
-                        window.location.href = "../frontend/home.html";
-                    } else {
-                        alert("Invalid mobile number or password. Please try again.");
-                    }
-                });
+                                 const data = await response.json();
+
+                                if (response.ok) {
+                                    alert("✅ " + data.message);
+                                    window.location.href = "../frontend/home.html";
+                                } else {
+                                    alert("❌ " + data.message);
+                                }
+                        } catch (error) {
+                            console.error("API error:", error);
+                            alert("Error logging in: " + error.message);
+                        }
+                    });
+
+                //this link help to change the number on otp verification page.
                 const changeNumberLink = document.getElementById('changeNumberLink');
                 if (changeNumberLink) changeNumberLink.addEventListener('click', (e) => {
                     e.preventDefault();
-                    renderLoginForm();
+                    if (lastMode === "register") {
+                        renderRegisterForm();
+                    } else if (lastMode === "forgotPassword") {
+                        renderForgotPasswordForm();
+                    }
                 });
 
+                //this form help to send the otp for registration.
+                const registerForm = document.getElementById('registerForm');
+                if (registerForm) registerForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const phoneNumber = "+91" + document.getElementById('regMobile').value;
 
+                    if (!/^\+91[6-9]\d{9}$/.test(phoneNumber)) {
+                        alert("Please enter a valid 10-digit mobile number.");
+                        return;
+                    }
 
-               const registerForm = document.getElementById('registerForm');
-if (registerForm) registerForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const phoneNumber = "+91" + document.getElementById('regMobile').value;
+                    try {
+                        // Make sure phone is in +E.164 format
+                        setupRecaptchaRegister();
+                
+                        confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, recaptchaRegister);
+                        window.confirmationResult = confirmationResult;
+                        alert("OTP sent for registration!");
 
-    if (!/^\+91[6-9]\d{9}$/.test(phoneNumber)) {
-        alert("Please enter a valid 10-digit mobile number.");
-        return;
-    }
+                        // When user fills registration form
+                        // Store name and password temporarily, in the flow after OTP verification it can be used, if needed.
+                        //we need to create this variable globally, because this is not used on the page                 of otp verification.
+                        tempFullName = document.getElementById("regName").value;
+                        tempPassword = document.getElementById("regPassword").value;
 
-    try {
-        // Make sure phone is in +E.164 format
-        setupRecaptchaRegister();
-
-        confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, recaptchaRegister);
-        window.confirmationResult = confirmationResult;
-        alert("OTP sent for registration!");
-
-        // When user fills registration form
-tempFullName = document.getElementById("regName").value;
-tempPassword = document.getElementById("regPassword").value;
-
-        renderOtpForm("register", phoneNumber);
-    } catch (error) {
-        alert("Error sending OTP: " + error.message);
-    }
-});
-
-
+                        renderOtpForm("register", phoneNumber);
+                    } catch (error) {
+                        alert("Error sending OTP: " + error.message);
+                    }
+                });
+                //this form help to send the otp for forgot password.
                 const forgotPasswordForm = document.getElementById('forgotPasswordForm');
                 if (forgotPasswordForm) forgotPasswordForm.addEventListener('submit', async (e) => {
                     e.preventDefault();
@@ -779,8 +802,8 @@ tempPassword = document.getElementById("regPassword").value;
                         alert("Error sending OTP: " + error.message);
                     }
                 });
-
-
+ 
+                //this page help to update the new password.
                 const newPasswordForm = document.getElementById('newPasswordForm');
                 if (newPasswordForm) newPasswordForm.addEventListener('submit', (e) => {
                     e.preventDefault();
@@ -793,9 +816,10 @@ tempPassword = document.getElementById("regPassword").value;
                         alert("Passwords do not match. Please try again.");
                     }
                 });
-             };
+            };
 
-               const setupOtpLogic = (mode, phoneNumber) => {
+            // OTP input logic   
+            const setupOtpLogic = (mode, phoneNumber) => {
                 const otpInputs = document.querySelectorAll('.otp-input');
                 const verifyOtpBtn = document.getElementById('verifyOtpBtn');
 
@@ -816,6 +840,7 @@ tempPassword = document.getElementById("regPassword").value;
                     });
                 });
 
+                //checks the otp is filled or not.
                 const checkOtpFilled = () => {
                     const allFilled = Array.from(otpInputs).every(input => input.value.length === 1);
                     verifyOtpBtn.disabled = !allFilled;
@@ -823,6 +848,7 @@ tempPassword = document.getElementById("regPassword").value;
                 
                 checkOtpFilled(); // Initial check
 
+                //this verify button help to verify otp and help to haldle the register and forgot password flow.
                 verifyOtpBtn.addEventListener('click', async (event) => {
                     event.preventDefault();
                     const otp = Array.from(otpInputs).map(input => input.value).join('');
@@ -831,8 +857,6 @@ tempPassword = document.getElementById("regPassword").value;
                         alert("Please enter a valid 6-digit OTP.");
                         return;
                     }
-
-                   
 
                     try {
                         const result = await window.confirmationResult.confirm(otp);
@@ -848,11 +872,11 @@ tempPassword = document.getElementById("regPassword").value;
                                 const fullName = tempFullName;
                                 const password = tempPassword;
 
+                                // Basic validation
                                 if (!fullName || !password) {
                                     alert("Name or password field not found in the DOM!");
                                     return;
-                                }
-                                
+                                }  
                         
                                 // Send data to your backend
                                 const response = await fetch("http://localhost:3000/api/users/create", {
@@ -865,7 +889,7 @@ tempPassword = document.getElementById("regPassword").value;
                                      })
                                 });
                         
-                             const data = await response.json();
+                                const data = await response.json();
                         
                                 if (response.ok) {
                                     alert("✅ " + data.message);

@@ -10,7 +10,7 @@ import User from "../models/User.js";
 router.post('/create', registerUser);
 
 //Route 2 - Login existing User
-router.get("/login",loginUser);
+router.post("/login",loginUser);
 
 //Route 3 - Forgot password
 router.post("/forgot", forgotPassword);
