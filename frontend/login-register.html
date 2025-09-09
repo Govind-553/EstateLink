@@ -344,6 +344,105 @@
             }
         }
 
+        /* Pop-up Overlay styles */
+#custom-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1001; /* Ensure it's on top of other content */
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* Pop-up Card styles */
+.custom-popup-card {
+    background-color: var(--bg-white);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+}
+
+/* Hide the pop-up by default */
+.popup-hidden {
+    visibility: hidden;
+    opacity: 0;
+}
+
+/* Show the pop-up with a smooth animation */
+.popup-visible {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Adjust button styles to match your design */
+.custom-popup-buttons {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 1.5rem;
+}
+
+.custom-popup-buttons .btn {
+    width: 45%;
+    /* Add any other button styles */
+}
+
+@media (max-width: 768px) {
+    .main-container {
+        flex-direction: column; /* Stacks panels vertically */
+        height: auto;
+        width: 95%; /* Adjusts width for a better fit on smaller screens */
+        border-radius: 12px;
+        margin: 0 auto;
+    }
+
+    .left-panel {
+        width: 100%; /* Makes the left panel take full width */
+        height: 25vh; /* Adjusts height for mobile view */
+        padding: 1rem;
+    }
+
+    .left-panel h1 {
+        font-size: 1.6rem;
+    }
+
+    .left-panel p {
+        font-size: 0.8rem;
+    }
+
+    .right-panel {
+        width: 100%; /* Makes the right panel take full width */
+    }
+
+    .form-container {
+        padding: 1.5rem;
+    }
+
+    .form-container h2 {
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .otp-row {
+        gap: 5px;
+    }
+    
+    .otp-input {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+}
+
     </style>
 </head>
 <body>
@@ -373,6 +472,19 @@
             </div>
         </div>
     </main>
+
+    <div id="custom-popup-overlay" class="popup-hidden">
+  <div class="custom-popup-card">
+    <div class="custom-popup-content">
+      <h3 id="popup-title"></h3>
+      <p id="popup-message"></p>
+    </div>
+    <div class="custom-popup-buttons">
+      <button id="popup-ok-btn" class="btn">OK</button>
+      <button id="popup-close-btn" class="btn">Close</button>
+    </div>
+  </div>
+</div>
 
     <script type = "module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
@@ -452,8 +564,12 @@ function setupRecaptchaForgot() {
                     <p class="message-text">Don't have an account? <a href="#" id="showRegisterLink">Sign up</a></p>
                 `;
                 setupEventListeners();
+<<<<<<< HEAD
                 //setupRecaptcha('recaptcha-container-login', 'loginSendOtpBtn', 'loginMobile');
                 
+=======
+                setupRecaptcha('recaptcha-container-login', 'loginSendOtpBtn', 'loginMobile');
+>>>>>>> 9cfbaafd7ca99a9877fc0821c15fc11b39224a20
             };
 
             const renderRegisterForm = () => {
@@ -543,7 +659,7 @@ function setupRecaptchaForgot() {
                         e.preventDefault();
     
                         if (!lastPhoneNumber || !lastPhoneNumber.startsWith("+91")) {
-                            alert('Phone number not found. Please go back and enter your number again.');
+                            showCustomPopup('Phone number not found. Please go back and enter your number again.');
                             return;
                         }
 
@@ -552,10 +668,10 @@ function setupRecaptchaForgot() {
                             // Make sure phone is in +E.164 formate
                             confirmationResult = await signInWithPhoneNumber(auth, lastPhoneNumber, recaptchaForgot);
                             window.confirmationResult = confirmationResult;
-                            alert('OTP resent!');
+                            showCustomPopup('OTP resent!');
                         } catch (error) {
                             console.error(error);
-                            alert('Error resending OTP: ' + error.message);
+                            showCustomPopup('Error resending OTP: ' + error.message);
                         }
                     });
                 };
@@ -573,7 +689,7 @@ function setupRecaptchaForgot() {
                                     console.log("reCAPTCHA solved:", response);
                                 },
                                 "expired-callback": () => {
-                                    alert("reCAPTCHA expired. Please try again.");
+                                    showCustomPopup("reCAPTCHA expired. Please try again.");
                                 }
                             }, auth);
                     
@@ -595,7 +711,7 @@ function setupRecaptchaForgot() {
 
             // Validate Indian mobile number
             if (!/^\+91[6-9]\d{9}$/.test(phoneNumber)) {
-                alert("Please enter a valid 10-digit Indian mobile number.");
+                showCustomPopup("Please enter a valid 10-digit Indian mobile number.");
                 return;
             }
 
@@ -604,11 +720,11 @@ function setupRecaptchaForgot() {
                 confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, recaptchaForgot);
                 window.confirmationResult = confirmationResult; // store globally
                 lastPhoneNumber = phoneNumber;
-                alert("OTP sent!");
+                showCustomPopup("OTP sent!");
                 renderOtpForm(lastMode, phoneNumber); // show OTP form
             } catch (error) {
                 console.error(error);
-                alert("Error sending OTP: " + error.message);
+                showCustomPopup("Error sending OTP: " + error.message);
             }
         });
         sendOtpBtn.dataset.listenerAdded = "true"; // mark listener added
@@ -726,6 +842,7 @@ function setupRecaptchaForgot() {
                             })
                         });
 
+<<<<<<< HEAD
                                  const data = await response.json();
 
                                 if (response.ok) {
@@ -741,6 +858,15 @@ function setupRecaptchaForgot() {
                     });
 
                 //this link help to change the number on otp verification page.
+=======
+                    if (mobileInput === dummyUser.mobile && passwordInput === dummyUser.password) {
+                        showCustomPopup("Login successful! Redirecting to home page.");
+                        window.location.href = "../frontend/home.html";
+                    } else {
+                        showCustomPopup("Invalid mobile number or password. Please try again.");
+                    }
+                });
+>>>>>>> 9cfbaafd7ca99a9877fc0821c15fc11b39224a20
                 const changeNumberLink = document.getElementById('changeNumberLink');
                 if (changeNumberLink) changeNumberLink.addEventListener('click', (e) => {
                     e.preventDefault();
@@ -762,6 +888,7 @@ function setupRecaptchaForgot() {
                         return;
                     }
 
+<<<<<<< HEAD
                     try {
                         // Make sure phone is in +E.164 format
                         setupRecaptchaRegister();
@@ -769,6 +896,35 @@ function setupRecaptchaForgot() {
                         confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, recaptchaRegister);
                         window.confirmationResult = confirmationResult;
                         alert("OTP sent for registration!");
+=======
+               const registerForm = document.getElementById('registerForm');
+if (registerForm) registerForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const phoneNumber = "+91" + document.getElementById('regMobile').value;
+
+    if (!/^\+91[6-9]\d{9}$/.test(phoneNumber)) {
+        showCustomPopup("Please enter a valid 10-digit mobile number.");
+        return;
+    }
+
+    try {
+        // Make sure phone is in +E.164 format
+        setupRecaptchaRegister();
+
+        confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, recaptchaRegister);
+        window.confirmationResult = confirmationResult;
+        showCustomPopup("OTP sent for registration!");
+
+        // When user fills registration form
+tempFullName = document.getElementById("regName").value;
+tempPassword = document.getElementById("regPassword").value;
+
+        renderOtpForm("register", phoneNumber);
+    } catch (error) {
+        showCustomPopup("Error sending OTP: " + error.message);
+    }
+});
+>>>>>>> 9cfbaafd7ca99a9877fc0821c15fc11b39224a20
 
                         // When user fills registration form
                         // Store name and password temporarily, in the flow after OTP verification it can be used, if needed.
@@ -788,7 +944,7 @@ function setupRecaptchaForgot() {
                     const phoneNumber = '+91' + document.getElementById('fpMobile').value;
 
                     if (!/^\+91[6-9]\d{9}$/.test(phoneNumber)) {
-                        alert("Please enter a valid 10-digit mobile number.");
+                        showCustomPopup("Please enter a valid 10-digit mobile number.");
                         return;
                     }
 
@@ -796,10 +952,10 @@ function setupRecaptchaForgot() {
                         setupRecaptchaForgot();
                         confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, recaptchaForgot);
                         window.confirmationResult = confirmationResult;
-                        alert("OTP sent for password reset!");
+                        showCustomPopup("OTP sent for password reset!");
                         renderOtpForm("forgotPassword", phoneNumber);
                     } catch (error) {
-                        alert("Error sending OTP: " + error.message);
+                        showCustomPopup("Error sending OTP: " + error.message);
                     }
                 });
  
@@ -810,10 +966,10 @@ function setupRecaptchaForgot() {
                     const newPass = document.getElementById('newPassword').value;
                     const confirmPass = document.getElementById('confirmPassword').value;
                     if (newPass === confirmPass) {
-                        alert("Password updated successfully. Navigating back to login.");
+                        showCustomPopup("Password updated successfully. Navigating back to login.");
                         renderVerificationPage();
                     } else {
-                        alert("Passwords do not match. Please try again.");
+                        showCustomPopup("Passwords do not match. Please try again.");
                     }
                 });
             };
@@ -854,14 +1010,14 @@ function setupRecaptchaForgot() {
                     const otp = Array.from(otpInputs).map(input => input.value).join('');
 
                     if (otp.length !== 6) {
-                        alert("Please enter a valid 6-digit OTP.");
+                        showCustomPopup("Please enter a valid 6-digit OTP.");
                         return;
                     }
 
                     try {
                         const result = await window.confirmationResult.confirm(otp);
                         const user = result.user;
-                        alert("OTP verified! Phone: " + user.phoneNumber);
+                        showCustomPopup("OTP verified! Phone: " + user.phoneNumber);
                         if (mode === "forgotPassword") {
                             // Handle forgot password flow
                             //alert(".");
@@ -874,7 +1030,7 @@ function setupRecaptchaForgot() {
 
                                 // Basic validation
                                 if (!fullName || !password) {
-                                    alert("Name or password field not found in the DOM!");
+                                    showCustomPopup("Name or password field not found in the DOM!");
                                     return;
                                 }  
                         
@@ -892,14 +1048,14 @@ function setupRecaptchaForgot() {
                                 const data = await response.json();
                         
                                 if (response.ok) {
-                                    alert("✅ " + data.message);
+                                    showCustomPopup("✅ " + data.message);
                                     renderRegistrationConfirmPage(); // show success page
                                 } else {
-                                    alert("❌ " + data.message);
+                                    showCustomPopup("❌ " + data.message);
                                 }
                             } catch (error) {
                                 console.error("API error:", error);
-                                alert("Error registering user: " + error.message);
+                                showCustomPopup("Error registering user: " + error.message);
                             }
                         }
 
@@ -907,7 +1063,7 @@ function setupRecaptchaForgot() {
                         // window.location.href = "../frontend/home.html"; // Example redirect
                     } catch (error) {
                         console.error("OTP verification failed:", error);
-                        alert("OTP verification failed: " + error.message);
+                        showCustomPopup("OTP verification failed: " + error.message);
                     }
                 });
             };
@@ -917,6 +1073,47 @@ function setupRecaptchaForgot() {
 
     document.addEventListener('DOMContentLoaded', setupFirebaseAndForms);
 
+    // A single function to display your custom pop-up.
+function showCustomPopup(message, title = "Notification", onOk = null, showClose = false) {
+    const overlay = document.getElementById('custom-popup-overlay');
+    const popupTitle = document.getElementById('popup-title');
+    const popupMessage = document.getElementById('popup-message');
+    const okBtn = document.getElementById('popup-ok-btn');
+    const closeBtn = document.getElementById('popup-close-btn');
+
+    popupTitle.textContent = title;
+    popupMessage.textContent = message;
+
+    // Show or hide the close button based on the function call
+    closeBtn.style.display = showClose ? 'inline-block' : 'none';
+
+    // Clear previous event listeners to prevent multiple actions
+    okBtn.onclick = null;
+    closeBtn.onclick = null;
+
+    // Set up button actions
+    okBtn.onclick = () => {
+        if (onOk) onOk(); // Run the callback function if it exists
+        hideCustomPopup();
+    };
+
+    closeBtn.onclick = () => {
+        hideCustomPopup();
+    };
+
+    // Show the pop-up
+    overlay.classList.remove('popup-hidden');
+    overlay.classList.add('popup-visible');
+    document.querySelector('.custom-popup-card').style.transform = 'scale(1)';
+}
+
+// Function to hide the pop-up
+function hideCustomPopup() {
+    const overlay = document.getElementById('custom-popup-overlay');
+    overlay.classList.remove('popup-visible');
+    overlay.classList.add('popup-hidden');
+    document.querySelector('.custom-popup-card').style.transform = 'scale(0.9)';
+}
     </script>
 </body>
 </html>
