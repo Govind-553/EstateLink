@@ -80,7 +80,7 @@ export const loginUser = async (req, res) => {
         }
         
         //mobileNumber length restriction
-        if (mobileNumber.length !== 10) {
+        if (mobileNumber.length !== 13 || !/^\+91[6-9]\d{9}$/.test(mobileNumber)) {
             return res.status(400).json({
                 message: "mobile Number should be of only 10 digit"
             });

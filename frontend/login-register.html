@@ -647,30 +647,6 @@ function setupRecaptchaForgot() {
                     setupOtpLogic(mode, phoneNumber);
                     setupEventListeners();
 
-                    // Add resend OTP logic
-                const resendOtpLink = document.getElementById('resendOtpLink');
-                    if (resendOtpLink) {
-                        resendOtpLink.addEventListener('click', async (e) => {
-                        e.preventDefault();
-    
-                        if (!lastPhoneNumber || !lastPhoneNumber.startsWith("+91")) {
-                            showCustomPopup('Phone number not found. Please go back and enter your number again.');
-                            return;
-                        }
-
-                        try {
-                            recaptchaForgot();
-                            // Make sure phone is in +E.164 formate
-                            confirmationResult = await signInWithPhoneNumber(auth, lastPhoneNumber, recaptchaForgot);
-                            window.confirmationResult = confirmationResult;
-                            showCustomPopup('OTP resent!');
-                        } catch (error) {
-                            console.error(error);
-                            showCustomPopup('Error resending OTP: ' + error.message);
-                        }
-                    });
-                };
-
                 const setupRecaptcha = (containerId, buttonId, loginMobile) => {
                         // Create reCAPTCHA only once
                         if (recaptchaVerifier) {                     
@@ -699,7 +675,7 @@ function setupRecaptchaForgot() {
 
 
             const renderPasswordResetForm = () => {
-                formContainer.innerHTML = `s
+                formContainer.innerHTML = `
                     <h2>Set New Password</h2>
                     <form id="newPasswordForm">
                         <div class="input-group">
@@ -803,7 +779,7 @@ function setupRecaptchaForgot() {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify({
-                                mobileNumber: mobileInput, // verified mobile from OTP
+                                mobileNumber: "+91" + mobileInput, // verified mobile from OTP
                                 password: passwordInput
                             })
                         });
@@ -864,6 +840,34 @@ function setupRecaptchaForgot() {
                     }
                 });
 
+                const resendOtpLink = document.getElementById('resendOtpLink');
+if (resendOtpLink) {
+    resendOtpLink.addEventListener('click', async (e) => {
+        e.preventDefault();
+
+        const lastPhoneNumber = localStorage.getItem("tempContact");
+
+        if (!lastPhoneNumber || !lastPhoneNumber.startsWith("+91")) {
+            showCustomPopup('Phone number not found. Please go back and enter your number again.');
+            return;
+        }
+
+        try {
+            // Re-initialize recaptcha each time
+            setupRecaptchaForgot();
+
+            // Send OTP again
+            confirmationResult = await signInWithPhoneNumber(auth, lastPhoneNumber, recaptchaForgot);
+            window.confirmationResult = confirmationResult;
+
+            showCustomPopup('✅ OTP resent successfully!');
+        } catch (error) {
+            console.error("Resend OTP error:", error);
+            showCustomPopup('❌ Error resending OTP: ' + error.message);
+        }
+    });
+}
+
                 //this form help to send the otp for forgot password.
                 const forgotPasswordForm = document.getElementById('forgotPasswordForm');
                 if (forgotPasswordForm) forgotPasswordForm.addEventListener('submit', async (e) => {
@@ -882,14 +886,14 @@ function setupRecaptchaForgot() {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify({
-                                contact: mobileInput, // verified mobile from OTP
+                                contact: phoneNumber, // verified mobile from OTP
                             })
                         });
                         const data = await response.json();
 
                         //if the response is not ok, then show the error message.
                         if (!response.ok) {
-                            showCustomPopup("❌ " + data.message);
+                            showCustomPopup("❌ " + data.msg);
                             return;
                         }
 
@@ -898,8 +902,8 @@ function setupRecaptchaForgot() {
                         confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, recaptchaForgot);
                         window.confirmationResult = confirmationResult;
                         // Save mobile for reset-password API call later
-                        localStorage.setItem("tempContact", mobileInput);
-                        tempContact = mobileInput;
+                        localStorage.setItem("tempContact", phoneNumber);
+                        tempContact =  phoneNumber;
                         showCustomPopup("OTP sent for password reset!");
                         renderOtpForm("forgotPassword", phoneNumber);
                         
@@ -922,16 +926,16 @@ function setupRecaptchaForgot() {
         const response = await fetch("http://localhost:3000/api/users/reset-password", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ mobileNumber: tempContact, confirmPassword: confirmPass, newPassword: newPass })
+            body: JSON.stringify({ contact: mobileNumber, confirmPassword: confirmPass, newPassword: newPass })
         });
 
         const data = await response.json();
         if (response.ok) {
-            showCustomPopup("✅ /" + data.message);
+            showCustomPopup("✅ " + data.message);
             localStorage.removeItem("tempContact"); // cleanup
-            window.location.href = "login.html"; // go back to login
+            renderRegistrationConfirmPage();
         } else {
-            showCustomPopup("❌ " + data.message);
+            showCustomPopup("❌ " + data.msg);
         }
     } catch (err) {
         console.error("API error:", err);
