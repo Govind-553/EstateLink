@@ -187,32 +187,47 @@
   </main>
 
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // Toggle password visibility
-      const togglePassword = document.querySelector('.toggle-password');
-      togglePassword.addEventListener('click', () => {
-        const passwordInput = document.getElementById('password');
-        const type = passwordInput.type === 'password' ? 'text' : 'password';
-        passwordInput.type = type;
-        togglePassword.classList.toggle('fa-eye');
-        togglePassword.classList.toggle('fa-eye-slash');
+  
+document.addEventListener('DOMContentLoaded', () => {
+  const togglePassword = document.querySelector('.toggle-password');
+  togglePassword.addEventListener('click', () => {
+    const passwordInput = document.getElementById('password');
+    const type = passwordInput.type === 'password' ? 'text' : 'password';
+    passwordInput.type = type;
+    togglePassword.classList.toggle('fa-eye');
+    togglePassword.classList.toggle('fa-eye-slash');
+  });
+
+  document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const mobile = document.getElementById('mobile').value;
+    const password = document.getElementById('password').value;
+
+    try {
+      const res = await fetch("http://localhost:3000/api/admins/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mobileNumber: mobile, password })
       });
 
-      // Handle login form submit
-      document.getElementById('loginForm').addEventListener('submit', (e) => {
-        e.preventDefault();
-        const mobile = document.getElementById('mobile').value;
-        const password = document.getElementById('password').value;
+      const data = await res.json();
 
-        // Dummy check → always redirect if credentials match
-        if (mobile === "9876543210" && password === "password123") {
-          alert("Login successful! Redirecting to Admin Dashboard...");
-          window.location.href = "admin.html"; // redirect directly
-        } else {
-          alert("Invalid mobile number or password.");
-        }
-      });
-    });
+      if (res.ok && data.token) {
+        // Save JWT in sessionStorage
+        sessionStorage.setItem("token", data.token);
+        alert("Login successful! Redirecting...");
+        window.location.href = "admin-dashboard.html";
+      } else {
+        alert(data.message || "Invalid login credentials");
+      }
+    } catch (err) {
+      console.error("Error:", err);
+      alert("Something went wrong. Please try again.");
+    }
+  });
+});
+
   </script>
 </body>
 </html>

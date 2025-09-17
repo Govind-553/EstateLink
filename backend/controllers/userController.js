@@ -1,68 +1,64 @@
+// userController.js
+
 import User from '../models/User.js';
 import bcrypt from "bcrypt";
 import express from 'express';
 import jwt from "jsonwebtoken";
-//import admin from "firebase-admin";
 import { generateRefreshToken, generateAccessToken, sendTokenResponse } from './jwtController.js';
 
+// ---- Global in-memory pending user store ----
+const pendingUsers = {};  
 
 //Route 1 - Register user
 export const registerUser = async (req, res) => {
     const { fullName, mobileNumber, password } = req.body;
-    // Temporary in-memory store for OTP verification
-    const pendingUsers = {};
 
-
-
-    try{
-    // --- Basic Validation ---
-    if (!fullName || !mobileNumber || !password) {
-        return res.status(400).json({ msg: 'Please enter all fields.' });
-    }
-
-    // Optional: Check if a user with the same mobile number already exists
-    const existingUser = await User.findOne({ mobileNumber });
-    if (existingUser) {
-        return res.status(400).json({ msg: 'A user with this mobile number already exists.' });
-    }
-
-    // Password length check
-    if (password.length < 6) {
-        return res.status(400).json({ msg: 'Password must be at least 6 characters long.' });
-    }
-    
-    // password hashing
-    const salt = await bcrypt.genSalt(10);
-    const hashpassword = await bcrypt.hash(password, salt);
-
-    // Store in pending until OTP verified
-    pendingUsers[mobileNumber] = {fullName: fullName, mobileNumber: mobileNumber, password: hashpassword };
-
-    // creating new user.
-    const newUser = new User({
-        fullName,
-        mobileNumber,
-        password: hashpassword,
-    });
-
-    // Save the new user to the database
-    await newUser.save();
-
-    //Respond with the saved user data
-    res.status(201).json({
-        status: 'success',
-        message: 'User registered successfully',
-        data: {
-            fullName: newUser.fullName,
-            contact: newUser.mobileNumber,
-            password: newUser.password,
+    try {
+        // --- Basic Validation ---
+        if (!fullName || !mobileNumber || !password) {
+            return res.status(400).json({ msg: 'Please enter all fields.' });
         }
-    });
-    return res.json({
-    message: "User pending, OTP sent. Please verify",
-    mobileNumber: mobileNumber,
-  });
-} catch (error) {
+
+        // Optional: Check if a user with the same mobile number already exists
+        const existingUser = await User.findOne({ mobileNumber });
+        if (existingUser) {
+            return res.status(400).json({ msg: 'A user with this mobile number already exists.' });
+        }
+
+        // Password length check
+        if (password.length < 6) {
+            return res.status(400).json({ msg: 'Password must be at least 6 characters long.' });
+        }
+        
+        // password hashing
+        const salt = await bcrypt.genSalt(10);
+        const hashpassword = await bcrypt.hash(password, salt);
+
+        // Store in pending until OTP verified
+        pendingUsers[mobileNumber] = { 
+            fullName, 
+            mobileNumber, 
+            password: hashpassword 
+        };
+
+        // creating new user directly (you can change this to only save after OTP)
+        const newUser = new User({
+            fullName,
+            mobileNumber,
+            password: hashpassword,
+        });
+
+        await newUser.save();
+
+        res.status(201).json({
+            status: 'success',
+            message: 'User registered successfully (OTP pending)',
+            data: {
+                fullName: newUser.fullName,
+                contact: newUser.mobileNumber
+            }
+        });
+    } catch (error) {
         console.error('Error registering user:', error);
         res.status(500).json({ msg: 'Server error. Please try again later.' });
     }  
@@ -74,22 +70,13 @@ export const loginUser = async (req, res) => {
     try {
         //Basic validation
         if (!mobileNumber || !password) {
-            return res.status(400).json({
-                msg: 'Please enter all fields.'
-            });
-        }
-        
-        //mobileNumber length restriction
-        if (mobileNumber.length !== 13 || !/^\+91[6-9]\d{9}$/.test(mobileNumber)) {
-            return res.status(400).json({
-                message: "mobile Number should be of only 10 digit"
-            });
+            return res.status(400).json({ msg: 'Please enter all fields.' });
         }
 
         // Password length check
         if (password.length < 6) {
             return res.status(400).json({
-                message: "Password should be at least of 6 characters."
+                message: "Password should be at least 6 characters."
             });
         }
 
@@ -103,11 +90,11 @@ export const loginUser = async (req, res) => {
             const isMatch = await bcrypt.compare(password, existingUser.password);
             if (!isMatch) {
                 return res.status(400).json({
-                    message: "Password do not match."
+                    message: "Password does not match."
                 });
             }
 
-            // If login is successful, you can return user data or a token
+            // If login is successful, return a token
             res.status(200).json({
                 status: 'success',
                 message: 'User logged in successfully',
@@ -118,31 +105,23 @@ export const loginUser = async (req, res) => {
     } catch (error) {
         console.error('Error logging in user:', error);
         res.status(500).json({ msg: 'Server error. Please try again later.' });
-        }
+    }
 };
 
 //Route 3 - Forgot Password (password reset request)
 export const forgotPassword = async (req, res) => {
-    // Extract the mobile number from the request body    
     const { contact } = req.body;
-     // Basic validation
-        if (!contact) {
-            return res.status(400).json({ msg: 'Please enter your mobile number.' });
-        }
+
+    if (!contact) {
+        return res.status(400).json({ msg: 'Please enter your mobile number.' });
+    }
 
     try {
-        // Check if the user exists
         const existingUser = await User.findOne({ mobileNumber: contact });
         if (!existingUser) {
             return res.status(400).json({ msg: 'Mobile number is not registered.' });
         }
 
-        // Generate a password reset token (you can use a library like jsonwebtoken)
-        //const resetToken = existingUser.generateResetToken();
-
-        // Send the reset token to the user's email or mobile number
-        // (For simplicity, we'll just return it in the response)
-        // Just confirm user exists
         res.status(200).json({
             status: "success",
             message: "User exists. Proceed with OTP verification using Firebase.",
@@ -154,7 +133,7 @@ export const forgotPassword = async (req, res) => {
     }
 };
 
-//route 9 - resetpassword 
+//route 4 - reset password 
 export const resetPassword = async (req, res) => {
     const { contact, confirmPassword, newPassword } = req.body;
 
@@ -171,19 +150,14 @@ export const resetPassword = async (req, res) => {
     }   
      
     try {
-        //pendingUsers[mobileNumber] = { mobileNumber: mobileNumber };
-
-        // Find user
         const user = await User.findOne({ mobileNumber: contact });
         if (!user) {
             return res.status(400).json({ msg: "User not found." });
         }
 
-        // Hash new password
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(newPassword, salt);
 
-        // Save new password
         user.password = hashedPassword;
         await user.save();
 
@@ -198,50 +172,32 @@ export const resetPassword = async (req, res) => {
     }
 };
 
-
 //Route 5 - verify-otp
 export const verifyOtp = async (req, res) => {
     const { mobileNumber, otp, verificationId } = req.body;
 
-    // Basic validation
     if (!mobileNumber || !otp || !verificationId) {
         return res.status(400).json({ msg: 'Please enter all fields.' });
     }
 
     try {
-
-        const decodedToken = await admin.auth().verifyIdToken(verificationId);
-
-        // Verify the OTP
-        if (!decodedToken) {
-          return res.status(400).json({ error: "Invalid OTP" });
-        }
-
-        // Move from pending to registered users
+        // TODO: integrate Firebase or other OTP verification
         const user = pendingUsers[mobileNumber];
         if (!user) {
-          return res.status(400).json({ error: "No pending user found" });
+            return res.status(400).json({ error: "No pending user found" });
         }
 
-        // Generate JWT for login session
         const token = jwt.sign({ mobileNumber }, "SECRET_KEY", { expiresIn: "1h" });
 
-        // If OTP is valid, create the user
-        const newUser = new User({
-            fullName: user.fullName,
-            mobileNumber: user.mobileNumber,
-            password: user.password,
-        });
-
-        await newUser.save();
         delete pendingUsers[mobileNumber]; // Remove from pendingUsers
 
         res.status(201).json({
             status: 'success',
-            message: 'User registered successfully',
+            message: 'OTP verified, user registered',
             data: {
-                fullName: newUser.fullName,
-                contact: newUser.mobileNumber,
+                fullName: user.fullName,
+                contact: user.mobileNumber,
+                token
             }
         });
     } catch (error) {
@@ -250,16 +206,14 @@ export const verifyOtp = async (req, res) => {
     }
 };
 
-//Route 8 - logout User
-// logout.controller.js
+//Route 6 - logout User
 export const logout = async (req, res) => {
     try {
-        // Clear the refreshToken cookie
         res.clearCookie("refreshToken", {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             sameSite: "Strict",
-            path: "/" // ensures cookie is cleared site-wide
+            path: "/"
         });
 
         res.status(200).json({

@@ -7,6 +7,7 @@ import userRoutes from "./routes/userRoutes.js";
 import rentRoutes from "./routes/rentRoutes.js";
 import sellRoutes from "./routes/sellRoutes.js";
 import cookieParser from "cookie-parser";
+import adminRoutes from "./routes/adminRoutes.js";
 //import { firebaseconfig } from "./controllers/firebase.js";
 //import { verifyAccessToken } from "./middleware/userAuth.js";
 //import { checkAdminNumber } from "./middleware/checkAdminNumber.js";
@@ -22,6 +23,7 @@ app.use(cookieParser()); // Optional if you're handling cookies
 app.use('/api/users', userRoutes);
 app.use('/api/rentflats', rentRoutes);
 app.use('/api/sellflats', sellRoutes);
+app.use("/api/admins", adminRoutes);
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI)
