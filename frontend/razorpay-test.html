@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Razorpay Subscription</title>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+  <h2>🔔 Razorpay Subscription Test</h2>
+  <button id="subscribeBtn">Subscribe Now</button>
+
+  <script>
+    document.getElementById("subscribeBtn").addEventListener("click", async () => {
+      try {
+        // Actual MongoDB user _id
+        const testUserId = "68cf7b702567de9357794c5b";  
+
+        // Call backend to create subscription
+        const response = await fetch("http://localhost:3000/api/payment/create-subscription", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId: testUserId }),
+        });
+
+        const data = await response.json();
+        console.log("Backend response:", data);
+
+        if (!data.subscriptionId) {
+          alert("Failed to create subscription. Check backend logs.");
+          return;
+        }
+
+        // Open Razorpay checkout popup
+        const options = {
+          key: "rzp_test_ZxNdYbzCa0cpti", 
+          subscription_id: data.subscriptionId,
+          name: "Flatmate Platform",
+          description: "Premium Subscription Plan",
+          handler: function (response) {
+            alert("✅ Payment Successful!\nPayment ID: " + response.razorpay_payment_id);
+            console.log("Razorpay Response:", response);
+          },
+          theme: { color: "#3399cc" },
+        };
+
+        const rzp = new Razorpay(options);
+        rzp.open();
+      } catch (error) {
+        console.error("Error:", error);
+        alert("Error starting subscription.");
+      }
+    });
+  </script>
+</body>
+</html>

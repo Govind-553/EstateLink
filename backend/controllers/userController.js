@@ -1,211 +1,195 @@
-import bcrypt from "bcryptjs";
+import User from '../models/User.js';
+import bcrypt from "bcrypt";
+import express from 'express';
 import jwt from "jsonwebtoken";
-import User from "../models/User.js";
+import { generateRefreshToken, generateAccessToken, sendTokenResponse } from './jwtController.js';
 
-/**
- * Register new user
- */
+// ---- Global in-memory pending user store ----
+const pendingUsers = {};  
+
+//Route 1 - Register user
 export const registerUser = async (req, res) => {
-  try {
     const { fullName, mobileNumber, password } = req.body;
 
-    // Check if user already exists
-    const existingUser = await User.findOne({ mobileNumber });
-    if (existingUser) {
-      return res.status(400).json({
-        status: "failed",
-        message: "User already exists with this mobile number",
-      });
-    }
+    try {
+        if (!fullName || !mobileNumber || !password) {
+            return res.status(400).json({ msg: 'Please enter all fields.' });
+        }
 
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
+        const existingUser = await User.findOne({ mobileNumber });
+        if (existingUser) {
+            return res.status(400).json({ msg: 'A user with this mobile number already exists.' });
+        }
 
-    // Create new user
-    const newUser = new User({
-      fullName,
-      mobileNumber,
-      password: hashedPassword,
-      registrationDate: new Date(),
-      subscriptionActive: false, // default until subscribed
-    });
+        if (password.length < 6) {
+            return res.status(400).json({ msg: 'Password must be at least 6 characters long.' });
+        }
+        
+        const salt = await bcrypt.genSalt(10);
+        const hashpassword = await bcrypt.hash(password, salt);
 
-    await newUser.save();
+        pendingUsers[mobileNumber] = { 
+            fullName, 
+            mobileNumber, 
+            password: hashpassword 
+        };
 
-    res.status(201).json({
-      status: "success",
-      message: "User registered successfully",
-      user: {
-        id: newUser._id,
-        fullName: newUser.fullName,
-        mobileNumber: newUser.mobileNumber,
-      },
-    });
-  } catch (error) {
-    console.error("Error in registerUser:", error.message);
-    res.status(500).json({
-      status: "failed",
-      message: "Server error",
-    });
-  }
+        const newUser = new User({
+            fullName,
+            mobileNumber,
+            password: hashpassword,
+            subscriptionActive: true, // ✅ Give trial by default
+            subscriptionExpiry: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // ✅ 7 days free
+        });
+
+        await newUser.save();
+
+        res.status(201).json({
+            status: 'success',
+            message: 'User registered successfully (OTP pending)',
+            data: {
+                fullName: newUser.fullName,
+                contact: newUser.mobileNumber
+            }
+        });
+    } catch (error) {
+        console.error('Error registering user:', error);
+        res.status(500).json({ msg: 'Server error. Please try again later.' });
+    }  
 };
 
-/**
- * Login user
- */
+//Route 2 - Login user 
 export const loginUser = async (req, res) => {
-  try {
-    const { mobileNumber, password } = req.body;
-
-    // Find user
-    const user = await User.findOne({ mobileNumber });
-    if (!user) {
-      return res.status(404).json({
-        status: "failed",
-        message: "User not found",
-      });
-    }
-
-    // Check password
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({
-        status: "failed",
-        message: "Invalid credentials",
-      });
-    }
-
-    // Trial and subscription check
-    const trialPeriodDays = 7;
-    const today = new Date();
-    const daysSinceRegistration = Math.floor(
-      (today - user.registrationDate) / (1000 * 60 * 60 * 24)
-    );
-
-    if (daysSinceRegistration > trialPeriodDays && !user.subscriptionActive) {
-      return res.status(403).json({
-        status: "failed",
-        message: "Please subscribe to continue.",
-      });
-    }
-
-    // Generate JWT
-    const token = jwt.sign(
-      {
-        userId: user._id,
-        mobileNumber: user.mobileNumber,
-      },
-      process.env.JWT_ACCESS_TOKEN_SECRET,
-      { expiresIn: "1h" }
-    );
-
-    res.status(200).json({
-      status: "success",
-      message: "Login successful",
-      token,
-      user: {
-        id: user._id,
-        fullName: user.fullName,
-        mobileNumber: user.mobileNumber,
-        subscriptionActive: user.subscriptionActive,
-      },
-    });
-  } catch (error) {
-    console.error("Error in loginUser:", error.message);
-    res.status(500).json({
-      status: "failed",
-      message: "Server error",
-    });
-  }
-};
-
-/**
- * Forgot Password (send OTP)
- */
-export const forgotPassword = async (req, res) => {
-  try {
-    const { mobileNumber } = req.body;
-
-    const user = await User.findOne({ mobileNumber });
-    if (!user) {
-      return res.status(404).json({
-        status: "failed",
-        message: "User not found",
-      });
-    }
-
-    // Normally: generate OTP, send via SMS/Email
-    const otp = Math.floor(100000 + Math.random() * 900000);
-
-    // For demo, save OTP in user (not secure for production)
-    user.resetOtp = otp;
-    user.resetOtpExpiry = Date.now() + 10 * 60 * 1000; // 10 min
-    await user.save();
-
-    res.status(200).json({
-      status: "success",
-      message: "OTP sent successfully",
-      otp, // ⚠️ In production, don't send OTP in response
-    });
-  } catch (error) {
-    console.error("Error in forgotPassword:", error.message);
-    res.status(500).json({
-      status: "failed",
-      message: "Server error",
-    });
-  }
-};
-
-/**
- * Reset Password (verify OTP + set new password)
- */
-export const resetPassword = async (req, res) => {
-  try {
-    const { mobileNumber, otp, newPassword } = req.body;
-
-    const user = await User.findOne({ mobileNumber });
-    if (!user || user.resetOtp !== Number(otp) || user.resetOtpExpiry < Date.now()) {
-      return res.status(400).json({
-        status: "failed",
-        message: "Invalid or expired OTP",
-      });
-    }
-
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
-    user.password = hashedPassword;
-    user.resetOtp = undefined;
-    user.resetOtpExpiry = undefined;
-
-    await user.save();
-
-    res.status(200).json({
-      status: "success",
-      message: "Password reset successful",
-    });
-  } catch (error) {
-    console.error("Error in resetPassword:", error.message);
-    res.status(500).json({
-      status: "failed",
-      message: "Server error",
-    });
-  }
-};
-
-/**
- * Admin Login
- */
-export const adminLogin = async (req, res) => {
-  try {
     const { mobileNumber, password } = req.body;
     try {
-        // Check if admin exists
+        if (!mobileNumber || !password) {
+            return res.status(400).json({ msg: 'Please enter all fields.' });
+        }
+
+        if (password.length < 6) {
+            return res.status(400).json({
+                message: "Password should be at least 6 characters."
+            });
+        }
+
+        const existingUser = await User.findOne({ mobileNumber });
+        if (!existingUser) {
+            return res.status(400).json({
+                message: "Mobile number is not registered."
+            });
+        } 
+
+        const isMatch = await bcrypt.compare(password, existingUser.password);
+        if (!isMatch) {
+            return res.status(400).json({
+                message: "Password does not match."
+            });
+        }
+
+        // ✅ Check subscription validity
+        let subscriptionActive = existingUser.subscriptionActive;
+        if (existingUser.subscriptionExpiry && existingUser.subscriptionExpiry < new Date()) {
+            subscriptionActive = false;
+            existingUser.subscriptionActive = false;
+            await existingUser.save();
+        }
+
+        if (!subscriptionActive) {
+            return res.status(403).json({
+                message: "Your trial/subscription has expired. Please subscribe to continue.",
+                subscriptionActive: false
+            });
+        }
+
+        // If login is successful
+        res.status(200).json({
+            status: 'success',
+            message: 'User logged in successfully',
+            userId: existingUser._id,
+            subscriptionActive: existingUser.subscriptionActive,
+            subscriptionExpiry: existingUser.subscriptionExpiry,
+            token: generateAccessToken(existingUser.mobileNumber),
+        });
+
+    } catch (error) {
+        console.error('Error logging in user:', error);
+        res.status(500).json({ msg: 'Server error. Please try again later.' });
+    }
+};
+
+//Route 3 - Forgot Password
+export const forgotPassword = async (req, res) => {
+    const { contact } = req.body;
+
+    if (!contact) {
+        return res.status(400).json({ msg: 'Please enter your mobile number.' });
+    }
+
+    try {
+        const existingUser = await User.findOne({ mobileNumber: contact });
+        if (!existingUser) {
+            return res.status(400).json({ msg: 'Mobile number is not registered.' });
+        }
+
+        res.status(200).json({
+            status: "success",
+            message: "User exists. Proceed with OTP verification using Firebase.",
+        });
+
+    } catch (error) {
+        console.error('Error processing forgot password request:', error);
+        res.status(500).json({ msg: 'Server error. Please try again later.' });
+    }
+};
+
+//Route 4 - reset password 
+export const resetPassword = async (req, res) => {
+    const { contact, confirmPassword, newPassword } = req.body;
+
+    if (!contact || !confirmPassword || !newPassword) {
+        return res.status(400).json({ msg: "Mobile number, confirm password and new password are required." });
+    }
+
+    if (newPassword !== confirmPassword) {
+        return res.status(400).json({ msg: "Passwords do not match." });
+    }
+
+    if (newPassword.length < 6) {
+        return res.status(400).json({ msg: "Password must be at least 6 characters long." });
+    }   
+     
+    try {
+        const user = await User.findOne({ mobileNumber: contact });
+        if (!user) {
+            return res.status(400).json({ msg: "User not found." });
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+        user.password = hashedPassword;
+        await user.save();
+
+        res.status(200).json({
+            status: "success",
+            message: "Password updated successfully. Please log in again.",
+        });
+
+    } catch (error) {
+        console.error("Error resetting password:", error);
+        res.status(500).json({ msg: "Server error. Please try again later." });
+    }
+};
+
+// Route 5 - Admin Login
+export const adminLogin = async (req, res) => {
+    const { mobileNumber, password } = req.body;
+    try {
         const user = await User.findOne({ mobileNumber });
         if (!user) {
           return res.status(400).json({ message: "Admin not found" });
-
         }
     
-        //checks is the user have admin login.
         const adminNumber = process.env.ADMIN_NUMBER;
         const phoneNumber = user.mobileNumber;
         if (String(phoneNumber) !== String(adminNumber)) {
@@ -214,13 +198,11 @@ export const adminLogin = async (req, res) => {
           })
         }
     
-        // Compare password
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
           return res.status(400).json({ message: "Invalid password" });
         }
     
-        // If login is successful, return a token
         res.status(200).json({
             status: 'success',
             message: 'Admin logged in successfully',
@@ -236,22 +218,32 @@ export const adminLogin = async (req, res) => {
     }
 }
 
+//Route 7 - Get All Users
+export const getAllUsers = async (req, res) => {
+    try {
+        const users = await User.find();
+        res.json(users);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+};
 
-/**
- * Logout
- */
+//Route 9 - logout User
 export const logout = async (req, res) => {
-  try {
-    // With JWT, logout is client-side (remove token)
-    res.status(200).json({
-      status: "success",
-      message: "Logged out successfully",
-    });
-  } catch (error) {
-    console.error("Error in logout:", error.message);
-    res.status(500).json({
-      status: "failed",
-      message: "Server error",
-    });
-  }
+    try {
+        res.clearCookie("refreshToken", {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "Strict",
+            path: "/"
+        });
+
+        res.status(200).json({
+            message: "Logged Out Successfully - Come Back Soon!"
+        });
+    } catch (error) {
+        console.error("Logout Error:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
 };

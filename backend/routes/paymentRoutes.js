@@ -2,6 +2,8 @@ import express from "express";
 import crypto from "crypto";
 import razorpay from "../config/razorpay.js";
 import User from "../models/User.js";
+import dotenv from "dotenv";
+dotenv.config();
 
 const router = express.Router();
 
@@ -18,7 +20,7 @@ router.post("/create-subscription", async (req, res) => {
 
     // Create subscription using Razorpay Plan ID
     const subscription = await razorpay.subscriptions.create({
-      plan_id: process.env.RAZORPAY_PLAN_ID, // You must create this plan in Razorpay dashboard
+      plan_id: process.env.RAZORPAY_PLAN_ID, // Replace with your Razorpay Plan ID
       customer_notify: 1,
       total_count: 12,
     });

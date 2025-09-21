@@ -11,6 +11,7 @@ import adminRoutes from "./routes/adminRoutes.js";
 //import { firebaseconfig } from "./controllers/firebase.js";
 //import { verifyAccessToken } from "./middleware/userAuth.js";
 //import { checkAdminNumber } from "./middleware/checkAdminNumber.js";
+import paymentRoutes from "./routes/paymentRoutes.js";
 
 dotenv.config();
 const app = express();  // Initialize Express app
@@ -23,6 +24,7 @@ app.use(cookieParser());
 app.use('/api/users', userRoutes);
 app.use('/api/rentflats', rentRoutes);
 app.use('/api/sellflats', sellRoutes);
+app.use("/api/payment", paymentRoutes);
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI)
