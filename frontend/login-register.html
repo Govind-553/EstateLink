@@ -701,8 +701,16 @@ if (resendOtpLink) {
         try {
             if (mode === 'register') {
                 recaptcha = setupRecaptchaRegister();
+                const confirmationResult = await signInWithPhoneNumber(auth, lastPhoneNumber, recaptcha);
+                window.confirmationResult = confirmationResult;
+                showCustomPopup('✅ OTP resend successfully!');
+
             } else if (mode === 'forgot') {
                 recaptcha = setupRecaptchaForgot();
+                const confirmationResult = await signInWithPhoneNumber(auth, lastPhoneNumber, recaptcha);
+                window.confirmationResult = confirmationResult;
+
+                showCustomPopup('✅ OTP resend successfully!');
             } else {
                 showCustomPopup('❌ Invalid mode for resending OTP.');
                 return;
@@ -713,10 +721,6 @@ if (resendOtpLink) {
                 return;
             }
 
-            const confirmationResult = await signInWithPhoneNumber(auth, lastPhoneNumber, recaptcha);
-            window.confirmationResult = confirmationResult;
-
-            showCustomPopup('✅ OTP resend successfully!');
         } catch (error) {
             console.error("Resend OTP error:", error);
             showCustomPopup('❌ Error resending OTP: ' + error.message);
@@ -872,7 +876,7 @@ if (resendOtpLink) {
                     e.preventDefault();
                     if (lastMode === "register") {
                         renderRegisterForm();
-                    } else if (lastMode === "forgotPassword") {
+                    } else if (lastMode === "forgot") {
                         renderForgotPasswordForm();
                     }
                 });
@@ -943,7 +947,7 @@ if (resendOtpLink) {
                         localStorage.setItem("tempContact", phoneNumber);
                         tempContact = phoneNumber;
                         showCustomPopup("OTP sent for password reset!");
-                        renderOtpForm("forgotPassword", phoneNumber);
+                        renderOtpForm("forgot", phoneNumber);
                         
                     } catch (error) {
                         showCustomPopup("Error sending OTP: " + error.message);
@@ -1026,7 +1030,7 @@ if (resendOtpLink) {
                         const result = await window.confirmationResult.confirm(otp);
                         const user = result.user;
                         showCustomPopup("OTP verified! Phone: " + user.phoneNumber);
-                        if (mode === "forgotPassword") {
+                        if (mode === "forgot") {
                             // Handle forgot password flow
                             //showCustomPopup(".");
                             renderPasswordResetForm();
