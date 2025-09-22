@@ -18,13 +18,23 @@ const UserSchema = new mongoose.Schema({
     required: [true, 'Password is required.'],
     minlength: [6, 'Password must be at least 6 characters long.'],
   },
+  status: {
+      type: String,
+      enum: ['Active', 'Inactive'],
+      default: 'Inactive',
+  },
+  type: {
+      type: String,
+      enum: ['Owner', 'Agent'],
+      default: 'Agent',
+  },
   registrationDate: {
     type: Date,
     default: Date.now,
   },
   subscriptionActive: {
     type: Boolean,
-    default: false,
+    default: true,
   },
   subscriptionId: {
     type: String,

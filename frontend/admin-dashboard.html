@@ -1036,20 +1036,20 @@ async function fetchUsers() {
         }
         data.forEach((user) => {
             const statusText = user.status ? user.status : "Unknown";
-            const statusClass = `status-${user.status.toLowerCase()}`;
+            const statusClass = `status-${user.status ? user.status.toLowerCase() : 'unknown'}`;
             //const registrationDate = (user.registrationDate || "N/A").toLocaleDateString();
             const row = document.createElement('tr');
             row.innerHTML =  `
-        <td data-label="Name">${user.fullName || "N/A"}</td>
-        <td data-label="Contact">+91 ${user.mobileNumber || "N/A"}</td>
-        <td data-label="Date Joined">${
-      user.registrationDate
-        ? new Date(user.registrationDate).toLocaleDateString()
-        : "N/A"
-  }</td>
-        <td data-label="User Type">${user.type || "N/A"}</td>
-        <td data-label="Status"><span class="${statusClass}">${statusText}</span></td>
-    `;
+                <td data-label="Name">${user.fullName || "N/A"}</td>
+                <td data-label="Contact">+91 ${user.mobileNumber || "N/A"}</td>
+                <td data-label="Date Joined">${
+                    user.registrationDate
+                    ? new Date(user.registrationDate).toLocaleDateString()
+                    : "N/A"
+                }</td>
+                <td data-label="User Type">${user.type || "N/A"}</td>
+                <td data-label="Status"><span class="${statusClass}">${statusText}</span></td>
+            `;
             usersBody.appendChild(row);
         });
         updateCounters(data);
