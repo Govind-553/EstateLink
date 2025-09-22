@@ -61,9 +61,7 @@ router.get("/contact/:mobileNumber", async (req, res) => {
   }
 });
 
-/**
- * SUBSCRIPTION ROUTES
- */
+// Subscription routes
 
 // Route 9 - Create subscription for logged-in user
 //router.post("/create-subscription", verifyAccessToken, createSubscription);

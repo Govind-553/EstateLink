@@ -451,7 +451,6 @@
     </style>
 </head>
 <body>
-
     <nav class="navbar">
         <div class="logo">
             <a href="../frontend/index.html">
@@ -460,7 +459,7 @@
             </a>
         </div>
     </nav>
-    
+
     <main>
         <div class="main-container">
             <div class="left-panel">
@@ -470,7 +469,6 @@
                     <p>Your journey to the perfect property starts here.</p>
                 </div>
             </div>
-
             <div class="right-panel">
                 <div class="form-container" id="form-container">
                 </div>
@@ -479,19 +477,21 @@
     </main>
 
     <div id="custom-popup-overlay" class="popup-hidden">
-  <div class="custom-popup-card">
-    <div class="custom-popup-content">
-      <h3 id="popup-title"></h3>
-      <p id="popup-message"></p>
+        <div class="custom-popup-card">
+            <div class="custom-popup-content">
+                <h3 id="popup-title"></h3>
+                <p id="popup-message"></p>
+            </div>
+            <div class="custom-popup-buttons">
+                <button id="popup-ok-btn" class="btn">OK</button>
+                <button id="popup-close-btn" class="btn">Close</button>
+            </div>
+        </div>
     </div>
-    <div class="custom-popup-buttons">
-      <button id="popup-ok-btn" class="btn">OK</button>
-      <button id="popup-close-btn" class="btn">Close</button>
-    </div>
-  </div>
-</div>
 
-    <script type = "module">
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
         import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 
@@ -504,70 +504,64 @@
             appId: "1:1014619180710:web:49f231abc721762a472e67",
             measurementId: "G-YS2N7C27EC"
         };
+
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-
-        // 👇 Add debug here
         console.log("Auth object:", auth);
 
-        //let confirmationResult;
-        let recaptchaVerifier;
         let recaptchaRegister, recaptchaForgot;
-        let tempFullName, tempPhoneNumber, tempPassword, tempContact;
-        let lastPhoneNumber = null;
+        let tempFullName, tempMobileNumber, tempPassword;
         let lastMode = null;
         let confirmationResult;
 
         function setupFirebaseAndForms() {
-            
             const formContainer = document.getElementById('form-container');
-            // For Register
+
             function setupRecaptchaRegister() {
                 if (window.recaptchaRegister) {
-        console.log("♻️ Re-using existing reCAPTCHA");
-        return window.recaptchaRegister;
-    }
-    // Always create a new instance for resend
-     const container = document.getElementById('recaptcha-container-register');
-    if (!container) {
-        console.error("❌ recaptcha-container-register not found in DOM!");
-        return null;
-    }
+                    console.log("♻️ Re-using existing reCAPTCHA");
+                    return window.recaptchaRegister;
+                }
 
-    return new RecaptchaVerifier(container, {
-        size: 'invisible',
-        callback: (response) => {
-            console.log("✅ reCAPTCHA solved:", response);
-        },
-        'expired-callback': () => {
-            showCustomPopup("⚠️ reCAPTCHA expired, please try again.");
-        }
-    }, auth);
-}
+                const container = document.getElementById('recaptcha-container-register');
+                if (!container) {
+                    console.error("❌ recaptcha-container-register not found in DOM!");
+                    return null;
+                }
 
-// For Forgot Password
-function setupRecaptchaForgot() {
-    if (window.recaptchaForgot) {
-        console.log("♻️ Re-using existing reCAPTCHA");
-        return window.recaptchaForgot;
-    }
-    // Always create a new instance for resend
-     const container = document.getElementById('recaptcha-container-forgot');
-    if (!container) {
-        console.error("❌ recaptcha-container-forgot not found in DOM!");
-        return null;
-    }
+                return new RecaptchaVerifier(container, {
+                    size: 'invisible',
+                    callback: (response) => {
+                        console.log("✅ reCAPTCHA solved:", response);
+                    },
+                    'expired-callback': () => {
+                        showCustomPopup("⚠️ reCAPTCHA expired, please try again.");
+                    }
+                }, auth);
+            }
 
-    return new RecaptchaVerifier(container, {
-        size: 'invisible',
-        callback: (response) => {
-            console.log("✅ reCAPTCHA solved:", response);
-        },
-        'expired-callback': () => {
-            showCustomPopup("⚠️ reCAPTCHA expired, please try again.");
-        }
-    }, auth);
-}
+            function setupRecaptchaForgot() {
+                if (window.recaptchaForgot) {
+                    console.log("♻️ Re-using existing reCAPTCHA");
+                    return window.recaptchaForgot;
+                }
+
+                const container = document.getElementById('recaptcha-container-forgot');
+                if (!container) {
+                    console.error("❌ recaptcha-container-forgot not found in DOM!");
+                    return null;
+                }
+
+                return new RecaptchaVerifier(container, {
+                    size: 'invisible',
+                    callback: (response) => {
+                        console.log("✅ reCAPTCHA solved:", response);
+                    },
+                    'expired-callback': () => {
+                        showCustomPopup("⚠️ reCAPTCHA expired, please try again.");
+                    }
+                }, auth);
+            }
 
             const renderLoginForm = () => {
                 formContainer.innerHTML = `
@@ -596,7 +590,6 @@ function setupRecaptchaForgot() {
                     <p class="message-text">Don't have an account? <a href="#" id="showRegisterLink">Sign up</a></p>
                 `;
                 setupEventListeners();
-                //setupRecaptcha('recaptcha-container-login', 'loginSendOtpBtn', 'loginMobile');
             };
 
             const renderRegisterForm = () => {
@@ -627,8 +620,7 @@ function setupRecaptchaForgot() {
                     <p class="message-text">Already have an account? <a href="#" id="showLoginLink">Login</a></p>
                 `;
                 setupEventListeners();
-                setupRecaptchaRegister('recaptcha-container-register', 'sendOtpBtn', 'regMobile');
-
+                setupRecaptchaRegister();
             };
 
             const renderForgotPasswordForm = () => {
@@ -642,109 +634,79 @@ function setupRecaptchaForgot() {
                                 <span>+91</span>
                                 <input type="tel" id="fpMobile" name="mobile" placeholder="Enter your mobile number" required pattern="^[6-9]\\d{9}$">
                             </div>
-                            <div id="recaptcha-container-forgot"></div>
                         </div>
+                        <div id="recaptcha-container-forgot"></div>
                         <button type="submit" class="btn" id="sendOtpBtn">Send OTP</button>
                     </form>
                     <p class="message-text"><a href="#" id="showLoginLink">Back to Login</a></p>
                 `;
                 setupEventListeners();
-                setupRecaptchaForgot('recaptcha-container-forgot', 'sendOtpBtn', 'fpMobile');
-
+                setupRecaptchaForgot();
             };
 
-                // Store the last phone number and recaptcha info for resend
             const renderOtpForm = (mode, phoneNumber) => {
-                    lastMode = mode;
-                    formContainer.innerHTML = `
-                        <h2>Verify Your Mobile</h2>
-                        <p class="message-text">A 6-digit OTP has been sent to your mobile number.</p>
-                        <form id="otpForm">
-                            <div class="otp-box">
-                                <div class="otp-row">
-                                    <input type="text" maxlength="1" class="otp-input" inputmode="numeric" />
-                                    <input type="text" maxlength="1" class="otp-input" inputmode="numeric" />
-                                    <input type="text" maxlength="1" class="otp-input" inputmode="numeric" />
-                                    <input type="text" maxlength="1" class="otp-input" inputmode="numeric" />
-                                    <input type="text" maxlength="1" class="otp-input" inputmode="numeric" />
-                                    <input type="text" maxlength="1" class="otp-input" inputmode="numeric" />
-                                </div>
+                lastMode = mode;
+                formContainer.innerHTML = `
+                    <h2>Verify Your Mobile</h2>
+                    <p class="message-text">A 6-digit OTP has been sent to your mobile number.</p>
+                    <form id="otpForm">
+                        <div class="otp-box">
+                            <div class="otp-row">
+                                <input type="text" maxlength="1" class="otp-input" inputmode="numeric" />
+                                <input type="text" maxlength="1" class="otp-input" inputmode="numeric" />
+                                <input type="text" maxlength="1" class="otp-input" inputmode="numeric" />
+                                <input type="text" maxlength="1" class="otp-input" inputmode="numeric" />
+                                <input type="text" maxlength="1" class="otp-input" inputmode="numeric" />
+                                <input type="text" maxlength="1" class="otp-input" inputmode="numeric" />
                             </div>
-                            <button type="submit" class="btn" id="verifyOtpBtn">Verify OTP</button>
-                            <div id="recaptcha-container-register"></div>
-                            <div id="recaptcha-container-forgot"></div>
-                            <p class="message-text">Didn't receive the OTP? <a href="#" id="resendOtpLink">Resend OTP</a></p>
-                        </form>
-                        <p class="message-text"><a href="#" id="changeNumberLink">Change Number</a></p>
-                    `
-                    setupOtpLogic(mode, phoneNumber);
-                    setupEventListeners();
+                        </div>
+                        <button type="submit" class="btn" id="verifyOtpBtn">Verify OTP</button>
+                        <div id="recaptcha-container-register"></div>
+                        <div id="recaptcha-container-forgot"></div>
+                        <p class="message-text">Didn't receive the OTP? <a href="#" id="resendOtpLink">Resend OTP</a></p>
+                    </form>
+                    <p class="message-text"><a href="#" id="changeNumberLink">Change Number</a></p>
+                `;
 
-                                    // ✅ Resend OTP
-const resendOtpLink = document.getElementById('resendOtpLink');
-if (resendOtpLink) {
-    resendOtpLink.addEventListener('click', async (e) => {
-        e.preventDefault();
+                setupOtpLogic(mode, phoneNumber);
+                setupEventListeners();
 
-        let lastPhoneNumber = localStorage.getItem('tempContact');
+                const resendOtpLink = document.getElementById('resendOtpLink');
+                if (resendOtpLink) {
+                    resendOtpLink.addEventListener('click', async (e) => {
+                        e.preventDefault();
+                        const lastPhoneNumber = localStorage.getItem('tempMobileNumber');
+                        if (!lastPhoneNumber) {
+                            showCustomPopup('⚠️ Phone number not found. Please go back and enter your number again.');
+                            return;
+                        }
 
-        if (!lastPhoneNumber) {
-            showCustomPopup('⚠️ Phone number not found. Please go back and enter your number again.');
-            return;
-        }
+                        try {
+                            let recaptcha;
+                            if (mode === 'register') {
+                                recaptcha = setupRecaptchaRegister();
+                            } else if (mode === 'forgot') {
+                                recaptcha = setupRecaptchaForgot();
+                            } else {
+                                showCustomPopup('❌ Invalid mode for resending OTP.');
+                                return;
+                            }
 
-        // Ensure correct format
-        if (!lastPhoneNumber.startsWith("+91")) {
-            lastPhoneNumber = "+91" + lastPhoneNumber;
-        }
+                            if (!recaptcha) {
+                                showCustomPopup("❌ Could not initialize reCAPTCHA");
+                                return;
+                            }
 
-        try {
-            if (mode === 'register') {
-                recaptcha = setupRecaptchaRegister();
-                const confirmationResult = await signInWithPhoneNumber(auth, lastPhoneNumber, recaptcha);
-                window.confirmationResult = confirmationResult;
-                showCustomPopup('✅ OTP resend successfully!');
-
-            } else if (mode === 'forgot') {
-                recaptcha = setupRecaptchaForgot();
-                const confirmationResult = await signInWithPhoneNumber(auth, lastPhoneNumber, recaptcha);
-                window.confirmationResult = confirmationResult;
-
-                showCustomPopup('✅ OTP resend successfully!');
-            } else {
-                showCustomPopup('❌ Invalid mode for resending OTP.');
-                return;
-            }
-            
-            if (!recaptcha) {
-                showCustomPopup("❌ Could not initialize reCAPTCHA");
-                return;
-            }
-
-        } catch (error) {
-            console.error("Resend OTP error:", error);
-            showCustomPopup('❌ Error resending OTP: ' + error.message);
-        }
-    });
-}
-
-                /*async function setupRecaptcha(containerId = "recaptcha-container-forgot") {
-    // Don't clear if already destroyed
-    recaptchaVerifier = new RecaptchaVerifier(containerId, {
-        size: "invisible",
-        callback: (response) => {
-            console.log("✅ reCAPTCHA solved:", response);
-        },
-        "expired-callback": () => {
-            showCustomPopup("⚠️ reCAPTCHA expired, please try again.");
-        }
-    }, auth);
-
-    await recaptchaVerifier.render();
-    return recaptchaVerifier;
-}*/
-            }
-
+                            confirmationResult = await signInWithPhoneNumber(auth, lastPhoneNumber, recaptcha);
+                            window.confirmationResult = confirmationResult;
+                            showCustomPopup('✅ OTP resend successfully!');
+                        } catch (error) {
+                            console.error("Resend OTP error:", error);
+                            showCustomPopup('❌ Error resending OTP: ' + error.message);
+                        }
+                    });
+                }
+            };
 
             const renderPasswordResetForm = () => {
                 formContainer.innerHTML = `
@@ -780,6 +742,7 @@ if (resendOtpLink) {
                         <button class="btn" id="backToLoginBtn" style="margin-top: 2rem;">Back to Login</button>
                     </div>
                 `;
+
                 const backToLoginBtn = document.getElementById('backToLoginBtn');
                 if (backToLoginBtn) {
                     backToLoginBtn.addEventListener('click', renderLoginForm);
@@ -795,6 +758,7 @@ if (resendOtpLink) {
                         <button class="btn" id="backToLoginBtn" style="margin-top: 2rem;">Back to Login</button>
                     </div>
                 `;
+
                 const backToLoginBtn = document.getElementById('backToLoginBtn');
                 if (backToLoginBtn) {
                     backToLoginBtn.addEventListener('click', renderLoginForm);
@@ -802,7 +766,6 @@ if (resendOtpLink) {
             };
 
             const setupEventListeners = () => {
-                //help to toggle the password visibility.
                 const togglePasswordIcons = document.querySelectorAll('.toggle-password');
                 togglePasswordIcons.forEach(icon => {
                     icon.addEventListener('click', () => {
@@ -814,67 +777,63 @@ if (resendOtpLink) {
                     });
                 });
 
-                //help to switch between login and register forms.
                 const showRegisterLink = document.getElementById('showRegisterLink');
                 if (showRegisterLink) showRegisterLink.addEventListener('click', (e) => {
                     e.preventDefault();
                     renderRegisterForm();
                 });
 
-                //help to switch back to login form.
                 const showLoginLink = document.getElementById('showLoginLink');
                 if (showLoginLink) showLoginLink.addEventListener('click', (e) => {
                     e.preventDefault();
                     renderLoginForm();
                 });
 
-                //this link help to navigate to forgot password form.
                 const forgotPasswordLink = document.getElementById('forgotPasswordLink');
                 if (forgotPasswordLink) forgotPasswordLink.addEventListener('click', (e) => {
                     e.preventDefault();
                     renderForgotPasswordForm();
                 });
 
-                //This is helps to handle the login form submission.
                 const loginForm = document.getElementById('loginForm');
                 if (loginForm) loginForm.addEventListener('submit', async (e) => {
                     e.preventDefault();
                     const mobileInput = document.getElementById('mobile').value;
                     const passwordInput = document.getElementById('password').value;
-                    // Here you would typically send the login data to your backend for verification
-                    showCustomPopup(`Logging in with Mobile: +91${mobileInput} and Password: ${passwordInput}`);
-                    // For demonstration, we'll just reset the form
-                    // Example API call for login
-                    // Send data to your backend
+
                     try {
                         const response = await fetch("http://localhost:3000/api/users/login", {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify({
-                                mobileNumber: "+91" + mobileInput, // verified mobile from OTP
+                                mobileNumber: "+91" + mobileInput,
                                 password: passwordInput
                             })
                         });
 
-                                 const data = await response.json();
-
-                                if (response.ok) {
-                                    showCustomPopup("✅ " + data.message);
-                                    // Store token in localStorage
-                                    localStorage.setItem("token", data.token);
-                                    localStorage.setItem("user", JSON.stringify(data.data));
-                                    // Redirect to properties page after successful login
-                                    window.location.href = "../frontend/sellProperties.html";
-                                } else {
-                                    showCustomPopup("❌ " + data.message);
-                                }
-                        } catch (error) {
-                            console.error("API error:", error);
-                            showCustomPopup("Error logging in: " + error.message);
+                        const data = await response.json();
+                        if (response.ok) {
+                            const expiryDate = new Date(data.subscriptionExpiry).toLocaleDateString();
+                            showCustomPopup(`✅ User logged in successfully! Your subscription expires on ${expiryDate}.`);
+                            localStorage.setItem("userToken", data.token);
+                            localStorage.setItem("userMobileNumber", "+91" + mobileInput);
+                            window.location.href = "../frontend/sellProperties.html";
+                        } else if (response.status === 403) {
+                            showCustomPopup(
+                                "❌ " + data.message,
+                                "Subscription Expired",
+                                () => handleSubscription(data.userId),
+                                true
+                            );
+                        } else {
+                            showCustomPopup("❌ " + data.message);
                         }
-                    });
+                    } catch (error) {
+                        console.error("API error:", error);
+                        showCustomPopup("Error logging in: " + error.message);
+                    }
+                });
 
-                //this link help to change the number on otp verification page.
                 const changeNumberLink = document.getElementById('changeNumberLink');
                 if (changeNumberLink) changeNumberLink.addEventListener('click', (e) => {
                     e.preventDefault();
@@ -885,11 +844,11 @@ if (resendOtpLink) {
                     }
                 });
 
-                //this form help to send the otp for registration.
                 const registerForm = document.getElementById('registerForm');
                 if (registerForm) registerForm.addEventListener('submit', async (e) => {
                     e.preventDefault();
-                    const phoneNumber = "+91" + document.getElementById('regMobile').value;
+                    const mobileInput = document.getElementById('regMobile').value;
+                    const phoneNumber = "+91" + mobileInput;
 
                     if (!/^\+91[6-9]\d{9}$/.test(phoneNumber)) {
                         showCustomPopup("Please enter a valid 10-digit mobile number.");
@@ -897,17 +856,17 @@ if (resendOtpLink) {
                     }
 
                     try {
-                        // Make sure phone is in +E.164 format
-                
                         confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, setupRecaptchaRegister());
                         window.confirmationResult = confirmationResult;
                         showCustomPopup("OTP sent for registration!");
 
-                        // When user fills registration form
-                        // Store name and password temporarily, in the flow after OTP verification it can be used, if needed.
-                        //we need to create this variable globally, because this is not used on the page                 of otp verification.
                         tempFullName = document.getElementById("regName").value;
                         tempPassword = document.getElementById("regPassword").value;
+                        tempMobileNumber = phoneNumber;
+
+                        localStorage.setItem("tempFullName", tempFullName);
+                        localStorage.setItem("tempPassword", tempPassword);
+                        localStorage.setItem("tempMobileNumber", tempMobileNumber);
 
                         renderOtpForm("register", phoneNumber);
                     } catch (error) {
@@ -915,7 +874,6 @@ if (resendOtpLink) {
                     }
                 });
 
-                //this form help to send the otp for forgot password.
                 const forgotPasswordForm = document.getElementById('forgotPasswordForm');
                 if (forgotPasswordForm) forgotPasswordForm.addEventListener('submit', async (e) => {
                     e.preventDefault();
@@ -928,17 +886,15 @@ if (resendOtpLink) {
                     }
 
                     try {
-                        //call the api for checking the user is existing or not before sending OTP for password reset.
                         const response = await fetch("http://localhost:3000/api/users/forgot", {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify({
-                                contact: phoneNumber, // verified mobile from OTP
+                                contact: phoneNumber,
                             })
                         });
-                        const data = await response.json();
 
-                        //if the response is not ok, then show the error message.
+                        const data = await response.json();
                         if (!response.ok) {
                             showCustomPopup("❌ " + data.msg);
                             return;
@@ -947,50 +903,50 @@ if (resendOtpLink) {
                         showCustomPopup("✅ " + data.message);
                         confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, setupRecaptchaForgot());
                         window.confirmationResult = confirmationResult;
-                        // Save mobile for reset-password API call later
-                        localStorage.setItem("tempContact", phoneNumber);
-                        tempContact = phoneNumber;
-                        showCustomPopup("OTP sent for password reset!");
+                        localStorage.setItem("tempMobileNumber", phoneNumber);
                         renderOtpForm("forgot", phoneNumber);
-                        
                     } catch (error) {
                         showCustomPopup("Error sending OTP: " + error.message);
                     }
                 });
- 
-                //this page help to update the new password.
+
                 const newPasswordForm = document.getElementById('newPasswordForm');
                 if (newPasswordForm) newPasswordForm.addEventListener('submit', async (e) => {
                     e.preventDefault();
                     const newPass = document.getElementById('newPassword').value;
                     const confirmPass = document.getElementById('confirmPassword').value;
-                    const mobileNumber = tempContact;
+                    const mobileNumber = localStorage.getItem("tempMobileNumber");
+
                     if (newPass !== confirmPass) {
                         return showCustomPopup("Passwords do not match.");
                     }
+
                     try {
-        const response = await fetch("http://localhost:3000/api/users/reset-password", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ contact: mobileNumber, confirmPassword: confirmPass, newPassword: newPass })
-        });
+                        const response = await fetch("http://localhost:3000/api/users/reset-password", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ 
+                                contact: mobileNumber, 
+                                confirmPassword: confirmPass, 
+                                newPassword: newPass 
+                            })
+                        });
 
-        const data = await response.json();
-        if (response.ok) {
-            showCustomPopup("✅ " + data.message);
-            localStorage.removeItem("tempContact"); // cleanup
-            renderRegistrationConfirmPage();
-        } else {
-            showCustomPopup("❌ " + data.msg);
-        }
-    } catch (err) {
-        console.error("API error:", err);
-        showCustomPopup("Server error. Try again.");
-    }
-});    
-                };
+                        const data = await response.json();
+                        if (response.ok) {
+                            showCustomPopup("✅ " + data.message);
+                            localStorage.removeItem("tempMobileNumber");
+                            renderRegistrationConfirmPage();
+                        } else {
+                            showCustomPopup("❌ " + data.msg);
+                        }
+                    } catch (err) {
+                        console.error("API error:", err);
+                        showCustomPopup("Server error. Try again.");
+                    }
+                });
+            };
 
-            // OTP input logic   
             const setupOtpLogic = (mode, phoneNumber) => {
                 const otpInputs = document.querySelectorAll('.otp-input');
                 const verifyOtpBtn = document.getElementById('verifyOtpBtn');
@@ -1005,6 +961,7 @@ if (resendOtpLink) {
                         }
                         checkOtpFilled();
                     });
+
                     input.addEventListener('keydown', (e) => {
                         if (e.key === 'Backspace' && !input.value && index > 0) {
                             arr[index - 1].focus();
@@ -1012,15 +969,13 @@ if (resendOtpLink) {
                     });
                 });
 
-                //checks the otp is filled or not.
                 const checkOtpFilled = () => {
                     const allFilled = Array.from(otpInputs).every(input => input.value.length === 1);
                     verifyOtpBtn.disabled = !allFilled;
                 };
-                
-                checkOtpFilled(); // Initial check
 
-                //this verify button help to verify otp and help to haldle the register and forgot password flow.
+                checkOtpFilled();
+
                 verifyOtpBtn.addEventListener('click', async (event) => {
                     event.preventDefault();
                     const otp = Array.from(otpInputs).map(input => input.value).join('');
@@ -1031,52 +986,44 @@ if (resendOtpLink) {
                     }
 
                     try {
-                        const result = await window.confirmationResult.confirm(otp);
-                        const user = result.user;
-                        showCustomPopup("OTP verified! Phone: " + user.phoneNumber);
-                        if (mode === "forgot") {
-                            // Handle forgot password flow
-                            //showCustomPopup(".");
-                            renderPasswordResetForm();
-                        } else if (mode === "register") {
-                            try {
-                                // Example extra fields you might collect
-                                const fullName = tempFullName;
-                                const password = tempPassword;
+                        await window.confirmationResult.confirm(otp);
+                        showCustomPopup(
+                            "✅ OTP verified. Your 7-day trial has been activated. To continue using your account, you need to buy a subscription of 1 month for ₹200.",
+                            "Subscription Required",
+                            async () => {
+                                const fullName = localStorage.getItem("tempFullName");
+                                const password = localStorage.getItem("tempPassword");
+                                const mobileNumber = localStorage.getItem("tempMobileNumber");
 
-                                // Basic validation
-                                if (!fullName || !password) {
-                                    showCustomPopup("Name or password field not found in the DOM!");
+                                if (!fullName || !password || !mobileNumber) {
+                                    showCustomPopup("Registration data not found. Please try again.");
                                     return;
-                                }  
-                        
-                                // Send data to your backend
-                                const response = await fetch("http://localhost:3000/api/users/create", {
-                                    method: "POST",
-                                    headers: { "Content-Type": "application/json" },
-                                    body: JSON.stringify({
-                                        fullName: fullName,
-                                        mobileNumber: user.phoneNumber, // verified mobile from OTP
-                                        password: password
-                                     })
-                                });
-                        
-                                const data = await response.json();
-                        
-                                if (response.ok) {
-                                    showCustomPopup("✅ " + data.message);
-                                    renderRegistrationConfirmPage(); // show success page
-                                } else {
-                                    showCustomPopup("❌ " + data.message);
                                 }
-                            } catch (error) {
-                                console.error("API error:", error);
-                                showCustomPopup("Error registering user: " + error.message);
-                            }
-                        }
 
-                        // At this point, the user is signed in. You can redirect or perform other actions.
-                        // window.location.href = "../frontend/home.html"; // Example redirect
+                                try {
+                                    const response = await fetch("http://localhost:3000/api/users/create", {
+                                        method: "POST",
+                                        headers: { "Content-Type": "application/json" },
+                                        body: JSON.stringify({
+                                            fullName: fullName,
+                                            mobileNumber: mobileNumber,
+                                            password: password
+                                        })
+                                    });
+
+                                    const data = await response.json();
+                                    if (data.status === 'success') {
+                                        handleSubscription(mobileNumber); // Using mobile number for subscription
+                                    } else {
+                                        showCustomPopup("❌ " + data.message);
+                                    }
+                                } catch(error) {
+                                    console.error("API error:", error);
+                                    showCustomPopup("Error registering user: " + error.message);
+                                }
+                            },
+                            true
+                        );
                     } catch (error) {
                         console.error("OTP verification failed:", error);
                         showCustomPopup("OTP verification failed: " + error.message);
@@ -1084,52 +1031,92 @@ if (resendOtpLink) {
                 });
             };
 
+            const handleSubscription = async (mobileNumber) => { // Updated to take mobileNumber
+                const razorpayKey = "rzp_test_ZxNdYbzCa0cpti";
+
+                try {
+                    const response = await fetch("http://localhost:3000/api/payment/create-subscription", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ mobileNumber: mobileNumber }), // Using mobile number in the payload
+                    });
+
+                    const data = await response.json();
+                    if (!response.ok) {
+                        throw new Error(data.message || "Failed to create subscription.");
+                    }
+
+                    const options = {
+                        key: razorpayKey,
+                        subscription_id: data.subscriptionId,
+                        name: "DSA Enterprise",
+                        description: "Subscription Plan",
+                        handler: function (response) {
+                            showCustomPopup(
+                                "✅ Payment Successful! You are now subscribed.",
+                                "Subscription Confirmed",
+                                () => renderRegistrationConfirmPage()
+                            );
+                        },
+                        theme: { color: "#0c2db0" },
+                    };
+
+                    const rzp = new Razorpay(options);
+                    rzp.open();
+                } catch (error) {
+                    console.error("Error starting subscription:", error);
+                    showCustomPopup("Error starting subscription: " + error.message);
+                }
+            };
+
             renderLoginForm();
         }
 
-    document.addEventListener('DOMContentLoaded', setupFirebaseAndForms);
+        document.addEventListener('DOMContentLoaded', setupFirebaseAndForms);
 
-    // A single function to display your custom pop-up.
-function showCustomPopup(message, title = "Notification", onOk = null, showClose = false) {
-    const overlay = document.getElementById('custom-popup-overlay');
-    const popupTitle = document.getElementById('popup-title');
-    const popupMessage = document.getElementById('popup-message');
-    const okBtn = document.getElementById('popup-ok-btn');
-    const closeBtn = document.getElementById('popup-close-btn');
+        function showCustomPopup(message, title = "Notification", onOk = null, showClose = false) {
+            const overlay = document.getElementById('custom-popup-overlay');
+            const popupTitle = document.getElementById('popup-title');
+            const popupMessage = document.getElementById('popup-message');
+            const okBtn = document.getElementById('popup-ok-btn');
+            const closeBtn = document.getElementById('popup-close-btn');
 
-    popupTitle.textContent = title;
-    popupMessage.textContent = message;
+            popupTitle.textContent = title;
+            popupMessage.textContent = message;
 
-    // Show or hide the close button based on the function call
-    closeBtn.style.display = showClose ? 'inline-block' : 'none';
+            closeBtn.style.display = showClose ? 'inline-block' : 'none';
+            okBtn.textContent = (onOk && showClose) ? "Continue" : "OK";
+            closeBtn.textContent = "Discard";
 
-    // Clear previous event listeners to prevent multiple actions
-    okBtn.onclick = null;
-    closeBtn.onclick = null;
+            okBtn.onclick = null;
+            closeBtn.onclick = null;
 
-    // Set up button actions
-    okBtn.onclick = () => {
-        if (onOk) onOk(); // Run the callback function if it exists
-        hideCustomPopup();
-    };
+            okBtn.onclick = () => {
+                if (onOk) {
+                    hideCustomPopup();
+                    onOk();
+                } else {
+                    hideCustomPopup();
+                }
+            };
 
-    closeBtn.onclick = () => {
-        hideCustomPopup();
-    };
+            closeBtn.onclick = () => {
+                hideCustomPopup();
+                renderLoginForm();
+            };
 
-    // Show the pop-up
-    overlay.classList.remove('popup-hidden');
-    overlay.classList.add('popup-visible');
-    document.querySelector('.custom-popup-card').style.transform = 'scale(1)';
-}
+            overlay.classList.remove('popup-hidden');
+            overlay.classList.add('popup-visible');
+            document.querySelector('.custom-popup-card').style.transform = 'scale(1)';
+        }
 
-// Function to hide the pop-up
-function hideCustomPopup() {
-    const overlay = document.getElementById('custom-popup-overlay');
-    overlay.classList.remove('popup-visible');
-    overlay.classList.add('popup-hidden');
-    document.querySelector('.custom-popup-card').style.transform = 'scale(0.9)';
-}
+        function hideCustomPopup() {
+            const overlay = document.getElementById('custom-popup-overlay');
+            overlay.classList.remove('popup-visible');
+            overlay.classList.add('popup-hidden');
+            document.querySelector('.custom-popup-card').style.transform = 'scale(0.9)';
+        }
     </script>
 </body>
+
 </html>

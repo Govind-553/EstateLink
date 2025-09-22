@@ -255,3 +255,53 @@ export const logout = async (req, res) => {
         res.status(500).json({ message: "Internal Server Error" });
     }
 };
+
+// Route 10 - Create Subscription
+export const createSubscription = async (req, res) => {
+    const userId = req.userId; // From verifyAccessToken middleware
+    try {
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: "User not found." });
+        } 
+        // For simplicity, we directly activate subscription here
+        user.subscriptionActive = true;
+        user.subscriptionStatus = "Active";
+        user.subscriptionExpiry = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+        await user.save(); 
+        res.status(200).json({
+            status: "success",
+            message: "Subscription activated successfully.",
+            subscriptionStatus: user.subscriptionStatus,
+            subscriptionExpiry: user.subscriptionExpiry
+        });
+    } catch (error) {
+        console.error("Subscription Error:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+};
+
+// Route 11 - Get Subscription Status 
+export const getSubscriptionStatus = async (req, res) => {
+    const userId = req.userId;
+    try {
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: "User not found." });
+        } 
+        // Check if subscription has expired
+        if (user.subscriptionExpiry && user.subscriptionExpiry < new Date()) {
+            user.subscriptionActive = false;
+            user.subscriptionStatus = "Inactive";
+            await user.save();
+        } 
+        res.status(200).json({
+            subscriptionActive: user.subscriptionActive,
+            subscriptionStatus: user.subscriptionStatus,
+            subscriptionExpiry: user.subscriptionExpiry
+        });
+    } catch (error) {
+        console.error("Get Subscription Status Error:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    } 
+};
