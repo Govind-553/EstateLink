@@ -856,20 +856,20 @@
 </head>
 <body>
 <nav class="navbar">
-     <div class="logo">
-  <a onclick="history.back()">
-    <i class="fas fa-arrow-left"></i>
-  </a>
-  <a>
-    <img src="img/DSA.png" alt="Logo">
-    <span>DSA Enterprise</span>
-  </a>
+    <div class="logo">
+    <a onclick="history.back()">
+        <i class="fas fa-arrow-left"></i>
+    </a>
+    <a>
+        <img src="img/DSA.png" alt="Logo">
+        <span>DSA Enterprise</span>
+    </a>
 </div>
-        
+    
     <ul class="nav-links">
         <li><a href="#home">Home</a></li>
         <li><a href="../frontend/rentProperties.html">Rent Properties</a></li>
-        <li><a href=""id="profileIcon"><i class="fas fa-user-circle fa-xl"></i></a></li>
+        <li><a href="#" id="profileIcon"><i class="fas fa-user-circle fa-xl"></i></a></li>
     </ul>
         
     <div class="hamburger">
@@ -884,7 +884,6 @@
         <span>My Profile</span>
         <button class="close-btn" id="closeProfileBtn">&times;</button>
     </div>
-
     <div class="panel-content">
         <label for="profileName">Name:</label>
         <input type="text" id="profileName" readonly>
@@ -899,7 +898,6 @@
 <section class="search-section" id="home">
     <div class="search-container">
         <h2 class="search-title">Find Your Perfect Property</h2>
-            
         <div class="search-form" id="searchForm">
             <div class="search-group">
                 <label class="search-label">Select Your Location</label>
@@ -935,8 +933,8 @@
             <div class="search-group">
                 <label class="search-label">Enter Your Budget</label>
                 <div class="price-input-group">
-                       <span class="input-icon">₹</span>
-                       <input type="text" class="search-input" id="priceInput" placeholder="e.g., 10,000 - 15,000">
+                        <span class="input-icon">₹</span>
+                        <input type="text" class="search-input" id="priceInput" placeholder="e.g., 25000">
                 </div>
             </div>
 
@@ -945,12 +943,11 @@
                 Search
             </button>
         </div>
-            
         <div class="selected-filters-container">
             <div class="selected-filters" id="selectedFilters"></div>
-               <button type="button" id="clearAllBtn" class="search-btn" style="display:none;">
-                 <i class="fas fa-times"></i> Clear All
-               </button>
+                <button type="button" id="clearAllBtn" class="search-btn" style="display:none;">
+                    <i class="fas fa-times"></i> Clear All
+                </button>
         </div>
     </div>
 </section>
@@ -958,10 +955,9 @@
 <section class="listings-section" id="listings">
     <div class="property-container">
         <h2 class="property-title">Available Properties</h2>
-            
         <div id="tableContainer" class="property-table-container hidden">
             <table class="property-table">
-                <thead id="propertiesTable">
+                <thead>
                     <tr>
                         <th>Location</th>
                         <th>Property Type</th>
@@ -973,8 +969,7 @@
                     </tr>
                 </thead>
                 <tbody id="propertiesBody">
-                    <!-- Property rows will be dynamically inserted here -->
-                     </tbody>
+                    </tbody>
             </table>
         </div>
         <div id="tableMessage" class="table-message">
@@ -984,75 +979,16 @@
 </section>
 
 <footer class="footer">
-    <div class="footer-container">
-        <div class="footer-content">
-            <div class="footer-left">
-                <div class="footer-logo">
-                    <img src="img/DSA.png" alt="Logo">
-                    <span>DSA Enterprise</span>
-                </div>
-                <p class="footer-description">
-                    Your trusted partner in finding the perfect property. We combine years of experience with modern technology to help you buy, sell, or rent with confidence.
-                </p>
-                <div class="footer-copyright">
-                    © 2025 DSA Enterprise. All rights reserved.
-                </div>
-            </div>
-
-            <div class="footer-center">
-                <h3>Quick Links</h3>
-                <ul class="footer-nav">
-                    <li><a href="#home"><i class="fas fa-home"></i> Home</a></li>
-                    <li><a href="#about"><i class="fas fa-info-circle"></i> About</a></li>
-                    <li><a href="../frontend/login-register.html"><i class="fas fa-sign-in-alt"></i> Login</a></li>
-                </ul>
-            </div>
-
-            <div class="footer-right">
-                <h3>Get In Touch</h3>
-                <div class="contact-info">
-                    <div class="contact-item">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span>Mumbai, Maharashtra, India</span>
-                    </div>
-                    <div class="contact-item">
-                        <i class="fas fa-phone"></i>
-                        <span>+91 7021062721</span>
-                    </div>
-                    <div class="contact-item">
-                        <i class="fas fa-envelope"></i>
-                        <span>dsaenterprise30@gmail.com</span>
-                    </div>
-                </div>
-                
-                <div class="social-links">
-                    <a href="#" class="social-link" title="Facebook">
-                        <i class="fab fa-facebook-f"></i>
-                    </a>
-                    <a href="#" class="social-link" title="Twitter">
-                        <i class="fab fa-twitter"></i>
-                    </a>
-                    <a href="#" class="social-link" title="Instagram">
-                        <i class="fab fa-instagram"></i>
-                    </a>
-                    <a href="#" class="social-link" title="LinkedIn">
-                        <i class="fab fa-linkedin-in"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <div class="footer-bottom">
-            Privacy Policy | Terms of Service
-        </div>
-    </div>
+    <div class="footer-container"><div class="footer-content"><div class="footer-left"><div class="footer-logo"><img src="img/DSA.png" alt="Logo"> <span>DSA Enterprise</span></div><p class="footer-description"> Your trusted partner in finding the perfect property. We combine years of experience with modern technology to help you buy, sell, or rent with confidence. </p><div class="footer-copyright"> © 2025 DSA Enterprise. All rights reserved. </div></div><div class="footer-center"><h3>Quick Links</h3><ul class="footer-nav"><li><a href="#home"><i class="fas fa-home"></i> Home</a></li><li><a href="#about"><i class="fas fa-info-circle"></i> About</a></li><li><a href="../frontend/login-register.html"><i class="fas fa-sign-in-alt"></i> Login</a></li></ul></div><div class="footer-right"><h3>Get In Touch</h3><div class="contact-info"><div class="contact-item"><i class="fas fa-map-marker-alt"></i> <span>Mumbai, Maharashtra, India</span></div><div class="contact-item"><i class="fas fa-phone"></i> <span>+91 7021062721</span></div><div class="contact-item"><i class="fas fa-envelope"></i> <span>dsaenterprise30@gmail.com</span></div></div><div class="social-links"><a href="#" class="social-link" title="Facebook"><i class="fab fa-facebook-f"></i></a> <a href="#" class="social-link" title="Twitter"><i class="fab fa-twitter"></i></a> <a href="#" class="social-link" title="Instagram"><i class="fab fa-instagram"></i></a> <a href="#" class="social-link" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a></div></div></div><div class="footer-bottom"> Privacy Policy | Terms of Service </div></div>
 </footer>
 
 <script>
-
     document.addEventListener('DOMContentLoaded', function() {
+        // --- VARIABLE DECLARATIONS ---
         let filters = {};
         let propertiesData = [];
+        let filteredData = [];
+
         const hamburger = document.querySelector('.hamburger');
         const navLinks = document.querySelector('.nav-links');
         const dropdowns = document.querySelectorAll('.dropdown');
@@ -1063,135 +999,176 @@
         const tableContainer = document.getElementById('tableContainer');
         const tableMessage = document.getElementById('tableMessage');
         const priceInput = document.getElementById('priceInput');
-        const propertiesTable = document.getElementById('propertiesTable');
-        let filteredData = [...propertiesData];
         const BaseUrl = 'http://localhost:3000/api/sellflats';
-        const overlay = document.getElementById('overlay');
-        const togglePassword = document.getElementById('togglePassword');
-    const profilePasswordInput = document.getElementById('profilePassword');
-    const logoutBtn = document.getElementById('logoutBtn');
-    const userData = JSON.parse(localStorage.getItem("user"));
 
-     //check the user data is present or not
+        // --- SIDE PANEL LOGIC ---
+        const overlay = document.getElementById('overlay');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const profilePanel = document.getElementById('profilePanel');
+        const profileIcon = document.getElementById('profileIcon');
+        const closeProfileBtn = document.getElementById('closeProfileBtn');
+        const profileName = document.getElementById('profileName');
+        const profileMobile = document.getElementById('profileMobile');
+        const userData = JSON.parse(localStorage.getItem("user"));
+    
+    //check the user data is present or not
     if (userData) {
         document.getElementById("profileName").value = userData.fullName;
         document.getElementById("profileMobile").value = userData.mobileNumber;
     // Password field can be left blank or masked (don’t store passwords in frontend!)
     }
-    
-    // Panels
-    const profilePanel = document.getElementById('profilePanel');
 
-    // Panel Triggers
-    const profileIcon = document.getElementById('profileIcon');
-    
-    // Panel Close Buttons
-    const closeProfileBtn = document.getElementById('closeProfileBtn');
+        function openPanel(panel) {
+            panel.style.width = '350px';
+            overlay.classList.add('show');
+        }
 
-    // --- Panel Management ---
-    function openPanel(panel) {
-        panel.style.width = '350px';
-        overlay.classList.add('show');
-    }
+        function closeAllPanels() {
+            if(profilePanel) profilePanel.style.width = '0';
+            overlay.classList.remove('show');
+        }
 
-    function closeAllPanels() {
-        profilePanel.style.width = '0';
-        overlay.classList.remove('show');
-    }
+        if (profileIcon && profilePanel && closeProfileBtn && logoutBtn) {
+            profileIcon.addEventListener('click', (e) => {
+                e.preventDefault();
+                openPanel(profilePanel);
+            });
+            closeProfileBtn.addEventListener('click', closeAllPanels);
+            overlay.addEventListener('click', closeAllPanels);
+            logoutBtn.addEventListener("click", () => {
+                localStorage.removeItem("token");
+                localStorage.removeItem("admin");
+                window.location.href = "sellLogin.html";
+            });
+        }
+        
+        // --- DATA FETCHING ---
+        async function fetchProperties() {
+            const token = localStorage.getItem("userToken");
+            try {
+                const response = await fetch(`${BaseUrl}/all-public`, {
+                    headers: { 'Content-Type': 'application/json', 'authorization': `Bearer ${token}` }
+                });
+                if (!response.ok) throw new Error('Failed to fetch properties');
+                const result = await response.json();
+                propertiesData = result.data || [];
+                console.log("Fetched properties:", propertiesData);
+            } catch (error) {
+                console.error('Error fetching properties:', error);
+                showTableMessage('Error loading properties. Please try again later.');
+            }
+        }
 
-    // --- Event Handlers ---
-    profileIcon.addEventListener('click', (e) => { e.preventDefault(); openPanel(profilePanel); });
-    
-    closeProfileBtn.addEventListener('click', closeAllPanels);
-    overlay.addEventListener('click', closeAllPanels);
-    
-    // Toggle Password Visibility
-    //togglePassword.addEventListener('click', () => {
-    //    const type = profilePasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-    //    profilePasswordInput.setAttribute('type', type);
-    //    togglePassword.classList.toggle('fa-eye');
-    //    togglePassword.classList.toggle('fa-eye-slash');
-    //});
+        // --- CORE FILTERING LOGIC ---
+        function applyFilters() {
+            const filterLocation = filters.location ? filters.location.value.toLowerCase() : '';
+            const filterType = filters.propertyType ? filters.propertyType.value.toLowerCase() : '';
+            const priceValue = filters.priceInput ? filters.priceInput.value : '';
 
-    // Logout Button
-    document.getElementById("logoutBtn").addEventListener("click", () => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("admin");
-        window.location.href = "login-register.html"; // redirect to login page
-});
+            filteredData = propertiesData.filter(property => {
+                const rowLocation = (property.location || '').toLowerCase();
+                const normalizedRowType = (property.propertyType || '').toLowerCase().replace(/\s+/g, '');
+                
+                const matchLocation = !filterLocation || rowLocation.includes(filterLocation);
+                const matchType = !filterType || normalizedRowType === filterType;
 
-                function renderProperties(data) {
+                // --- MODIFIED BUDGET FILTER LOGIC ---
+                let matchPrice = true; // Default to true if no price is entered
+                if (priceValue) {
+                    const cleanDataPrice = String(property.price || '').replace(/[^0-9]/g, '');
+                    const cleanInputPrice = String(priceValue).replace(/[^0-9]/g, '');
+                    
+                    if (cleanInputPrice) {
+                        matchPrice = cleanDataPrice.includes(cleanInputPrice);
+                    }
+                }
+                // --- END OF MODIFICATION ---
+                
+                return matchLocation && matchType && matchPrice;
+            });
+        }
+        
+        function performSearch() {
+            if (Object.keys(filters).length === 0) {
+                showTableMessage("Please select at least one filter to start a search.");
+                return;
+            }
+
+            applyFilters();
+            if (filteredData.length > 0) {
+                renderProperties();
+                showTable();
+            } else {
+                hideTable();
+                showTableMessage("No properties found matching your criteria.");
+            }
+        }
+
+        // --- UI RENDERING & UPDATES ---
+        function renderProperties() {
             propertiesBody.innerHTML = "";
-            data.forEach(property => {
+            filteredData.forEach(property => {
                 const row = document.createElement("tr");
+
+                let displayPrice = '';
+                if (property.price) {
+                    const numericPrice = String(property.price).replace(/\D/g, '');
+                    if (numericPrice) {
+                        displayPrice = `₹${Number(numericPrice).toLocaleString('en-IN')}`;
+                    }
+                }
+
                 row.innerHTML = `
-                    <td>${property.location || ''}</td>
-                    <td>${property.propertyType || ''}</td>
-                    <td>₹${property.price ? property.price.toLocaleString() : ''}</td>
-                    <td>${property.userName || ''}</td>
-                    <td>${property.contact || ''}</td>
-                    <td>${property.date ? new Date(property.date).toLocaleDateString() : ''}</td>
-                    <td>${property.ownershipType || ''}</td>
+                    <td data-label="Location">${property.location || ''}</td>
+                    <td data-label="Property Type">${property.propertyType || ''}</td>
+                    <td data-label="Price">${displayPrice}</td>
+                    <td data-label="Name">${property.userName || ''}</td>
+                    <td data-label="Contact">${property.contact || ''}</td>
+                    <td data-label="Date">${property.date ? new Date(property.date).toLocaleDateString() : ''}</td>
+                    <td data-label="Ownership">${property.ownershipType || ''}</td>
                 `;
                 propertiesBody.appendChild(row);
             });
         }
-
-async function fetchProperties() {
-    const token = localStorage.getItem("userToken");
-    try {
-        const response = await fetch(`${BaseUrl}/all-public`, { 
-            headers: { 
-                'Content-Type': 'application/json',
-                'authorization': `Bearer ${token}` 
-            } 
-        });
-        if (!response.ok) throw new Error('Failed to fetch properties');
-
-        const result = await response.json();
-        propertiesData = result.data || { "data": [] } || [];
-
-        console.log("Fetched properties:", propertiesData);
-
-    } catch (error) {
-        console.error('Error fetching properties:', error);
-        showTableMessage('Error loading properties. Please try again later.');
-    }
-}
-        
-        function hideTable() {
-            tableContainer.classList.add('hidden');
-            tableMessage.classList.remove('hidden');
-        }
-
-        
 
         function showTable() {
             tableContainer.classList.remove('hidden');
             tableMessage.classList.add('hidden');
         }
 
-        function showTableMessage(message) {
+        function hideTable() {
+            tableContainer.classList.add('hidden');
             tableMessage.classList.remove('hidden');
-            tableMessage.textContent = message;
         }
 
-        function checkOrientation() {
-            if (window.innerWidth <= 768 && window.innerHeight > window.innerWidth) {
-                propertiesTable.classList.add('mobile-table');
+        function showTableMessage(message) {
+            tableMessage.textContent = message;
+            hideTable();
+        }
+
+        function updateSelectedFilters() {
+            selectedFiltersContainer.innerHTML = '';
+            const hasFilters = Object.values(filters).some(f => f && f.value);
+
+            if (hasFilters) {
+                Object.values(filters).forEach(filter => {
+                    if (filter && filter.value) {
+                        const tag = document.createElement('div');
+                        tag.className = 'filter-tag';
+                        tag.innerHTML = `<span>${filter.text}</span>`;
+                        selectedFiltersContainer.appendChild(tag);
+                    }
+                });
+                clearAllBtn.style.display = 'block';
             } else {
-                propertiesTable.classList.remove('mobile-table');
+                clearAllBtn.style.display = 'none';
             }
         }
 
-        hideTable();
-        showTableMessage('Please use the search filters above to find properties.');
-        checkOrientation();
-        window.addEventListener('resize', checkOrientation);
-
-        hamburger.addEventListener('click', function() {
-            navLinks.classList.toggle('active');
-        });
+        // --- EVENT LISTENERS ---
+        hamburger.addEventListener('click', () => navLinks.classList.toggle('active'));
+        
+        searchBtn.addEventListener('click', performSearch);
 
         dropdowns.forEach(dropdown => {
             const btn = dropdown.querySelector('.dropdown-btn');
@@ -1199,154 +1176,51 @@ async function fetchProperties() {
 
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                dropdowns.forEach(d => {
-                    if(d !== dropdown) d.classList.remove('active');
-                });
-                dropdown.classList.toggle('active');
+                const isActive = dropdown.classList.contains('active');
+                dropdowns.forEach(d => d.classList.remove('active'));
+                if (!isActive) dropdown.classList.add('active');
             });
 
             options.forEach(option => {
                 option.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    const value = option.dataset.value;
-                    const text = option.textContent;
-                    const dropdownId = dropdown.id;
-                    
-                    btn.querySelector('span').textContent = text;
+                    btn.querySelector('span').textContent = option.textContent;
                     options.forEach(opt => opt.classList.remove('selected'));
                     option.classList.add('selected');
-                    
-                    filters[dropdownId] = { value, text };
-                    
+                    filters[dropdown.id] = { value: option.dataset.value, text: option.textContent };
                     dropdown.classList.remove('active');
                     updateSelectedFilters();
-                    applyFilters();
                 });
             });
-        });
-
-        document.addEventListener('click', () => {
-            dropdowns.forEach(d => d.classList.remove('active'));
-        });
-
-        clearAllBtn.addEventListener('click', () => {
-            clearAllFilters();
-            hideTable();
-            showTableMessage('Please use the search filters above to find properties.');
         });
 
         priceInput.addEventListener('input', () => {
             const priceValue = priceInput.value.trim();
             if (priceValue) {
-                filters.priceInput = {
-                    value: priceValue,
-                    text: `₹${priceValue}`
-                };
+                filters.priceInput = { value: priceValue, text: `Budget: ₹${priceValue}` };
             } else {
                 delete filters.priceInput;
             }
             updateSelectedFilters();
-            applyFilters();
         });
 
-        function updateSelectedFilters() {
-            selectedFiltersContainer.innerHTML = '';
-            let hasFilters = false;
-            
-            Object.keys(filters).forEach(key => {
-                const filter = filters[key];
-                if (filter && filter.value) {
-                    hasFilters = true;
-                    const tag = document.createElement('div');
-                    tag.className = 'filter-tag';
-                    tag.innerHTML = `<span>${filter.text}</span>`;
-                    selectedFiltersContainer.appendChild(tag);
-                }
-            });
-            
-            if (hasFilters) {
-                clearAllBtn.style.display = 'block';
-            } else {
-                clearAllBtn.style.display = 'none';
-            }
-        }
-
-        function getDefaultText(filterKey) {
-            switch(filterKey) {
-                case 'location': return 'Select Location';
-                case 'propertyType': return 'Select Property Type';
-                default: return 'Select';
-            }
-        }
-
-        searchBtn.addEventListener('click', () => {
-    if (propertiesData.length > 0) {
-        applyFilters();
-        if (filteredData.length > 0) {
-            renderProperties(filteredData);
-            showTable();
-        } else {
-            hideTable();
-            showTableMessage("No 1properties found. Please try different filters.");
-        }
-    } else {
-        hideTable();
-        showTableMessage("1No properties found. Please try different filters.");
-    }
-});
-
-        function clearAllFilters() {
+        clearAllBtn.addEventListener('click', () => {
             filters = {};
-            
-            dropdowns.forEach(dropdown => {
-                const btn = dropdown.querySelector('.dropdown-btn span');
-                const options = dropdown.querySelectorAll('.dropdown-option');
-                btn.textContent = getDefaultText(dropdown.id);
-                options.forEach(opt => opt.classList.remove('selected'));
-            });
-            
             priceInput.value = '';
-            updateSelectedFilters();
-        }
-
-               function applyFilters() {
-            filteredData = [...propertiesData];
-        
-            const filterLocation = filters.location ? filters.location.value.toLowerCase() : '';
-            const filterType = filters.propertyType ? filters.propertyType.value.toLowerCase() : '';
-            const priceRange = filters.priceInput ? filters.priceInput.value.replace(/[^0-9-]/g, '') : '';
-        
-            let minPrice = -1, maxPrice = -1;
-            if (priceRange.includes('-')) {
-                const parts = priceRange.split('-').map(p => parseInt(p.trim().replace(/,/g, ''), 10));
-                minPrice = parts[0]; maxPrice = parts[1];
-            }
-        
-            filteredData = filteredData.filter(property => {
-                const rowLocation = property.location ? property.location.toLowerCase() : '';
-                const rowType = property.propertyType ? property.propertyType.toLowerCase() : '';
-                const rowPrice = property.price || 0;
-        
-                const matchLocation = !filterLocation || rowLocation.includes(filterLocation);
-                const matchType = !filterType || rowType === filterType;
-        
-                let matchPrice = false;
-                if (!priceRange) {
-                    matchPrice = true;
-                } else if (minPrice !== -1 && maxPrice !== -1) {
-                    matchPrice = (rowPrice >= minPrice && rowPrice <= maxPrice);
-                } else if (minPrice !== -1) {
-                    matchPrice = (rowPrice >= minPrice);
-                } else {
-                    const singlePrice = parseInt(priceRange.replace(/,/g, ''), 10);
-                    matchPrice = (rowPrice === singlePrice);
-                }
-        
-                return matchLocation && matchType && matchPrice;
+            dropdowns.forEach(dropdown => {
+                dropdown.querySelector('.dropdown-btn span').textContent = dropdown.id === 'location' ? 'Select Location' : 'Select Property Type';
+                dropdown.querySelectorAll('.dropdown-option').forEach(opt => opt.classList.remove('selected'));
             });
-        }
+            updateSelectedFilters();
+            showTableMessage('Please use the search filters above to find properties.');
+        });
+        
+        document.addEventListener('click', () => dropdowns.forEach(d => d.classList.remove('active')));
+        
+        // --- INITIALIZATION ---
+        showTableMessage('Please use the search filters above to find properties.');
         fetchProperties();
     });
 </script>
 </body>
-</html> 
+</html>
