@@ -317,7 +317,8 @@
           </a>
       </div>
   </nav>
-
+ 
+      
   <main>
     <div class="main-container">
       <div class="left-panel">
@@ -447,18 +448,61 @@
                   if (response.ok && data.token) {
                       localStorage.setItem("token", data.token);
                       localStorage.setItem("admin", JSON.stringify(data.data));
-                      showCustomPopup("Admin Logged-in successfully!", "Success", () => {
+                      showCustomPopup("✅ Admin Logged-in successfully!", "Success", () => {
                           window.location.href = "../frontend/admin-dashboard.html";
                       });
                   } else {
-                      showCustomPopup(data.message || "Invalid login credentials", "Error");
+                      showCustomPopup(data.message ||"⚠️ Invalid login credentials", "Error");
                   }
               } catch (error) {
                   console.error("Error:", error.message);
-                  showCustomPopup("Something went wrong. Please try again.", "Error");
+                  showCustomPopup("❌ Something went wrong. Please try again.", "Error");
               }
           });
       });
+       function showCustomPopup(message, title = "Notification", onOk = null, showClose = false) {
+            const overlay = document.getElementById('custom-popup-overlay');
+            const popupTitle = document.getElementById('popup-title');
+            const popupMessage = document.getElementById('popup-message');
+            const okBtn = document.getElementById('popup-ok-btn');
+            const closeBtn = document.getElementById('popup-close-btn');
+
+            popupTitle.textContent = title;
+            popupMessage.textContent = message;
+
+            closeBtn.style.display = showClose ? 'inline-block' : 'none';
+            okBtn.textContent = (onOk && showClose) ? "Continue" : "OK";
+            closeBtn.textContent = "Discard";
+
+            okBtn.onclick = null;
+            closeBtn.onclick = null;
+
+            okBtn.onclick = () => {
+                if (onOk) {
+                    hideCustomPopup();
+                    onOk();
+                } else {
+                    hideCustomPopup();
+                }
+            };
+
+            closeBtn.onclick = () => {
+                hideCustomPopup();
+                renderLoginForm();
+            };
+
+            overlay.classList.remove('popup-hidden');
+            overlay.classList.add('popup-visible');
+            document.querySelector('.custom-popup-card').style.transform = 'scale(1)';
+        }
+
+        function hideCustomPopup() {
+            const overlay = document.getElementById('custom-popup-overlay');
+            overlay.classList.remove('popup-visible');
+            overlay.classList.add('popup-hidden');
+            document.querySelector('.custom-popup-card').style.transform = 'scale(0.9)';
+        }
+
   </script>
 </body>
 </html>

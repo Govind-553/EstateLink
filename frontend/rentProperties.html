@@ -851,7 +851,106 @@
         .social-links {
             justify-content: center;
         }
-    }      
+    }  
+     /* Pop-up Overlay styles */
+#custom-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1001; /* Ensure it's on top of other content */
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* Pop-up Card styles */
+.custom-popup-card {
+    background-color: var(--bg-white);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+}
+
+/* Hide the pop-up by default */
+.popup-hidden {
+    visibility: hidden;
+    opacity: 0;
+}
+
+/* Show the pop-up with a smooth animation */
+.popup-visible {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Adjust button styles to match your design */
+.custom-popup-buttons {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 1.5rem;
+}
+
+.custom-popup-buttons .btn {
+    width: 45%;
+    /* Add any other button styles */
+}
+/* --- RESPONSIVE DESIGN --- */
+
+/* Large screens (desktop) */
+@media (min-width: 1024px) {
+    .side-panel {
+        width: 450px; /* Wider on desktop */
+    }
+}
+
+/* Medium screens (tablet) */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .side-panel {
+        width: 350px; /* Slightly narrower */
+    }
+    .panel-header {
+        font-size: 1.2rem;
+    }
+    .button-row button {
+        font-size: 0.95rem;
+        padding: 10px;
+    }
+}
+
+/* Small screens (mobile) */
+@media (max-width: 767px) {
+    .side-panel {
+        width: 100%; /* Full width on mobile */
+    }
+    .panel-header {
+        font-size: 1.1rem;
+        padding: 0.8rem 1rem;
+    }
+    .panel-content {
+        padding: 1rem;
+    }
+    .panel-content input,
+    .panel-content select {
+        font-size: 0.95rem;
+        padding: 10px;
+    }
+    .button-row {
+        flex-direction: column; /* Stack buttons */
+    }
+    .button-row button {
+        width: 100%;
+    }
+}
+    
 </style>
 </head>
 <body>
@@ -878,6 +977,19 @@
         <span></span>
     </div>
 </nav>
+
+<div id="custom-popup-overlay" class="popup-hidden">
+        <div class="custom-popup-card">
+            <div class="custom-popup-content">
+                <h3 id="popup-title"></h3>
+                <p id="popup-message"></p>
+            </div>
+            <div class="custom-popup-buttons">
+                <button id="popup-ok-btn" class="btn">OK</button>
+                <button id="popup-close-btn" class="btn">Close</button>
+            </div>
+        </div>
+    </div>
 
 <div id="profilePanel" class="side-panel">
     <div class="panel-header">
@@ -1066,7 +1178,7 @@
         // --- LOGIN CHECK ---
         const token = localStorage.getItem("userToken");
         if (!token) {
-            alert("You must be logged in to view properties. Redirecting to login page...");
+            showCustomPopup("⚠️ You must be logged in to view properties. Redirecting to login page...");
             window.location.href = "rentLogin.html";
             return; // Stop script execution if not logged in
         }
@@ -1138,7 +1250,7 @@
                 propertiesData = result.rentFlatsList || [];
             } catch (error) {
                 console.error('Error fetching properties:', error);
-                showTableMessage('Error loading properties. Please try again later.' + error.message );
+                showTableMessage('❌ Error loading properties. Please try again later.' + error.message );
             }
         }
 
@@ -1179,7 +1291,7 @@
         
         function performSearch() {
             if (Object.keys(filters).length === 0 || Object.values(filters).every(f => !f.value)) {
-                showTableMessage("Please select at least one filter to start a search.");
+                showTableMessage("⚠️ Please select at least one filter to start a search.");
                 return;
             }
 
@@ -1189,7 +1301,7 @@
                 showTable();
             } else {
                 hideTable();
-                showTableMessage("No properties found matching your criteria.");
+                showTableMessage("❌ No properties found matching your criteria.");
             }
         }
 
@@ -1300,15 +1412,58 @@
                 dropdown.querySelectorAll('.dropdown-option').forEach(opt => opt.classList.remove('selected'));
             });
             updateSelectedFilters();
-            showTableMessage('Please use the search filters above to find properties.');
+            showTableMessage('⚠️ Please use the search filters above to find properties.');
         });
         
         document.addEventListener('click', () => dropdowns.forEach(d => d.classList.remove('active')));
         
         // --- INITIALIZATION ---
-        showTableMessage('Please use the search filters above to find properties.');
+        showTableMessage('⚠️ Please use the search filters above to find properties.');
         fetchProperties();
     });
+     function showCustomPopup(message, title = "Notification", onOk = null, showClose = false) {
+            const overlay = document.getElementById('custom-popup-overlay');
+            const popupTitle = document.getElementById('popup-title');
+            const popupMessage = document.getElementById('popup-message');
+            const okBtn = document.getElementById('popup-ok-btn');
+            const closeBtn = document.getElementById('popup-close-btn');
+
+            popupTitle.textContent = title;
+            popupMessage.textContent = message;
+
+            closeBtn.style.display = showClose ? 'inline-block' : 'none';
+            okBtn.textContent = (onOk && showClose) ? "Continue" : "OK";
+            closeBtn.textContent = "Discard";
+
+            okBtn.onclick = null;
+            closeBtn.onclick = null;
+
+            okBtn.onclick = () => {
+                if (onOk) {
+                    hideCustomPopup();
+                    onOk();
+                } else {
+                    hideCustomPopup();
+                }
+            };
+
+            closeBtn.onclick = () => {
+                hideCustomPopup();
+                renderLoginForm();
+            };
+
+            overlay.classList.remove('popup-hidden');
+            overlay.classList.add('popup-visible');
+            document.querySelector('.custom-popup-card').style.transform = 'scale(1)';
+        }
+
+        function hideCustomPopup() {
+            const overlay = document.getElementById('custom-popup-overlay');
+            overlay.classList.remove('popup-visible');
+            overlay.classList.add('popup-hidden');
+            document.querySelector('.custom-popup-card').style.transform = 'scale(0.9)';
+        }
+
 </script>
 </body>
 </html>

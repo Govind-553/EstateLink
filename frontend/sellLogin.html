@@ -459,7 +459,7 @@
             </a>
         </div>
     </nav>
-
+    
     <main>
         <div class="main-container">
             <div class="left-panel">
@@ -831,7 +831,7 @@
                         }
                     } catch (error) {
                         console.error("API error:", error);
-                        showCustomPopup("Error logging in: " + error.message);
+                        showCustomPopup("❌ Error logging in: " + error.message);
                     }
                 });
 
@@ -852,14 +852,14 @@
                     const phoneNumber = "+91" + mobileInput;
 
                     if (!/^\+91[6-9]\d{9}$/.test(phoneNumber)) {
-                        showCustomPopup("Please enter a valid 10-digit mobile number.");
+                        showCustomPopup("⚠️ Please enter a valid 10-digit mobile number.");
                         return;
                     }
 
                     try {
                         confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, setupRecaptchaRegister());
                         window.confirmationResult = confirmationResult;
-                        showCustomPopup("OTP sent for registration!");
+                        showCustomPopup("✅ OTP sent for registration!");
 
                         tempFullName = document.getElementById("regName").value;
                         tempPassword = document.getElementById("regPassword").value;
@@ -871,7 +871,7 @@
 
                         renderOtpForm("register", phoneNumber);
                     } catch (error) {
-                        showCustomPopup("Error sending OTP: " + error.message);
+                        showCustomPopup("❌ Error sending OTP: " + error.message);
                     }
                 });
 
@@ -882,7 +882,7 @@
                     const phoneNumber = '+91' + mobileInput;
 
                     if (!/^\+91[6-9]\d{9}$/.test(phoneNumber)) {
-                        showCustomPopup("Please enter a valid 10-digit mobile number.");
+                        showCustomPopup("⚠️ Please enter a valid 10-digit mobile number.");
                         return;
                     }
 
@@ -907,7 +907,7 @@
                         localStorage.setItem("tempMobileNumber", phoneNumber);
                         renderOtpForm("forgot", phoneNumber);
                     } catch (error) {
-                        showCustomPopup("Error sending OTP: " + error.message);
+                        showCustomPopup("❌ Error sending OTP: " + error.message);
                     }
                 });
 
@@ -919,7 +919,7 @@
                     const mobileNumber = localStorage.getItem("tempMobileNumber");
 
                     if (newPass !== confirmPass) {
-                        return showCustomPopup("Passwords do not match.");
+                        return showCustomPopup("⚠️ Passwords do not match.");
                     }
 
                     try {
@@ -943,7 +943,7 @@
                         }
                     } catch (err) {
                         console.error("API error:", err);
-                        showCustomPopup("Server error. Try again.");
+                        showCustomPopup("❌ Server error. Try again.");
                     }
                 });
             };
@@ -982,7 +982,7 @@
                     const otp = Array.from(otpInputs).map(input => input.value).join('');
 
                     if (otp.length !== 6) {
-                        showCustomPopup("Please enter a valid 6-digit OTP.");
+                        showCustomPopup("⚠️ Please enter a valid 6-digit OTP.");
                         return;
                     }
 
@@ -997,7 +997,7 @@
                                 const mobileNumber = localStorage.getItem("tempMobileNumber");
 
                                 if (!fullName || !password || !mobileNumber) {
-                                    showCustomPopup("Registration data not found. Please try again.");
+                                    showCustomPopup("❌ Registration data not found. Please try again.");
                                     return;
                                 }
 
@@ -1020,14 +1020,14 @@
                                     }
                                 } catch(error) {
                                     console.error("API error:", error);
-                                    showCustomPopup("Error registering user: " + error.msg);
+                                    showCustomPopup("❌ Error registering user: " + error.msg);
                                 }
                             },
                             true
                         );
                     } catch (error) {
                         console.error("OTP verification failed:", error);
-                        showCustomPopup("OTP verification failed: " + error.message);
+                        showCustomPopup("❌ OTP verification failed: " + error.message);
                     }
                 });
             };
@@ -1066,7 +1066,7 @@
                     rzp.open();
                 } catch (error) {
                     console.error("Error starting subscription:", error);
-                    showCustomPopup("Error starting subscription: " + error.message);
+                    showCustomPopup("❌ Error starting subscription: " + error.message);
                 }
             };
 
