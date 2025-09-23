@@ -119,13 +119,13 @@
 
 <nav class="navbar">
      <div class="logo">
-  <a onclick="history.back()">
-    <i class="fas fa-arrow-left"></i>
-  </a>
-  <a>
-    <img src="img/DSA.png" alt="Logo">
-    <span>DSA Enterprise</span>
-  </a>
+   <a onclick="history.back()">
+     <i class="fas fa-arrow-left"></i>
+   </a>
+   <a>
+     <img src="img/DSA.png" alt="Logo">
+     <span>DSA Enterprise</span>
+   </a>
 </div>
     <ul class="nav-links">
         <li><a href="../frontend/admin-dashboard.html">Dashboard</a></li>
@@ -342,11 +342,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function getFilteredData() {
         return properties.filter(p => {
+            // Location and Type filters (unchanged)
             if (filters.location && p.location !== filters.location.value) return false;
             if (filters.flatType && p.propertyType !== filters.flatType.value) return false;
-            if (filters.price && filters.price.value && !p.price.replace(/[^0-9]/g, '').includes(filters.price.value.replace(/[^0-9]/g, ''))) return false;
+
+            // --- MODIFIED RENT FILTER LOGIC ---
+            if (filters.price && filters.price.value) {
+                // Convert filter input and property price to numbers for comparison
+                const filterPrice = parseInt(filters.price.value.replace(/[^0-9]/g, ''), 10);
+                const propertyPrice = parseInt(p.price.replace(/[^0-9]/g, ''), 10);
+
+                // Check if both are valid numbers and if the property's price is greater than the filter
+                if (!isNaN(filterPrice) && !isNaN(propertyPrice) && propertyPrice > filterPrice) {
+                    return false; // Exclude if property price is higher than the entered value
+                }
+            }
+            // --- END OF MODIFICATION ---
+            
+            // Mobile number filter (unchanged)
             if (filters.mobile && filters.mobile.value && !p.contact.includes(filters.mobile.value)) return false;
-            return true;
+            
+            return true; // Include the property if it passes all filters
         });
     }
     
@@ -443,4 +459,3 @@ document.addEventListener('DOMContentLoaded', function() {
 
 </body>
 </html>
-
