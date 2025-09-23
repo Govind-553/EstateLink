@@ -851,7 +851,7 @@
         .social-links {
             justify-content: center;
         }
-    }      
+    }       
 </style>
 </head>
 <body>
@@ -934,7 +934,7 @@
                 <label class="search-label">Enter Your Budget</label>
                 <div class="price-input-group">
                         <span class="input-icon">₹</span>
-                        <input type="text" class="search-input" id="priceInput" placeholder="e.g., 25000">
+                        <input type="text" class="search-input" id="priceInput" placeholder="e.g., 5000000">
                 </div>
             </div>
 
@@ -984,6 +984,14 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // --- LOGIN CHECK ---
+        const token = localStorage.getItem("userToken");
+        if (!token) {
+            alert("You must be logged in to view properties. Redirecting to login page...");
+            window.location.href = "sellLogin.html";
+            return; // Stop script execution if not logged in
+        }
+
         // --- VARIABLE DECLARATIONS ---
         let filters = {};
         let propertiesData = [];
@@ -1011,12 +1019,10 @@
         const profileMobile = document.getElementById('profileMobile');
         const userData = JSON.parse(localStorage.getItem("user"));
     
-    //check the user data is present or not
-    if (userData) {
-        document.getElementById("profileName").value = userData.fullName;
-        document.getElementById("profileMobile").value = userData.mobileNumber;
-    // Password field can be left blank or masked (don’t store passwords in frontend!)
-    }
+        if (userData) {
+            profileName.value = userData.fullName || '';
+            profileMobile.value = userData.mobileNumber || '';
+        }
 
         function openPanel(panel) {
             panel.style.width = '350px';
@@ -1036,15 +1042,14 @@
             closeProfileBtn.addEventListener('click', closeAllPanels);
             overlay.addEventListener('click', closeAllPanels);
             logoutBtn.addEventListener("click", () => {
-                localStorage.removeItem("token");
-                localStorage.removeItem("admin");
+                localStorage.removeItem("userToken");
+                localStorage.removeItem("user");
                 window.location.href = "sellLogin.html";
             });
         }
         
         // --- DATA FETCHING ---
         async function fetchProperties() {
-            const token = localStorage.getItem("userToken");
             try {
                 const response = await fetch(`${BaseUrl}/all-public`, {
                     headers: { 'Content-Type': 'application/json', 'authorization': `Bearer ${token}` }
@@ -1072,24 +1077,26 @@
                 const matchLocation = !filterLocation || rowLocation.includes(filterLocation);
                 const matchType = !filterType || normalizedRowType === filterType;
 
-                // --- MODIFIED BUDGET FILTER LOGIC ---
-                let matchPrice = true; // Default to true if no price is entered
+                // --- CORRECTED NUMERICAL BUDGET FILTER LOGIC ---
+                let matchPrice = true;
                 if (priceValue) {
-                    const cleanDataPrice = String(property.price || '').replace(/[^0-9]/g, '');
-                    const cleanInputPrice = String(priceValue).replace(/[^0-9]/g, '');
-                    
-                    if (cleanInputPrice) {
-                        matchPrice = cleanDataPrice.includes(cleanInputPrice);
+                    const budget = parseInt(String(priceValue).replace(/[^0-9]/g, ''), 10);
+                    const propertyPrice = parseInt(String(property.price || '').replace(/[^0-9]/g, ''), 10);
+
+                    if (!isNaN(budget) && !isNaN(propertyPrice)) {
+                        matchPrice = propertyPrice <= budget;
+                    } else {
+                        matchPrice = false;
                     }
                 }
-                // --- END OF MODIFICATION ---
+                // --- END OF CORRECTION ---
                 
                 return matchLocation && matchType && matchPrice;
             });
         }
         
         function performSearch() {
-            if (Object.keys(filters).length === 0) {
+            if (Object.keys(filters).length === 0 || Object.values(filters).every(f => !f.value)) {
                 showTableMessage("Please select at least one filter to start a search.");
                 return;
             }
