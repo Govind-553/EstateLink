@@ -371,17 +371,38 @@ document.addEventListener('DOMContentLoaded', function() {
         const isCreating = propertyId === '';
         const url = isCreating ? `${BASE_URL}/create` : `${BASE_URL}/update/${propertyId}`;
         const method = isCreating ? 'POST' : 'PUT';
-        try {
-            const response = await fetch(url, { method, headers: { 'Content-Type': 'application/json', 'authorization': `Bearer ${accessToken}` }, body: JSON.stringify(formData) });
-            if (!response.ok) { const errorData = await response.json().catch(() => ({ message: 'Failed to save data.' })); throw new Error(errorData.message); }
-            showCustomPopup(isCreating ? '✅ New rental property added!' : '✅ Rental property updated!');
-            await fetchAndRenderProperties();
-            closePanel();
-        } catch (error) {
-            console.error("Error submitting form:", error);
-            showCustomPopup(`❌ An error occurred: ${error.message}`);
+         try {
+        const response = await fetch(url, { 
+            method, 
+            headers: { 
+                'Content-Type': 'application/json', 
+                'authorization': `Bearer ${accessToken}` 
+            }, 
+            body: JSON.stringify(formData) 
+        });
+
+        // ✅ MODIFIED: Handle the 409 status code
+        if (!response.ok) { 
+            const errorData = await response.json().catch(() => ({ message: 'Failed to save data.' })); 
+            
+            // Check for the 409 Conflict status code and display its message
+            if (response.status === 409) {
+                showCustomPopup(`❌ ${errorData.message}`);
+                return;
+            }
+
+            throw new Error(errorData.message); 
         }
-    });
+        
+        showCustomPopup(isCreating ? '✅ New rental property added!' : '✅ Rental property updated!');
+        await fetchAndRenderProperties();
+        closePanel();
+        
+    } catch (error) {
+        console.error("Error submitting form:", error);
+        showCustomPopup(`❌ An error occurred: ${error.message}`);
+    }
+});
 
     document.querySelector('.listings-section').addEventListener('click', async (e) => {
         const editBtn = e.target.closest('.edit-btn');

@@ -44,6 +44,16 @@ export const createRentListing = async (req, res) => {
         });
 
     } catch (error) {
+         // ✅ MODIFIED: Check for the specific duplicate key error
+        if (error.code === 11000) {
+            // Check if the duplicate key error is for the 'contact' field
+            if (error.keyPattern && error.keyPattern.contact) {
+                return res.status(409).json({ 
+                    message: "This contact number is already associated with an existing listing. Please use a different number." 
+                });
+            }
+        }
+
         console.error("Error creating rent listing:", error.message);
         res.status(500).json({ message: "Server error while creating rent listing." });
     }
