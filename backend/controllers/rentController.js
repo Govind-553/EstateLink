@@ -59,6 +59,30 @@ export const createRentListing = async (req, res) => {
     }
 };
 
+// New Route: Get user details by mobile number
+export const getUserByMobileNumber = async (req, res) => {
+    try {
+        const mobileNumber = req.params.mobileNumber;
+        const user = await User.findOne({ mobileNumber: mobileNumber });
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found." });
+        }
+
+        res.status(200).json({
+            message: "User found.",
+            user: {
+                fullName: user.fullName,
+                mobileNumber: user.mobileNumber
+            }
+        });
+
+    } catch (error) {
+        console.error("Error fetching user by mobile number:", error.message);
+        res.status(500).json({ message: "Server error." });
+    }
+};
+
 // Route 2: Get all rent listings
 export const getAllRentListings = async (req, res) => {
     try {

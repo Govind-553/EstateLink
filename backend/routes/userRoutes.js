@@ -18,6 +18,9 @@ import { verifyAccessToken } from "../middleware/userAuth.js";
 import { checkAdminNumber } from "../middleware/checkAdminNumber.js";
 import checkSubscription from "../middleware/checkSubscription.js"; // 🔹 New middleware
 
+// Import the controller function to get user by mobile number
+import { getUserByMobileNumber } from '../controllers/userController.js';
+
 // Import the User model
 import User from "../models/User.js";
 
@@ -40,6 +43,9 @@ router.post("/admin-login", adminLogin);
 
 // Route 6 - Logout user
 router.post("/logout", logout);
+
+// New Route - Get user details by mobile number
+router.get('/find/:mobileNumber', getUserByMobileNumber);
 
 // Admin routes
 

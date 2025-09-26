@@ -333,6 +333,32 @@ document.addEventListener('DOMContentLoaded', function() {
     // === FULLY RESTORED JAVASCRIPT LOGIC FOR UI AND FILTERS ===
     // ==========================================================
 
+     // New function to fetch user by mobile number
+        async function fetchUserByMobile(mobileNumber) {
+            try {
+                const accessToken = localStorage.getItem('token');
+                if (!accessToken) { return null; }
+                
+                // Assuming you have a new API endpoint to find users by mobile number
+                const response = await fetch(`http://localhost:3000/api/users/find/${mobileNumber}`, {
+                    headers: { 'Content-Type': 'application/json', 'authorization': `Bearer ${accessToken}` }
+                });
+
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        return null; // User not found
+                    }
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                return data.user;
+            } catch (error) {
+                console.error("Error fetching user:", error);
+                showCustomPopup("❌ Could not search for user. Please try again.");
+                return null;
+            }
+        }
+
     async function fetchAndRenderProperties() {
         try {
             const accessToken = localStorage.getItem('token');
