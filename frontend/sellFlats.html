@@ -325,8 +325,29 @@ document.addEventListener('DOMContentLoaded', function() {
     const searchInputs = document.querySelectorAll('.search-input');
     const clearButtons = document.querySelectorAll('.clear-btn');
     const searchBtn = document.getElementById('searchBtn');
+    const contactInput = propertyForm.elements['contact'];
+    const userNameInput = propertyForm.elements['userName'];
 
-    let filters = { location: null, flatType: null, price: null, mobile: null };
+    let filters = { location: null, flatType: null, price: null, mobile: null }; 
+
+    // API for user name fetching by contact number
+    contactInput.addEventListener('blur', async () => {
+    const contactVal = contactInput.value.trim();
+    if (contactVal.length === 10) {
+        try {
+            const res = await fetch(`http://localhost:3000/api/users/findByContact/${contactVal}`);
+            if (res.ok) {
+                const data = await res.json();
+                userNameInput.value = data.fullName;
+                showCustomPopup(`✅ User found: ${data.fullName}. Auto-filled name.`);
+            } else {
+                userNameInput.value = "";
+            }
+        } catch (err) {
+            console.error("Error checking user:", err);
+        }
+    }
+});
 
     async function fetchAndRenderProperties() {
         try {

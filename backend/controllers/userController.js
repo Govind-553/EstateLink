@@ -128,14 +128,27 @@ export const loginUser = async (req, res) => {
 // New Route - Get User by Contact 
 export const getUserByContact = async (req, res) => {
     try {
-        const { contact } = req.params;
+        let { contact } = req.params;
+
+        // If only 10 digits provided, add 91 prefix
+        if (/^[0-9]{10}$/.test(contact)) {
+            contact = "91" + contact;
+        }
+
         const user = await User.findOne({ mobileNumber: contact });
         if (!user) return res.status(404).json({ message: "No user found." });
-        res.json({ fullName: user.fullName, mobileNumber: user.mobileNumber });
+
+        // Return name but strip 91 for frontend display
+        res.json({ 
+            fullName: user.fullName, 
+            mobileNumber: user.mobileNumber.toString().slice(-10) 
+        });
     } catch (err) {
+        console.error("Error fetching user by contact:", err);
         res.status(500).json({ message: "Server error." });
     }
 };
+
 
 //Route 3 - Forgot Password
 export const forgotPassword = async (req, res) => {

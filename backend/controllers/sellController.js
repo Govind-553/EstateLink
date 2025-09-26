@@ -1,4 +1,5 @@
 import SellFlat from "../models/sellflats.js";
+import User from "../models/User.js";
 
 // Helper function to sanitize and parse the price string
 const parsePrice = (priceString) => {
@@ -21,8 +22,17 @@ export const createSellListing = async (req, res) => {
         if (!contact || !location || !propertyType || !price || !date || !ownershipType || !name) {
             return res.status(400).json({ message: "All required fields must be provided." });
         }
-        
+
+        // ✅ Always normalize contact to 10 digits
         const sanitizedContact = cleanMobileNumber(contact);
+
+        // ✅ Lookup user with "91" prefix
+        const matchedUser = await User.findOne({ mobileNumber: "91" + sanitizedContact });
+
+        let finalUserName = name; 
+        if (matchedUser) {
+            finalUserName = matchedUser.fullName; // auto-fill user name
+        }
 
         const newListing = new SellFlat({
             location,
@@ -30,8 +40,8 @@ export const createSellListing = async (req, res) => {
             price: parsePrice(price),
             date,
             ownershipType,
-            contact: sanitizedContact,
-            userName: name, // Use the name from the form
+            contact: sanitizedContact, // store clean contact
+            userName: finalUserName,   // either form name or user fullName
         });
 
         const savedListing = await newListing.save();
@@ -39,13 +49,15 @@ export const createSellListing = async (req, res) => {
         res.status(201).json({
             message: "✅ New flat for sale is listed successfully.",
             listing: savedListing,
+            autoFilledFromUser: !!matchedUser
         });
+
     } catch (error) {
         console.error("Error creating sell listing:", error.message);
 
-        // ✅ Handle duplicate contact error
+        // ✅ Handle duplicate contact gracefully
         if (error.code === 11000 && error.keyPattern?.contact) {
-            return res.status(409).json({ message: "❌ This contact number is already used in another listing." });
+            return res.status(409).json({ message: "❌ This contact number is already used in another sale listing." });
         }
 
         res.status(500).json({ message: "Server error while creating sell listing. " + error.message });

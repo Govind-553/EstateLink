@@ -1,4 +1,5 @@
 import RentFlat from "../models/rentflats.js";
+import User from "../models/User.js";
 
 // Helper function to sanitize and parse the price string
 const parsePrice = (priceString) => {
@@ -22,21 +23,22 @@ export const createRentListing = async (req, res) => {
             return res.status(400).json({ message: "All required fields must be provided." });
         }
 
-        const sanitizedContact = cleanMobileNumber(contact);
+        // Always normalize to 10 digits
+        const sanitizedContact = contact.replace(/^91/, "").trim();
 
-        // ✅ Check if contact matches a registered user
-        const matchedUser = await User.findOne({ mobileNumber: sanitizedContact });
+        // Lookup user with prefixed 91
+        const matchedUser = await User.findOne({ mobileNumber: "91" + sanitizedContact });
         let finalUserName = name;
 
         if (matchedUser) {
-            finalUserName = matchedUser.fullName; // auto use registered user's full name
+            finalUserName = matchedUser.fullName;
         }
 
         const newListing = new RentFlat({
             location,
             propertyType,
             price: parsePrice(price),
-            contact: sanitizedContact,
+            contact: sanitizedContact, // always store only 10 digits
             userName: finalUserName,
             date,
             tenantType
@@ -47,16 +49,14 @@ export const createRentListing = async (req, res) => {
         res.status(201).json({
             message: "New flat for rent is listed successfully.",
             listing: savedListing,
-            autoFilledFromUser: !!matchedUser // to tell frontend if autofill happened
+            autoFilledFromUser: !!matchedUser
         });
 
     } catch (error) {
-        if (error.code === 11000) {
-            if (error.keyPattern && error.keyPattern.contact) {
-                return res.status(409).json({ 
-                    message: "This contact number is already associated with an existing listing. Please use a different number." 
-                });
-            }
+        if (error.code === 11000 && error.keyPattern?.contact) {
+            return res.status(409).json({ 
+                message: "This contact number is already associated with an existing listing. Please use a different number." 
+            });
         }
         console.error("Error creating rent listing:", error.message);
         res.status(500).json({ message: "Server error while creating rent listing." });
