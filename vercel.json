@@ -1,6 +1,6 @@
 {
   "rewrites": [
     { "source": "/(.*)", "destination": "/frontend/index.html" },
-    { "src": "frontend/create-firebase-config.mjs", "use": "@vercel/node" }
+    { "source": "frontend/create-firebase-config.mjs", "use": "@vercel/node" }
   ]
 }
