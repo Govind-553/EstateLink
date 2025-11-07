@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 //generate access token 
 export const generateAccessToken = (mobileNumber) => {
     return jwt.sign({ mobileNumber }, process.env.JWT_ACCESS_TOKEN_SECRET, { 
-        expiresIn: '30m' 
+        expiresIn: '2h' 
     });
 };
 
