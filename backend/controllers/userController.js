@@ -64,7 +64,7 @@ export const registerUser = async (req, res) => {
 
     res.status(201).json({
       status: 'success',
-      message: 'User registered successfully (OTP & payment pending). Please complete payment to activate your 7 days free + 1 month subscription.',
+      message: '✅ User registered successfully (OTP & payment pending). Please complete payment to activate your 7 days free + 1 month subscription.',
       data: {
         fullName: newUser.fullName,
         contact: newUser.mobileNumber,

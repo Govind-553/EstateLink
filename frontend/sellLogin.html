@@ -824,6 +824,7 @@
             // Subscription expired or not active – show Razorpay renewal
             showCustomPopup(
               data.message || "⚠️ Your subscription has expired. Please subscribe to continue.",
+              "Subscription Expired",
               () => handleSubscription(phoneNumber, "renewal", passwordInput),
               true
             );
