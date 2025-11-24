@@ -1,3 +1,4 @@
+// webhook.js
 import express from "express";
 import crypto from "crypto";
 import User from "../models/User.js";
@@ -6,41 +7,46 @@ dotenv.config();
 
 const router = express.Router();
 
-// Helper: add one calendar month
+// Helper: add one calendar month to a given date
 const addOneMonth = (date) => {
   const d = new Date(date);
   const day = d.getDate();
   d.setMonth(d.getMonth() + 1);
+  // handle months with fewer days
   if (d.getDate() < day) {
     d.setDate(0);
   }
   return d;
 };
 
-// Razorpay webhook endpoint
 router.post(
   "/razorpay-webhook",
   express.json({ type: "application/json" }),
   async (req, res) => {
     try {
       const secret = process.env.RAZORPAY_WEBHOOK_SECRET;
+      if (!secret) {
+        console.warn("Razorpay webhook secret is not configured in environment.");
+      }
 
-      const shasum = crypto.createHmac("sha256", secret);
+      // Validate signature
+      const shasum = crypto.createHmac("sha256", secret || "");
       shasum.update(JSON.stringify(req.body));
       const digest = shasum.digest("hex");
 
       if (digest !== req.headers["x-razorpay-signature"]) {
+        console.warn("Invalid Razorpay webhook signature");
         return res.status(400).json({ status: "failed", message: "Invalid signature" });
       }
 
       const event = req.body.event;
       const payload = req.body.payload || {};
 
-      // Handle first activation of subscription
+      // SUBSCRIPTION ACTIVATED
       if (event === "subscription.activated") {
         const subscriptionEntity = payload.subscription?.entity;
         if (!subscriptionEntity) {
-          console.warn("subscription.activated: No subscription entity in payload");
+          console.warn("subscription.activated: no entity in payload");
         } else {
           const subscriptionId = subscriptionEntity.id;
 
@@ -48,41 +54,33 @@ router.post(
           if (user) {
             const now = new Date();
 
-            if (!user.hasUsedTrial) {
-              // First time ever: 7 days free + 1 calendar month
-              const trialEnd = new Date(now);
-              trialEnd.setDate(trialEnd.getDate() + 7);
-              const expiry = addOneMonth(trialEnd);
-
-              user.subscriptionActive = true;
-              user.subscriptionStatus = "Active";
-              user.subscriptionExpiry = expiry;
-              user.hasUsedTrial = true;
-            } else {
-              // Already used trial – subscription re-created: treat as renewal
-              const base = user.subscriptionExpiry && user.subscriptionExpiry > now
-                ? user.subscriptionExpiry
-                : now;
-
-              const expiry = addOneMonth(base);
-              user.subscriptionActive = true;
-              user.subscriptionStatus = "Active";
-              user.subscriptionExpiry = expiry;
+            // If user already has a future subscriptionExpiry (e.g., registration set 7-day trial),
+            // extend from that date; otherwise, extend from now.
+            let baseDate = now;
+            if (user.subscriptionExpiry && new Date(user.subscriptionExpiry) > now) {
+              baseDate = new Date(user.subscriptionExpiry);
             }
 
-            // Optional: capture email/contact from Razorpay customer details if present
-            if (subscriptionEntity.customer_details?.email && !user.email) {
-              user.email = subscriptionEntity.customer_details.email;
-            }
+            const newExpiry = addOneMonth(baseDate);
+
+            user.subscriptionActive = true;
+            user.subscriptionStatus = "Active";
+            user.subscriptionExpiry = newExpiry;
+
+            // If Razorpay sent customer email/contact, store if missing
+            const cust = subscriptionEntity.customer_details || {};
+            if (cust.email && !user.email) user.email = cust.email;
+            if (cust.contact && !user.mobileNumber) user.mobileNumber = cust.contact;
 
             await user.save();
-
-            console.log(`✅ Subscription activated for user ${user.mobileNumber}, expires at ${user.subscriptionExpiry}`);
+            console.log(`✅ subscription.activated -> user ${user.mobileNumber} expiry set to ${user.subscriptionExpiry}`);
+          } else {
+            console.warn(`subscription.activated -> no user found with subscriptionId ${subscriptionId}`);
           }
         }
       }
 
-      // Handle automatic monthly charges (for recurring subscriptions)
+      // INVOICE PAID (recurring monthly charge)
       if (event === "invoice.paid") {
         const invoiceEntity = payload.invoice?.entity;
         if (invoiceEntity && invoiceEntity.subscription_id) {
@@ -91,48 +89,46 @@ router.post(
 
           if (user) {
             const now = new Date();
-            const base = user.subscriptionExpiry && user.subscriptionExpiry > now
-              ? user.subscriptionExpiry
+            // extend from existing expiry if in future, else from now
+            const baseDate = user.subscriptionExpiry && new Date(user.subscriptionExpiry) > now
+              ? new Date(user.subscriptionExpiry)
               : now;
-            const expiry = addOneMonth(base);
+
+            const newExpiry = addOneMonth(baseDate);
 
             user.subscriptionActive = true;
             user.subscriptionStatus = "Active";
-            user.subscriptionExpiry = expiry;
+            user.subscriptionExpiry = newExpiry;
 
-            // Update email/contact from invoice if needed
-            if (invoiceEntity.customer_email && !user.email) {
-              user.email = invoiceEntity.customer_email;
-            }
+            // capture email if present in invoice
+            if (invoiceEntity.customer_email && !user.email) user.email = invoiceEntity.customer_email;
 
             await user.save();
-
-            console.log(`📅 Invoice paid: extended subscription for ${user.mobileNumber} to ${user.subscriptionExpiry}`);
+            console.log(`📅 invoice.paid -> extended ${user.mobileNumber} to ${user.subscriptionExpiry}`);
+          } else {
+            console.warn(`invoice.paid -> no user found with subscriptionId ${subscriptionId}`);
           }
         }
       }
 
+      // Subscription canceled/paused/halted
       if (event === "subscription.cancelled" || event === "subscription.halted" || event === "subscription.paused") {
         const subscriptionEntity = payload.subscription?.entity;
         if (subscriptionEntity) {
           const subscriptionId = subscriptionEntity.id;
-
           await User.findOneAndUpdate(
             { subscriptionId },
             { subscriptionActive: false, subscriptionStatus: "Inactive" }
           );
-
-          console.log(`❌ Subscription cancelled/paused: ${subscriptionId}`);
+          console.log(`❌ Subscription ${subscriptionId} set to Inactive`);
         }
       }
 
-      res.json({ status: "ok" });
+      // reply OK to the webhook 
+      return res.json({ status: "ok" });
     } catch (error) {
-      console.error("Error in webhook:", error.message);
-      res.status(500).json({
-        status: "failed",
-        message: "Server error",
-      });
+      console.error("Error in webhook:", error);
+      return res.status(500).json({ status: "failed", message: "Server error", error: error.message });
     }
   }
 );
