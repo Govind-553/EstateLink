@@ -1092,12 +1092,7 @@ const handleSubscription = async (mobileNumber, mode = "registration", loginPass
     };
 
     const rzp = new Razorpay(options);
-    try {
-      rzp.open();
-    } catch (err) {
-      console.error('Razorpay open error', err);
-      alert('Unable to open Razorpay checkout: ' + (err.message || err));
-    }
+    rzp.open();
   } catch (error) {
     console.error("Error starting subscription:", error);
     showCustomPopup("❌ Error starting subscription: " + error.message);
@@ -1150,7 +1145,7 @@ const handleSubscription = async (mobileNumber, mode = "registration", loginPass
     overlay.classList.add('popup-hidden');
     document.querySelector('.custom-popup-card').style.transform = 'scale(0.9)';
   }
-</script>
+</script>      
 
 </body>
 </html>

@@ -18,6 +18,10 @@ dotenv.config();
 const app = express(); // Initialize Express app
 
 app.use(cors());
+
+// razorpay webhook route
+app.use("/api/webhook", webhookRoutes);
+
 app.use(express.json());
 app.use(cookieParser());
 
@@ -26,7 +30,6 @@ app.use('/api/users', userRoutes);
 app.use('/api/rentflats', rentRoutes);
 app.use('/api/sellflats', sellRoutes);
 app.use("/api/payment", paymentRoutes);
-app.use("/api/webhook", webhookRoutes);
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI)

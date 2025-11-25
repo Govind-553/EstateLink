@@ -79,8 +79,9 @@ router.post("/create-subscription", async (req, res) => {
 
     return res.json({
       status: "success",
+      message: "Subscription created. Complete payment through Razorpay.",
       subscriptionId: subscription.id,
-      razorpayKeyId: process.env.RAZORPAY_KEY_ID, 
+      subscription,
     });
   } catch (error) {
     console.error("Error in create-subscription:", error && error.message, error);
