@@ -160,6 +160,7 @@ html{scroll-behavior:smooth}
   </a>
 </div>
     <ul class="nav-links">
+        <li><a href="rentFlats.html">Rent Flats</a></li>
         <li><a href="admin-dashboard.html">Dashboard</a></li>
     </ul>
     <div class="hamburger"><span></span><span></span><span></span></div>
@@ -268,25 +269,42 @@ document.addEventListener('DOMContentLoaded', function() {
     const confirmYesBtn = document.getElementById('confirmYesBtn');
     const confirmNoBtn = document.getElementById('confirmNoBtn');
     
-    function showCustomPopup(message, isConfirm = false, callback = null) {
-        modalMessage.textContent = message;
-        
-        if (isConfirm) {
-            okBtn.style.display = 'none';
-            confirmYesBtn.style.display = 'inline-block';
-            confirmNoBtn.style.display = 'inline-block';
-        } else {
-            okBtn.style.display = 'inline-block';
-            confirmYesBtn.style.display = 'none';
-            confirmNoBtn.style.display = 'none';
-        }
+    function showCustomPopup(message, isConfirm = false, callback = null, duration = 3000) {//here 3000 is shows the 3 second.
+    modalMessage.textContent = message;
 
-        customModal.style.display = 'flex';
-        
-        okBtn.onclick = () => { customModal.style.display = 'none'; if (callback) callback(true); };
-        confirmYesBtn.onclick = () => { customModal.style.display = 'none'; if (callback) callback(true); };
-        confirmNoBtn.onclick = () => { customModal.style.display = 'none'; if (callback) callback(false); };
+    if (isConfirm) {
+        okBtn.style.display = 'none';
+        confirmYesBtn.style.display = 'inline-block';
+        confirmNoBtn.style.display = 'inline-block';
+    } else {
+        okBtn.style.display = 'inline-block';
+        confirmYesBtn.style.display = 'none';
+        confirmNoBtn.style.display = 'none';
+
+        // Auto close for alert after specific duration
+        setTimeout(() => {
+            customModal.style.display = 'none';
+            if (callback) callback(true);
+        }, duration);
     }
+
+    customModal.style.display = 'flex';
+
+    okBtn.onclick = () => {
+        customModal.style.display = 'none';
+        if (callback) callback(true);
+    };
+
+    confirmYesBtn.onclick = () => {
+        customModal.style.display = 'none';
+        if (callback) callback(true);
+    };
+
+    confirmNoBtn.onclick = () => {
+        customModal.style.display = 'none';
+        if (callback) callback(false);
+    };
+}
 
     // --- UI Element References ---
     const hamburger = document.querySelector('.hamburger');

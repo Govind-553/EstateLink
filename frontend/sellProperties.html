@@ -1061,7 +1061,7 @@
 
 <section class="search-section" id="home">
     <div class="search-container">
-        <h2 class="search-title">Find Your Perfect Property</h2>
+        <h2 class="search-title">Find Your Perfect Property For Sell</h2>
         <div class="search-form" id="searchForm">
             <div class="search-group">
                 <label class="search-label">Select Your Location</label>
@@ -1101,6 +1101,20 @@
                 <div class="price-input-group">
                         <span class="input-icon">₹</span>
                         <input type="text" class="search-input" id="priceInput" placeholder="e.g., 5000000">
+                </div>
+            </div>
+
+            <div class="search-group">
+                <label class="search-label">Ownership Type</label>
+                <div class="dropdown" id="ownershipType">
+                    <div class="dropdown-btn">
+                        <span>Select Ownership Type</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="dropdown-content">
+                        <div class="dropdown-option" data-value="owner">Owner</div>
+                        <div class="dropdown-option" data-value="agent">Agent</div>
+                    </div>
                 </div>
             </div>
 
@@ -1159,7 +1173,7 @@
 </div>
 <div class="social-links">
     <a href="https://wa.link/qykos7" class="social-link" title="Whatsapp"><i class="fab fa-whatsapp"></i></a>
-    <a href="#" class="social-link" title="Facebook"><i class="fab fa-facebook-f"></i></a> 
+    <a href="https://www.facebook.com/share/14R1w7XsyMb/" class="social-link" title="Facebook"><i class="fab fa-facebook-f"></i></a> 
     <a href="https://www.instagram.com/dsa.enterprise?igsh=N3pidmZ6YjY2MDc=&utm_source=ig_contact_invite" class="social-link" title="Instagram"><i class="fab fa-instagram"></i></a> 
 </div>
 </div>
@@ -1270,6 +1284,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const filterLocation = filters.location ? filters.location.value.toLowerCase() : '';
         const filterType = filters.propertyType ? filters.propertyType.value.toLowerCase() : '';
         const priceValue = filters.priceInput ? filters.priceInput.value : '';
+        const filterOwnershipType = filters.ownershipType ? filters.ownershipType.value.toLowerCase() : '';
 
         filteredData = propertiesData.filter(property => {
             const rowLocation = (property.location || '').toLowerCase();
@@ -1277,6 +1292,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const matchLocation = !filterLocation || rowLocation.includes(filterLocation);
             const matchType = !filterType || normalizedRowType === filterType;
+            const matchOwnershipType = !filterOwnershipType || (property.ownershipType || '').toLowerCase() === filterOwnershipType;
 
             let matchPrice = true;
             if (priceValue) {
@@ -1289,7 +1305,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     matchPrice = false;
                 }
             }
-            return matchLocation && matchType && matchPrice;
+            
+            return matchLocation && matchType && matchPrice && matchOwnershipType;
         });
     }
 
