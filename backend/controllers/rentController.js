@@ -16,10 +16,10 @@ const cleanMobileNumber = (mobileString) => {
 
 // Route 1: Create a new rent listing
 export const createRentListing = async (req, res) => {
-    const { contact, location, propertyType, price, name, date, tenantType } = req.body || {};
+    const { contact, location, propertyType, price, name, date, tenantType, ownershipType } = req.body || {};
 
     try { 
-        if (!contact || !location || !propertyType || !price || !name || !date || !tenantType) {
+        if (!contact || !location || !propertyType || !price || !name || !date || !tenantType || !ownershipType) {
             return res.status(400).json({ message: "All required fields must be provided." });
         }
         
@@ -58,7 +58,8 @@ export const createRentListing = async (req, res) => {
             contact: sanitizedContact, // always store only 10 digits
             userName: finalUserName,
             date,
-            tenantType
+            tenantType,
+            ownershipType
         });
 
         const savedListing = await newListing.save();
@@ -113,7 +114,7 @@ export const getAllRentListings = async (req, res) => {
 export const updateRentListingById = async (req, res) => {
     const { id } = req.params; 
     // ✅ CORRECTED: Destructure tenantType
-    const { location, propertyType, price, name, contact, date, tenantType } = req.body || {};
+    const { location, propertyType, price, name, contact, date, tenantType, ownershipType } = req.body || {};
 
     try {
         const update = {
@@ -123,7 +124,8 @@ export const updateRentListingById = async (req, res) => {
             userName: name,
             contact: cleanMobileNumber(contact),
             date,
-            tenantType // ✅ CORRECTED: Update tenantType
+            tenantType, // ✅ CORRECTED: Update tenantType
+            ownershipType // ✅ CORRECTED: Update ownershipType
         };
 
         const result = await RentFlat.findByIdAndUpdate(id, { $set: update }, { new: true });

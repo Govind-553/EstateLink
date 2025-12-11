@@ -33,6 +33,11 @@ const RentFlatSchema = new mongoose.Schema({
         required: true,
         enum: ['Any', 'Family', 'Bachelors']
     },
+    ownershipType: {
+        type: String,
+        required: true,
+        enum: ['Owner', 'Agent']
+    },
 }, { 
     timestamps: true 
 });
