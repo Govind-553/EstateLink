@@ -890,6 +890,8 @@ html {
             <input type="date" id="propertyDate" name="date" required>
             <label for="tenantType">Tenant Preference:</label>
             <select id="tenantType" name="tenantType" required><option value="">Select a Preference</option><option value="Any">Any</option><option value="Family">Family</option><option value="Bachelors">Bachelors</option></select>
+            <label for="ownershipType">Ownership Type:</label>
+            <select id="ownershipType" name="ownershipType" required><option value="">Select an Ownership Type</option><option value="Owner">Owner</option><option value="Agent">Agent</option></select>
             <div class="button-row"><button type="submit" id="submitPropertyBtn">Add Property</button></div>
         </form>
     </div>
@@ -910,7 +912,7 @@ html {
         <form class="search-form" onsubmit="return false;">
             <div class="search-group">
                 <label class="search-label">Select Location</label>
-                <div class="dropdown" id="location"><div class="dropdown-btn"><span>Select Location</span><i class="fas fa-chevron-down"></i></div><div class="dropdown-content"><div class="dropdown-option" data-value="Borivali West">Borivali West</div><div class="dropdown-option" data-value="Kandivali West">Kandivali West</div><div class="dropdown-option" data-value="Malad West">Malad West</div><div class="dropdown-option" data-value="Goregaon West">Goregaon West</div><div class="dropdown-option" data-value="Andheri West">Andheri West</div></div></div>
+                <div class="dropdown" id="location"><div class="dropdown-btn"><span>Select Location</span><i class="fas fa-chevron-down"></i></div><div class="dropdown-content"><div class="dropdown-option" data-value="Borivali West">Borivali West</div><div class="dropdown-option" data-value="Kandivali West">Kandivali West</div><div class="dropdown-option" data-value="Malad West">Malad West</div><div class="dropdown-option" data-value="Ram Mandir west">Ram Mandir West</div><div class="dropdown-option" data-value="Goregaon West">Goregaon West</div><div class="dropdown-option" data-value="Andheri West">Andheri West</div><div class="dropdown-option" data-value="Vile parle west">Vile Parle West</div>
             </div>
             <div class="search-group">
                 <label class="search-label">Property Type</label>
@@ -1080,7 +1082,8 @@ function showCustomPopup(message, isConfirm = false, callback = null, duration =
             name: propertyForm.elements['userName'].value,
             contact: propertyForm.elements['contact'].value,
             date: propertyForm.elements['date'].value,
-            tenantType: propertyForm.elements['tenantType'].value
+            tenantType: propertyForm.elements['tenantType'].value,
+            ownershipType: propertyForm.elements['ownershipType'].value
         };
         const propertyId = propertyIdInput.value;
         const isCreating = propertyId === '';
@@ -1132,6 +1135,7 @@ function showCustomPopup(message, isConfirm = false, callback = null, duration =
                 propertyForm.elements['contact'].value = property.contact;
                 propertyForm.elements['date'].value = new Date(property.date).toISOString().substring(0, 10);
                 propertyForm.elements['tenantType'].value = property.tenantType;
+                propertyForm.elements['ownershipType'].value = property.ownershipType;
                 document.getElementById('propertyPanelTitle').textContent = 'Edit Rental Property';
                 document.getElementById('submitPropertyBtn').textContent = 'Save Changes';
                 openPanel();
