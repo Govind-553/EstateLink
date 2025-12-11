@@ -103,6 +103,10 @@ export const getAllRentListings = async (req, res) => {
             message: "All the flats for rent are listed below.",
             count: formattedListings.length,
             rentFlatsList: formattedListings,
+            ownershipTypeCounts: {
+                Agent: formattedListings.filter(listing => listing.ownershipType === "Agent").length,
+                Owner: formattedListings.filter(listing => listing.ownershipType === "Owner").length
+            }
         });
     } catch (error) {
         console.error("Error fetching listings:", error.message);

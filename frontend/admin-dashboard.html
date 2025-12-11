@@ -1185,10 +1185,16 @@ document.addEventListener('DOMContentLoaded', function() {
         data.forEach((user) => {
             const statusText = user.subscriptionStatus ? user.subscriptionStatus : "Unknown";
             const statusClass = `status-${user.subscriptionStatus ? user.subscriptionStatus.toLowerCase() : 'unknown'}`;
+            let formattedMobile = String(user.mobileNumber || "N/A");
+            if (formattedMobile !== "N/A" && formattedMobile.startsWith('91')) {
+                formattedMobile = formattedMobile.replace('91', '+91 ');
+            } else if (formattedMobile !== "N/A") {
+                formattedMobile = '+91' + formattedMobile;
+            }
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td data-label="Name">${user.fullName || "N/A"}</td>
-                <td data-label="Contact">+91 ${user.mobileNumber || "N/A"}</td>
+                <td data-label="Contact">${formattedMobile}</td>
                 <td data-label="Date Joined">${
                     user.registrationDate
                     ? new Date(user.registrationDate).toLocaleDateString()

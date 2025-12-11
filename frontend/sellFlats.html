@@ -221,7 +221,7 @@ html{scroll-behavior:smooth}
         <form class="search-form" onsubmit="return false;">
             <div class="search-group">
                 <label class="search-label">Select Location</label>
-                <div class="dropdown" id="location"><div class="dropdown-btn"><span>Select Location</span><i class="fas fa-chevron-down"></i></div><div class="dropdown-content"><div class="dropdown-option" data-value="Borivali West">Borivali West</div><div class="dropdown-option" data-value="Kandivali West">Kandivali West</div><div class="dropdown-option" data-value="Malad West">Malad West</div><div class="dropdown-option" data-value="Ram Mandir west">Ram Mandir West</div><div class="dropdown-option" data-value="Goregaon West">Goregaon West</div><div class="dropdown-option" data-value="Andheri West">Andheri West</div><div class="dropdown-option" data-value="Vile Parle West">Vile Parle West</div>
+                <div class="dropdown" id="location"><div class="dropdown-btn"><span>Select Location</span><i class="fas fa-chevron-down"></i></div><div class="dropdown-content"><div class="dropdown-option" data-value="Borivali West">Borivali West</div><div class="dropdown-option" data-value="Kandivali West">Kandivali West</div><div class="dropdown-option" data-value="Malad West">Malad West</div><div class="dropdown-option" data-value="Ram Mandir West">Ram Mandir West</div><div class="dropdown-option" data-value="Goregaon West">Goregaon West</div><div class="dropdown-option" data-value="Andheri West">Andheri West</div><div class="dropdown-option" data-value="Vile Parle West">Vile Parle West</div></div></div>
             </div>
             <div class="search-group">
                 <label class="search-label">Property Type</label>
@@ -235,7 +235,7 @@ html{scroll-behavior:smooth}
                 <label class="search-label">Enter Mobile No.</label>
                 <div class="input-with-clear"><input type="text" class="search-input" id="mobile" placeholder="e.g., 9876543210"><button type="button" class="clear-btn" data-target="mobile">&times;</button></div>
             </div>
-            <button type="button" class="search-btn" id="searchBtn"><i class="fas fa-search"></i> Search</button>
+            <button type="button" class="search-btn" id="searchBtn"><i class="fas fa-search"></i> Search</button><button></button>
         </form>
         <div class="selected-filters" id="selectedFilters"></div>
     </div>
@@ -252,7 +252,7 @@ html{scroll-behavior:smooth}
             <div class="counter-card"><h4>Owner Properties</h4><div class="count" id="ownerProperties">0</div></div>
             <div class="counter-card"><h4>Agent Properties</h4><div class="count" id="agentProperties">0</div></div>
         </div>
-        <div id="tableView" style="display: none;"><table class="property-table"><thead id="propertiesHeader"><tr><th>Location</th><th>Type</th><th>Price</th><th>Name</th><th>Contact</th><th>Date</th><th>Ownership</th><th>Actions</th></tr></thead><tbody id="propertiesBody"></tbody></table></div>
+        <div id="tableView" style="display: none;"><table class="property-table"><thead id="propertiesHeader"><tr><th>Location</th><th>Type</th><th>Price</th><th>Name</th><th>Contact</th><th>Date(MM/DD/YYYY)</th><th>Ownership</th><th>Actions</th></tr></thead><tbody id="propertiesBody"></tbody></table></div>
         <div id="cardView" class="card-view" style="display: none;"></div>
     </div>
 </section>
@@ -496,7 +496,7 @@ document.addEventListener('DOMContentLoaded', function() {
             row.innerHTML = `<td>${prop.location || ''}</td>
             <td>${prop.propertyType || ''}</td>
             <td>${prop.price || ''}</td><td>${prop.userName || ''}</td>
-            <td>${prop.contact || ''}</td>
+            <td>${"+91 " + (prop.contact || '')}</td>
             <td>${new Date(prop.date).toLocaleDateString()}</td>
             <td>${prop.ownershipType || ''}</td>
             <td class="actions-cell"><button class="action-btn edit-btn" data-id="${prop.id}"><i class="fas fa-edit"></i></button>

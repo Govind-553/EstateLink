@@ -912,7 +912,7 @@ html {
         <form class="search-form" onsubmit="return false;">
             <div class="search-group">
                 <label class="search-label">Select Location</label>
-                <div class="dropdown" id="location"><div class="dropdown-btn"><span>Select Location</span><i class="fas fa-chevron-down"></i></div><div class="dropdown-content"><div class="dropdown-option" data-value="Borivali West">Borivali West</div><div class="dropdown-option" data-value="Kandivali West">Kandivali West</div><div class="dropdown-option" data-value="Malad West">Malad West</div><div class="dropdown-option" data-value="Ram Mandir west">Ram Mandir West</div><div class="dropdown-option" data-value="Goregaon West">Goregaon West</div><div class="dropdown-option" data-value="Andheri West">Andheri West</div><div class="dropdown-option" data-value="Vile parle west">Vile Parle West</div>
+                <div class="dropdown" id="location"><div class="dropdown-btn"><span>Select Location</span><i class="fas fa-chevron-down"></i></div><div class="dropdown-content"><div class="dropdown-option" data-value="Borivali West">Borivali West</div><div class="dropdown-option" data-value="Kandivali West">Kandivali West</div><div class="dropdown-option" data-value="Malad West">Malad West</div><div class="dropdown-option" data-value="Ram Mandir West">Ram Mandir West</div><div class="dropdown-option" data-value="Goregaon West">Goregaon West</div><div class="dropdown-option" data-value="Andheri West">Andheri West</div><div class="dropdown-option" data-value="Vile Parle West">Vile Parle West</div></div></div>
             </div>
             <div class="search-group">
                 <label class="search-label">Property Type</label>
@@ -925,6 +925,10 @@ html {
             <div class="search-group">
                 <label class="search-label">Enter Mobile No.</label>
                 <div class="input-with-clear"><input type="text" class="search-input" id="mobile" placeholder="e.g., 9876543210"><button type="button" class="clear-btn" data-target="mobile">&times;</button></div>
+            </div>
+            <div class="search-group">
+                <label class="search-label">Ownership Type</label>
+                <div class="dropdown" id="ownershipType"><div class="dropdown-btn"><span>Select Ownership Type</span><i class="fas fa-chevron-down"></i></div><div class="dropdown-content"><div class="dropdown-option" data-value="Agent">Agent</div><div class="dropdown-option" data-value="Owner">Owner</div></div></div>
             </div>
             <button type="button" class="search-btn" id="searchBtn"><i class="fas fa-search"></i> Search</button>
         </form>
@@ -942,8 +946,10 @@ html {
             <div class="counter-card"><h4>Total Properties</h4><div class="count" id="totalProperties">0</div></div>
             <div class="counter-card"><h4>Family Preferred</h4><div class="count" id="familyProperties">0</div></div>
             <div class="counter-card"><h4>Bachelors Preferred</h4><div class="count" id="bachelorProperties">0</div></div>
+            <div class="counter-card"><h4>Agent Properties</h4><div class="count" id="agentProperties">0</div></div>
+            <div class="counter-card"><h4>Owner Properties</h4><div class="count" id="ownerProperties">0</div></div>
         </div>
-        <div id="tableView" style="display: none;"><table class="property-table"><thead id="propertiesHeader"><tr><th>Location</th><th>Type</th><th>Rent</th><th>Name</th><th>Contact</th><th>Date</th><th>Preference</th><th>Actions</th></tr></thead><tbody id="propertiesBody"></tbody></table></div>
+        <div id="tableView" style="display: none;"><table class="property-table"><thead id="propertiesHeader"><tr><th>Location</th><th>Type</th><th>Rent</th><th>Name</th><th>Contact</th><th>Date(MM/DD/YYYY)</th><th>Preference</th><th>Ownership Type</th><th>Actions</th></tr></thead><tbody id="propertiesBody"></tbody></table></div>
         <div id="cardView" class="card-view" style="display: none;"></div>
     </div>
 </section>
@@ -1166,6 +1172,10 @@ function showCustomPopup(message, isConfirm = false, callback = null, duration =
             // Location and Type filters (unchanged)
             if (filters.location && p.location !== filters.location.value) return false;
             if (filters.flatType && p.propertyType !== filters.flatType.value) return false;
+            if (filters.ownershipType) {
+                const ownershipValue = p.ownershipType || 'Agent'; // Treat blank as Agent
+                if (ownershipValue !== filters.ownershipType.value) return false;
+            }
 
             // --- MODIFIED RENT FILTER LOGIC ---
             if (filters.price && filters.price.value) {
@@ -1210,7 +1220,11 @@ function showCustomPopup(message, isConfirm = false, callback = null, duration =
         propertiesBody.innerHTML = '';
         data.forEach(prop => {
             const row = propertiesBody.insertRow();
-            row.innerHTML = `<td>${prop.location || ''}</td><td>${prop.propertyType || ''}</td><td>${prop.price || ''}</td><td>${prop.userName || ''}</td><td>${prop.contact || ''}</td><td>${new Date(prop.date).toLocaleDateString()}</td><td>${prop.tenantType || ''}</td><td class="actions-cell"><button class="action-btn edit-btn" data-id="${prop.id}"><i class="fas fa-edit"></i></button><button class="action-btn delete-btn" data-id="${prop.id}"><i class="fas fa-trash-alt"></i></button></td>`;
+            let contact = String(prop.contact || '');
+            if (contact && contact.startsWith('91')) {
+                contact = contact.replace('91', '+91 ');
+            }
+            row.innerHTML = `<td>${prop.location || ''}</td><td>${prop.propertyType || ''}</td><td>${prop.price || ''}</td><td>${prop.userName || ''}</td><td>${contact}</td><td>${new Date(prop.date).toLocaleDateString()}</td><td>${prop.tenantType || ''}</td><td>${prop.ownershipType || 'Agent'}</td><td class="actions-cell"><button class="action-btn edit-btn" data-id="${prop.id}"><i class="fas fa-edit"></i></button><button class="action-btn delete-btn" data-id="${prop.id}"><i class="fas fa-trash-alt"></i></button></td>`;
         });
     }
 
@@ -1219,7 +1233,11 @@ function showCustomPopup(message, isConfirm = false, callback = null, duration =
         data.forEach(prop => {
             const card = document.createElement('div');
             card.className = 'card-item';
-            card.innerHTML = `<div class="card-row"><span class="card-label">Location:</span> <span class="card-value">${prop.location}</span></div><div class="card-row"><span class="card-label">Type:</span> <span class="card-value">${prop.propertyType}</span></div><div class="card-row"><span class="card-label">Rent:</span> <span class="card-value">${prop.price}</span></div><div class="card-row"><span class="card-label">Name:</span> <span class="card-value">${prop.userName}</span></div><div class="card-row"><span class="card-label">Contact:</span> <span class="card-value">${prop.contact}</span></div><div class="card-row"><span class="card-label">Date:</span> <span class="card-value">${new Date(prop.date).toLocaleDateString()}</span></div><div class="card-row"><span class="card-label">Preference:</span> <span class="card-value">${prop.tenantType}</span></div><div class="card-actions actions-cell"><button class="action-btn edit-btn" data-id="${prop.id}"><i class="fas fa-edit"></i></button><button class="action-btn delete-btn" data-id="${prop.id}"><i class="fas fa-trash-alt"></i></button></div>`;
+            let contact = String(prop.contact || '');
+            if (contact && contact.startsWith('91')) {
+                contact = contact.replace('91', '+91 ');
+            }
+            card.innerHTML = `<div class="card-row"><span class="card-label">Location:</span> <span class="card-value">${prop.location}</span></div><div class="card-row"><span class="card-label">Type:</span> <span class="card-value">${prop.propertyType}</span></div><div class="card-row"><span class="card-label">Rent:</span> <span class="card-value">${prop.price}</span></div><div class="card-row"><span class="card-label">Name:</span> <span class="card-value">${prop.userName}</span></div><div class="card-row"><span class="card-label">Contact:</span> <span class="card-value">${contact}</span></div><div class="card-row"><span class="card-label">Date:</span> <span class="card-value">${new Date(prop.date).toLocaleDateString()}</span></div><div class="card-row"><span class="card-label">Preference:</span> <span class="card-value">${prop.tenantType}</span></div><div class="card-row"><span class="card-label">Ownership Type:</span> <span class="card-value">${prop.ownershipType || 'Agent'}</span></div><div class="card-actions actions-cell"><button class="action-btn edit-btn" data-id="${prop.id}"><i class="fas fa-edit"></i></button><button class="action-btn delete-btn" data-id="${prop.id}"><i class="fas fa-trash-alt"></i></button></div>`;
             cardView.appendChild(card);
         });
     }
@@ -1228,6 +1246,8 @@ function showCustomPopup(message, isConfirm = false, callback = null, duration =
         document.getElementById('totalProperties').textContent = data.length;
         document.getElementById('familyProperties').textContent = data.filter(p => p.tenantType === 'Family').length;
         document.getElementById('bachelorProperties').textContent = data.filter(p => p.tenantType === 'Bachelors').length;
+        document.getElementById('agentProperties').textContent = data.filter(p => p.ownershipType === 'Agent' || !p.ownershipType).length;
+        document.getElementById('ownerProperties').textContent = data.filter(p => p.ownershipType === 'Owner').length;
     }
 
     function openPanel() { propertyPanel.style.width = '320px'; overlay.style.display = 'block'; }
