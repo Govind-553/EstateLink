@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>DSA Enterprise - Rent Properties Admin Panel</title>
     <link rel="icon" type="image/x-icon" href="img/DSA.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Caprasimo&display=swap" rel="stylesheet">
-    
+
 <style>
     * {
     margin: 0;
@@ -833,7 +833,7 @@ html {
     .property-table td { font-size: 0.82rem; padding: 6px 6px; }
     .search-btn { min-width: 100px; font-size: 0.9rem; padding: 8px 10px; }
 }
-</style>    
+</style>
 </head>
 
 <body>
@@ -934,7 +934,7 @@ html {
         </form>
         <div class="selected-filters" id="selectedFilters"></div>
     </div>
-</section> 
+</section>
 
 <section class="listings-section">
     <div class="property-container">
@@ -965,7 +965,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const okBtn = document.getElementById('okBtn');
     const confirmYesBtn = document.getElementById('confirmYesBtn');
     const confirmNoBtn = document.getElementById('confirmNoBtn');
-    
+
    // Unified function to handle both alerts and confirmations
 function showCustomPopup(message, isConfirm = false, callback = null, duration = 3000) {//here 3000 is shows the 3 second.
     modalMessage.textContent = message;
@@ -1258,7 +1258,7 @@ function showCustomPopup(message, isConfirm = false, callback = null, duration =
     hamburger.addEventListener('click', () => navLinks.classList.toggle('active'));
     window.addEventListener('resize', filterAndRender);
     window.matchMedia("(orientation: portrait)").addEventListener('change', filterAndRender);
-    
+
     dropdowns.forEach(dropdown => {
         const btn = dropdown.querySelector('.dropdown-btn');
         const options = dropdown.querySelectorAll('.dropdown-option');
@@ -1269,48 +1269,68 @@ function showCustomPopup(message, isConfirm = false, callback = null, duration =
     });
 
     document.addEventListener('click', () => dropdowns.forEach(d => d.classList.remove('active')));
-    
+
     searchInputs.forEach(input => {
         input.addEventListener('input', () => { filters[input.id] = { value: input.value, text: input.value }; updateSelectedFilters(); filterAndRender(); });
     });
-    
+
     clearButtons.forEach(button => {
         button.addEventListener('click', () => { const targetId = button.dataset.target; document.getElementById(targetId).value = ''; filters[targetId] = null; updateSelectedFilters(); filterAndRender(); });
     });
-    
+
+    // --- QUICK-FIX: replace updateSelectedFilters to avoid id collision with form elements ---
     function updateSelectedFilters() {
         selectedFiltersContainer.innerHTML = '';
+
+        // default labels for resetting dropdowns / inputs
+        const defaultLabels = {
+            location: 'Select Location',
+            flatType: 'Select Property Type',
+            ownershipType: 'Select Ownership Type',
+            price: 'Enter Rent',
+            mobile: 'Enter Mobile No.'
+        };
+
         Object.keys(filters).forEach(key => {
-            if(filters[key] && filters[key].value) {
+            if (filters[key] && filters[key].value) {
                 const tag = document.createElement('div');
                 tag.className = 'filter-tag';
                 tag.innerHTML = `<span>${filters[key].text}</span><div class="remove" data-filter="${key}">×</div>`;
                 selectedFiltersContainer.appendChild(tag);
             }
         });
+
         selectedFiltersContainer.querySelectorAll('.remove').forEach(remove => {
             remove.addEventListener('click', (e) => {
                 const filterKey = e.target.dataset.filter;
                 filters[filterKey] = null;
-                const dropdown = document.getElementById(filterKey);
-                if (dropdown) {
-                    dropdown.querySelector('.dropdown-btn span').textContent = `Select ${filterKey === 'flatType' ? 'Property Type' : 'Location'}`;
-                    dropdown.querySelectorAll('.dropdown-option').forEach(opt => opt.classList.remove('selected'));
+
+                // FIRST: try to find the search dropdown with this id (the UI dropdowns have class 'dropdown')
+                const dropdownDiv = document.querySelector(`.dropdown#${filterKey}`);
+                if (dropdownDiv) {
+                    const labelSpan = dropdownDiv.querySelector('.dropdown-btn span');
+                    if (labelSpan) labelSpan.textContent = defaultLabels[filterKey] || 'Select';
+                    dropdownDiv.querySelectorAll('.dropdown-option').forEach(opt => opt.classList.remove('selected'));
                 }
-                const input = document.getElementById(filterKey);
-                if (input && (input.tagName === 'INPUT' || input.tagName === 'TEXTAREA')) {
-                    input.value = '';
+
+                // SECOND: if there's also an input/select with the same id (form fields), reset its value safely
+                const inputElem = document.getElementById(filterKey);
+                if (inputElem && (inputElem.tagName === 'INPUT' || inputElem.tagName === 'TEXTAREA' || inputElem.tagName === 'SELECT')) {
+                    // Only clear if it's not the dropdown we already handled
+                    // (we already targeted the .dropdown element above, so this will target form fields)
+                    inputElem.value = '';
                 }
+
                 updateSelectedFilters();
                 filterAndRender();
             });
         });
     }
+    // --- end quick-fix ---
 
     fetchAndRenderProperties();
 });
 </script>
-
 
 </body>
 </html>

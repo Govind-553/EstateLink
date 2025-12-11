@@ -221,20 +221,57 @@ html{scroll-behavior:smooth}
         <form class="search-form" onsubmit="return false;">
             <div class="search-group">
                 <label class="search-label">Select Location</label>
-                <div class="dropdown" id="location"><div class="dropdown-btn"><span>Select Location</span><i class="fas fa-chevron-down"></i></div><div class="dropdown-content"><div class="dropdown-option" data-value="Borivali West">Borivali West</div><div class="dropdown-option" data-value="Kandivali West">Kandivali West</div><div class="dropdown-option" data-value="Malad West">Malad West</div><div class="dropdown-option" data-value="Ram Mandir West">Ram Mandir West</div><div class="dropdown-option" data-value="Goregaon West">Goregaon West</div><div class="dropdown-option" data-value="Andheri West">Andheri West</div><div class="dropdown-option" data-value="Vile Parle West">Vile Parle West</div></div></div>
+                <!-- data-filter-key maps this dropdown to filters.location -->
+                <div class="dropdown" id="location" data-filter-key="location">
+                    <div class="dropdown-btn"><span>Select Location</span><i class="fas fa-chevron-down"></i></div>
+                    <div class="dropdown-content">
+                        <div class="dropdown-option" data-value="Borivali West">Borivali West</div>
+                        <div class="dropdown-option" data-value="Kandivali West">Kandivali West</div>
+                        <div class="dropdown-option" data-value="Malad West">Malad West</div>
+                        <div class="dropdown-option" data-value="Ram Mandir West">Ram Mandir West</div>
+                        <div class="dropdown-option" data-value="Goregaon West">Goregaon West</div>
+                        <div class="dropdown-option" data-value="Andheri West">Andheri West</div>
+                        <div class="dropdown-option" data-value="Vile Parle West">Vile Parle West</div>
+                    </div>
+                </div>
             </div>
+
             <div class="search-group">
                 <label class="search-label">Property Type</label>
-                <div class="dropdown" id="flatType"><div class="dropdown-btn"><span>Select Property Type</span><i class="fas fa-chevron-down"></i></div><div class="dropdown-content"><div class="dropdown-option" data-value="1 RK">1 RK</div><div class="dropdown-option" data-value="1 BHK">1 BHK</div><div class="dropdown-option" data-value="1.5 BHK">1.5 BHK</div><div class="dropdown-option" data-value="2 BHK">2 BHK</div></div></div>
+                <div class="dropdown" id="flatType" data-filter-key="flatType">
+                    <div class="dropdown-btn"><span>Select Property Type</span><i class="fas fa-chevron-down"></i></div>
+                    <div class="dropdown-content">
+                        <div class="dropdown-option" data-value="1 RK">1 RK</div>
+                        <div class="dropdown-option" data-value="1 BHK">1 BHK</div>
+                        <div class="dropdown-option" data-value="1.5 BHK">1.5 BHK</div>
+                        <div class="dropdown-option" data-value="2 BHK">2 BHK</div>
+                    </div>
+                </div>
             </div>
+
             <div class="search-group">
                 <label class="search-label">Enter Budget</label>
                 <div class="input-with-clear"><input type="text" class="search-input" id="price" placeholder="e.g., ₹50,00,000"><button type="button" class="clear-btn" data-target="price">&times;</button></div>
             </div>
+
             <div class="search-group">
                 <label class="search-label">Enter Mobile No.</label>
                 <div class="input-with-clear"><input type="text" class="search-input" id="mobile" placeholder="e.g., 9876543210"><button type="button" class="clear-btn" data-target="mobile">&times;</button></div>
             </div>
+
+            <!-- NEW: Ownership Type filter (search) -->
+            <div class="search-group">
+                <label class="search-label">Ownership Type</label>
+                <!-- data-filter-key maps to filters.ownershipType; id is unique to this dropdown -->
+                <div class="dropdown" id="ownershipTypeFilter" data-filter-key="ownershipType">
+                    <div class="dropdown-btn"><span>Select Ownership Type</span><i class="fas fa-chevron-down"></i></div>
+                    <div class="dropdown-content">
+                        <div class="dropdown-option" data-value="Agent">Agent</div>
+                        <div class="dropdown-option" data-value="Owner">Owner</div>
+                    </div>
+                </div>
+            </div>
+
             <button type="button" class="search-btn" id="searchBtn"><i class="fas fa-search"></i> Search</button><button></button>
         </form>
         <div class="selected-filters" id="selectedFilters"></div>
@@ -269,42 +306,41 @@ document.addEventListener('DOMContentLoaded', function() {
     const confirmYesBtn = document.getElementById('confirmYesBtn');
     const confirmNoBtn = document.getElementById('confirmNoBtn');
     
-    function showCustomPopup(message, isConfirm = false, callback = null, duration = 3000) {//here 3000 is shows the 3 second.
-    modalMessage.textContent = message;
+    function showCustomPopup(message, isConfirm = false, callback = null, duration = 3000) {
+        modalMessage.textContent = message;
 
-    if (isConfirm) {
-        okBtn.style.display = 'none';
-        confirmYesBtn.style.display = 'inline-block';
-        confirmNoBtn.style.display = 'inline-block';
-    } else {
-        okBtn.style.display = 'inline-block';
-        confirmYesBtn.style.display = 'none';
-        confirmNoBtn.style.display = 'none';
+        if (isConfirm) {
+            okBtn.style.display = 'none';
+            confirmYesBtn.style.display = 'inline-block';
+            confirmNoBtn.style.display = 'inline-block';
+        } else {
+            okBtn.style.display = 'inline-block';
+            confirmYesBtn.style.display = 'none';
+            confirmNoBtn.style.display = 'none';
 
-        // Auto close for alert after specific duration
-        setTimeout(() => {
+            setTimeout(() => {
+                customModal.style.display = 'none';
+                if (callback) callback(true);
+            }, duration);
+        }
+
+        customModal.style.display = 'flex';
+
+        okBtn.onclick = () => {
             customModal.style.display = 'none';
             if (callback) callback(true);
-        }, duration);
+        };
+
+        confirmYesBtn.onclick = () => {
+            customModal.style.display = 'none';
+            if (callback) callback(true);
+        };
+
+        confirmNoBtn.onclick = () => {
+            customModal.style.display = 'none';
+            if (callback) callback(false);
+        };
     }
-
-    customModal.style.display = 'flex';
-
-    okBtn.onclick = () => {
-        customModal.style.display = 'none';
-        if (callback) callback(true);
-    };
-
-    confirmYesBtn.onclick = () => {
-        customModal.style.display = 'none';
-        if (callback) callback(true);
-    };
-
-    confirmNoBtn.onclick = () => {
-        customModal.style.display = 'none';
-        if (callback) callback(false);
-    };
-}
 
     // --- UI Element References ---
     const hamburger = document.querySelector('.hamburger');
@@ -326,33 +362,34 @@ document.addEventListener('DOMContentLoaded', function() {
     const contactInput = propertyForm.elements['contact'];
     const userNameInput = propertyForm.elements['userName'];
 
-    let filters = { location: null, flatType: null, price: null, mobile: null }; 
+    // NOTE: include ownershipType in filters
+    let filters = { location: null, flatType: null, price: null, mobile: null, ownershipType: null }; 
 
    // API for User Fetching by Contact Number
     contactInput.addEventListener('blur', async () => {
-    const contactVal = contactInput.value.trim();
-    if (contactVal.length === 10) {
-        try {
-            const res = await fetch(`https://real-estate-project-1-lps5.onrender.com/api/users/findByContact/${contactVal}`);
-            const data = await res.json();
+        const contactVal = contactInput.value.trim();
+        if (contactVal.length === 10) {
+            try {
+                const res = await fetch(`https://real-estate-project-1-lps5.onrender.com/api/users/findByContact/${contactVal}`);
+                const data = await res.json();
 
-            if (res.ok && data.fullName) {
-                userNameInput.value = data.fullName; 
-                showCustomPopup(`✅ Data is fetched successfully: ${data.message}`);
-            } else if (res.status === 403) {
-                userNameInput.value = ""; 
-                showCustomPopup("⚠️ " + data.message); 
-                closePanel();
-            } else {
-                userNameInput.value = "";
-                showCustomPopup("⚠️ " + data.message); 
+                if (res.ok && data.fullName) {
+                    userNameInput.value = data.fullName; 
+                    showCustomPopup(`✅ Data is fetched successfully: ${data.message}`);
+                } else if (res.status === 403) {
+                    userNameInput.value = ""; 
+                    showCustomPopup("⚠️ " + data.message); 
+                    closePanel();
+                } else {
+                    userNameInput.value = "";
+                    showCustomPopup("⚠️ " + data.message); 
+                }
+            } catch (err) {
+                console.error("Error checking user:", err);
+                showCustomPopup("❌ Error fetching user details: " + err.message);
             }
-        } catch (err) {
-            console.error("Error checking user:", err);
-            showCustomPopup("❌ Error fetching user details: " + err.message);
         }
-    }
-});
+    });
 
     async function fetchAndRenderProperties() {
         try {
@@ -393,30 +430,29 @@ document.addEventListener('DOMContentLoaded', function() {
         const url = isCreating ? `${BASE_URL}/create` : `${BASE_URL}/update/${propertyId}`;
         const method = isCreating ? 'POST' : 'PUT';
         try {
-    const response = await fetch(url, {
-        method,
-        headers: { 
-            'Content-Type': 'application/json',
-            'authorization': `Bearer ${accessToken}` 
-        },
-        body: JSON.stringify(formData)
+            const response = await fetch(url, {
+                method,
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'authorization': `Bearer ${accessToken}` 
+                },
+                body: JSON.stringify(formData)
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({ message: 'Failed to save data.' }));
+                throw new Error(errorData.message);
+            }
+        
+            showCustomPopup(isCreating ? '✅ New property for sale added!' : '✅ Property for sale updated!');
+            await fetchAndRenderProperties();
+            closePanel();
+        
+        }  catch (error) {
+            console.error("Error submitting form:", error);
+            showCustomPopup(`❌ An error occurred: ${error.message}`);
+        }
     });
-    
-    if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ message: 'Failed to save data.' }));
-        throw new Error(errorData.message);
-    }
-
-    showCustomPopup(isCreating ? '✅ New property for sale added!' : '✅ Property for sale updated!');
-    await fetchAndRenderProperties();
-    closePanel();
-
-}  catch (error) {
-        console.error("Error submitting form:", error);
-        showCustomPopup(`❌ An error occurred: ${error.message}`);
-    }
-});
-
 
     document.querySelector('.listings-section').addEventListener('click', async (e) => {
         const editBtn = e.target.closest('.edit-btn');
@@ -460,9 +496,13 @@ document.addEventListener('DOMContentLoaded', function() {
         return properties.filter(p => {
             if (filters.location && filters.location.value && p.location !== filters.location.value) return false;
             if (filters.flatType && filters.flatType.value && p.propertyType !== filters.flatType.value) return false;
+            if (filters.ownershipType && filters.ownershipType.value) {
+                const ownershipValue = p.ownershipType || 'Agent';
+                if (ownershipValue !== filters.ownershipType.value) return false;
+            }
             if (filters.price && filters.price.value) {
-                const propertyPrice = parseInt(p.price.replace(/[^0-9]/g, ''), 10);
-                const filterBudget = parseInt(filters.price.value.replace(/[^0-g,]/g, ''), 10);
+                const propertyPrice = parseInt(String(p.price || '').replace(/[^0-9]/g, ''), 10);
+                const filterBudget = parseInt(filters.price.value.replace(/[^0-9]/g, ''), 10);
                 if (!isNaN(propertyPrice) && !isNaN(filterBudget) && propertyPrice > filterBudget) return false;
             }
             if (filters.mobile && filters.mobile.value && !String(p.contact).includes(filters.mobile.value)) return false;
@@ -529,17 +569,28 @@ document.addEventListener('DOMContentLoaded', function() {
     window.addEventListener('resize', filterAndRender);
     window.matchMedia("(orientation: portrait)").addEventListener('change', filterAndRender);
 
+    // Initialize dropdown UI (uses data-filter-key to map dropdown -> logical filter key)
     dropdowns.forEach(dropdown => {
         const btn = dropdown.querySelector('.dropdown-btn');
         const options = dropdown.querySelectorAll('.dropdown-option');
-        btn.addEventListener('click', (e) => { e.stopPropagation(); dropdowns.forEach(d => { if(d !== dropdown) d.classList.remove('active'); }); dropdown.classList.toggle('active'); });
+        const logicalKey = dropdown.dataset.filterKey; // e.g. 'location', 'flatType', 'ownershipType'
+        btn.addEventListener('click', (e) => { 
+            e.stopPropagation(); 
+            dropdowns.forEach(d => { if(d !== dropdown) d.classList.remove('active'); }); 
+            dropdown.classList.toggle('active'); 
+        });
         options.forEach(option => {
             option.addEventListener('click', (e) => { 
                 e.stopPropagation(); 
                 btn.querySelector('span').textContent = option.textContent; 
                 options.forEach(opt => opt.classList.remove('selected')); 
                 option.classList.add('selected'); 
-                filters[dropdown.id] = { value: option.dataset.value, text: option.textContent }; 
+                if (logicalKey) {
+                    filters[logicalKey] = { value: option.dataset.value, text: option.textContent }; 
+                } else {
+                    // fallback: use dropdown.id as key
+                    filters[dropdown.id] = { value: option.dataset.value, text: option.textContent };
+                }
                 dropdown.classList.remove('active'); 
                 updateSelectedFilters(); 
                 filterAndRender();
@@ -565,6 +616,16 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function updateSelectedFilters() {
         selectedFiltersContainer.innerHTML = '';
+
+        // default labels for resetting dropdowns / inputs
+        const defaultLabels = {
+            location: 'Select Location',
+            flatType: 'Select Property Type',
+            ownershipType: 'Select Ownership Type',
+            price: 'Enter Budget',
+            mobile: 'Enter Mobile No.'
+        };
+
         Object.keys(filters).forEach(key => {
             if(filters[key] && filters[key].value) {
                 const tag = document.createElement('div');
@@ -573,17 +634,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 selectedFiltersContainer.appendChild(tag);
             }
         });
+
         selectedFiltersContainer.querySelectorAll('.remove').forEach(remove => {
             remove.addEventListener('click', (e) => {
                 const filterKey = e.target.dataset.filter;
                 filters[filterKey] = null;
-                const dropdown = document.getElementById(filterKey);
-                if (dropdown) {
-                    dropdown.querySelector('.dropdown-btn span').textContent = `Select ${filterKey === 'flatType' ? 'Property Type' : 'Location'}`;
-                    dropdown.querySelectorAll('.dropdown-option').forEach(opt => opt.classList.remove('selected'));
+
+                // Find the search dropdown that maps to this logical key (data-filter-key)
+                const dropdownDiv = document.querySelector(`.dropdown[data-filter-key="${filterKey}"]`);
+                if (dropdownDiv) {
+                    const labelSpan = dropdownDiv.querySelector('.dropdown-btn span');
+                    if (labelSpan) labelSpan.textContent = defaultLabels[filterKey] || 'Select';
+                    dropdownDiv.querySelectorAll('.dropdown-option').forEach(opt => opt.classList.remove('selected'));
                 }
-                const input = document.getElementById(filterKey);
-                if (input) input.value = '';
+
+                // If there's also an input or element with the same id (form fields), reset its value safely
+                const inputElem = document.getElementById(filterKey);
+                if (inputElem && (inputElem.tagName === 'INPUT' || inputElem.tagName === 'TEXTAREA' || inputElem.tagName === 'SELECT')) {
+                    inputElem.value = '';
+                }
+
                 updateSelectedFilters();
                 filterAndRender();
             });
