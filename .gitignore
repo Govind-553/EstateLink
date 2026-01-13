@@ -1,5 +1,6 @@
 node_modules 
 
+# Env Variables
 .env
 
 # Hide Duplicate entry cleanup files

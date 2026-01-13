@@ -14,10 +14,19 @@ import cookieParser from "cookie-parser";
 import paymentRoutes from "./routes/paymentRoutes.js";
 import webhookRoutes from "./routes/webhook.js";
 
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 dotenv.config();
 const app = express(); // Initialize Express app
 
 app.use(cors());
+
+// serve static files
+app.use(express.static(path.join(__dirname, "../frontend/public")));
 
 // razorpay webhook route
 app.use("/api/webhook", webhookRoutes);

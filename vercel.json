@@ -1,5 +1,8 @@
 {
   "routes": [
+    { "src": "/js/(.*)", "dest": "/frontend/public/js/$1" },
+    { "src": "/styles/(.*)", "dest": "/frontend/public/styles/$1" },
+    { "src": "/img/(.*)", "dest": "/frontend/public/img/$1" },
     { "src": "/(.*)", "dest": "/frontend/$1" }
   ]
 }

@@ -1,7 +1,7 @@
 import fs from 'fs';
 
-const firebaseConfigFilePath = './frontend/firebaseConfig.js';
-const razorpayConfigFilePath = './frontend/razorpayConfig.js';
+const firebaseConfigFilePath = './frontend/public/js/firebaseConfig.js';
+const razorpayConfigFilePath = './frontend/public/js/razorpayConfig.js';
 
 // 1) Firebase config
 const firebaseConfigContent = `

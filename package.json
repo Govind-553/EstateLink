@@ -2,6 +2,6 @@
   "name": "real-estate-site",
   "version": "1.0.0",
   "scripts": {
-    "build": "node ./frontend/create-config.mjs"
+    "build": "node ./frontend/public/js/create-config.mjs"
   }
 }
